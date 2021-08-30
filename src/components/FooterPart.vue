@@ -1,27 +1,24 @@
 <template>
-<header>
+<footer>
 	<div>
-		<input type="file" multiple @change="onChange"/>
+	
 	</div>
-</header>
+	<div>
+		<button id="preview">Preview</button>
+		<button id="save">Save</button>
+	</div>
+</footer>
 </template>
 
 <script>
 export default
 {
-	methods: 
-	{
-		onChange(e)
-		{
-			console.log('emit?');
-			this.$emit('files', e.target.files);
-		}
-	}
+	
 }
 </script>
 
 <style>
-header
+footer
 {
 	flex: 0 0 auto;
 	display: flex;
@@ -30,4 +27,5 @@ header
 	padding: 10px;
 	background: var(--gray);
 }
+
 </style>

@@ -1,6 +1,6 @@
 <template>
 <section>
-	<img v-for="(image) in list" :src="image.src" :key="image.name" :class="isCurrent(image.name)" @click="selectCurrent(image.name)"/>
+	<img v-for="(image, index) in list" :src="image.src" :key="image.name" :class="isCurrent(image.name)" @click="selectCurrent(image.name, index)"/>
 </section>
 </template>
 
@@ -23,10 +23,10 @@ export default
 		{
 			return this.current === name ? 'current' : '';
 		},
-		selectCurrent(name)
+		selectCurrent(name, index)
 		{
 			this.current = name;
-			this.$emit('current', name);
+			this.$emit('current', index);
 		}
 	}
 }
@@ -35,7 +35,7 @@ export default
 <style>
 section
 {
-	flex: 0 0 content;
+	flex: 0 0 auto;
 	display: flex;
 	flex-flow: row nowrap;
 	overflow-y: auto;
