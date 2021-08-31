@@ -1,7 +1,7 @@
 <template>
 	<header-part @files="onFiles"></header-part>
 	<list-part :list="list" @current="onCurrent"></list-part>
-	<main-part :current="current"></main-part>
+	<main-part :current="current" :lines="lines"></main-part>
 	<footer-part></footer-part>
 </template>
 
@@ -19,6 +19,13 @@ export default
 	{
 		return{
 			list: [],
+			lines: [
+				{name: 'x1', type: 'vertical', value: 0 },
+				{name: 'x2', type: 'vertical', value: 0 },
+				{name: 'y1', type: 'horizontal', value: 0 },
+				{name: 'y2', type: 'horizontal', value: 0 },
+				{name: 'rotate', type: 'input', value: 0 },
+			],
 			current: null,
 		}
 	},
@@ -66,6 +73,7 @@ body
 	flex-flow: column nowrap;
 	height: 100%;
 	max-height: 100%;
+	overflow-y: none;
 }
 input
 {
