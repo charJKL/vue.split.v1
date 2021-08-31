@@ -13,7 +13,6 @@ export default
 	{
 		onChange(e)
 		{
-			console.log('emit?');
 			this.$emit('files', e.target.files);
 		}
 	}

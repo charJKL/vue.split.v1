@@ -27,5 +27,4 @@ footer
 	padding: 10px;
 	background: var(--gray);
 }
-
 </style>
