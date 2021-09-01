@@ -1,5 +1,5 @@
 <template>
-<div class="line" :class="[type, {'moving': isMoving}]" :style="getStyle" @mousedown.left.stop.prevent="onMouseDown">
+<div class="line" :class="[type, {'moving': isMoving}]" :style="getStyle" @mousedown.left.prevent="onMouseDown">
 	<span>{{ name }}</span>
 	<hr />
 </div>
@@ -19,7 +19,7 @@ export default
 		return {
 			isMoving: false,
 			position: 0,
-			point: { x:0, y:0 },
+			point: { x: 0, y: 0 },
 		}
 	},
 	computed:
@@ -37,7 +37,7 @@ export default
 		{
 			if(value === true) document.body.classList.add('moving');
 			if(value === false) document.body.classList.remove('moving');
-		}
+		},
 	},
 	created()
 	{
@@ -78,7 +78,7 @@ export default
 <style>
 .moving
 {
-	cursor: grabbing !important;
+	cursor: grabbing;
 }
 .line
 {

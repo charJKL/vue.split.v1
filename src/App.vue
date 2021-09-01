@@ -1,8 +1,8 @@
 <template>
 	<header-part @files="onFiles"></header-part>
 	<list-part :list="list" @current="onCurrent"></list-part>
-	<main-part :current="current" :lines="lines"></main-part>
-	<footer-part></footer-part>
+	<main-part v-model:current="current"></main-part>
+	<footer-part v-model:current="current"></footer-part>
 </template>
 
 <script>
@@ -19,30 +19,36 @@ export default
 	{
 		return{
 			list: [],
-			lines: [
-				{name: 'x1', type: 'vertical', value: 0 },
-				{name: 'x2', type: 'vertical', value: 0 },
-				{name: 'y1', type: 'horizontal', value: 0 },
-				{name: 'y2', type: 'horizontal', value: 0 },
-				{name: 'rotate', type: 'input', value: 0 },
-			],
 			current: null,
+			metrics: {
+				x1: { type: 'vertical', value: 0 },
+				x2: { type: 'vertical', value: 0 },
+				y1: { type: 'horizontal', value: 0 },
+				y2: { type: 'horizontal', value: 0 },
+				rotate: { type: 'value', value: 0},
+			},
 		}
 	},
 	methods:
 	{
 		onFiles(files)
 		{
-			let list = [];
 			for(const file of files)
 			{
-				list.push({name: file.name, src: URL.createObjectURL(file)});
+				let object = {};
+					object.name = file.name;
+					object.src = URL.createObjectURL(file);
+					object.metrics = Object.assign({}, this.metrics);
+				this.list.push(object);
 			}
-			this.list = list;
 		},
 		onCurrent(index)
 		{
 			this.current = this.list[index];
+		},
+		onMetricsChanged(metrics)
+		{
+			console.log(metrics);
 		}
 	}
 }

@@ -1,8 +1,12 @@
 <template>
 <main ref="main">
-	<article :style="style">
-		<img class="image" :style="style" v-if="current" :src="current.src"  />
-		<the-line v-for="(line, index) in lines" :key="index" v-model:value="line.value" :type="line.type" :name="line.name"></the-line>
+	<article class="preview" v-if="current" :style="getPreviewStyle" @wheel.prevent="onMouseWhell">
+		<div class="desktop">
+			<img class="image" :style="getImageStyle" :src="current.src" />
+		</div>
+		<template v-for="(metric, key, index) in current.metrics" :key="index">
+			<the-line v-if="isLine(metric.type)" :type="metric.type" :name="key" :value="metric.value" @update:value="onValueChanged(key, $event)" ></the-line>
+		</template>
 	</article>
 </main>
 </template>
@@ -16,44 +20,71 @@ export default
 	props:
 	{
 		current: { type: Object, requred: true },
-		lines: { type: Array, requred: true },
 	},
 	data()
 	{
 		return {
-			preview: null,
-			style: { width: 0, height: 0 },
+			main: null,
+			width: 0,
+			height: 0,
+			rotate: 0,
 		}
 	},
 	mounted()
 	{
 		const rect = this.$refs.main.getBoundingClientRect();
 				rect.height = rect.height - 20;
-		this.preview = rect;
+		this.main = rect;
 	},
 	watch:
 	{
 		current(value)
 		{
 			const image = new Image();
-			image.onload = (e) => this.onImageLoad.call(this, e);
-			image.src = value.src;
+					image.onload = (e) => this.onImageLoad.call(this, e);
+					image.src = value.src;
 		}
 	},
 	computed:
 	{
-
+		getPreviewStyle()
+		{
+			return { width: `${this.width}px`, height: `${this.height}px` }
+		},
+		getImageStyle()
+		{
+			return { width: `${this.width}px`, height: `${this.height}px`, transform: `rotate(${this.rotate}deg)` }
+		}
 	},
 	methods: 
 	{
+		isLine(type)
+		{
+			return ['vertical','horizontal'].includes(type);
+		},
 		onImageLoad(e)
 		{
 			const size = { width: e.target.naturalWidth, height: e.target.naturalHeight };
-			const scale = this.preview.height / size.height;
-			const width = size.width * scale;
-			const height = size.height * scale;
-			this.style = { width: width+'px', height: height+'px' };
-		}
+			const scale = this.main.height / size.height;
+			this.width = size.width * scale;
+			this.height = size.height * scale;
+			this.rotate = this.current.metrics.rotate.value;
+		},
+		onMouseWhell(e)
+		{
+			const scale = 0.001;
+			this.rotate += e.deltaY * scale;
+			
+			const current = Object.assign({}, this.current);
+					current.metrics.rotate.value = this.rotate;
+			this.$emit('update:current', current);
+		},
+		onValueChanged(key, value)
+		{
+			const current = Object.assign({}, this.current);
+					current.metrics[key].value = value;
+			this.$emit('update:current', current);
+		},
 	}
 }
 </script>
@@ -66,16 +97,15 @@ main
 	justify-content: center;
 	align-items: center;
 }
-article
+.preview
 {
-	position: relative;
+	position:relative;
 	border: solid 1px #000;
 }
-.line
+.desktop
 {
-	position: absolute;
-}
-.image
-{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 }
 </style>
