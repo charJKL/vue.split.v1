@@ -38,13 +38,15 @@ section
 	flex: 0 0 auto;
 	display: flex;
 	flex-flow: row nowrap;
-	overflow-y: auto;
+	overflow-x: scroll;
 	padding: 10px;
+	height: 100px;
 	background: var(--gray-light);
 }
 section > img
 {
-	height: 100px;
+	box-sizing: border-box;
+	height: 100%;
 	margin: 0px 5px;
 	border: solid 2px #000;
 }

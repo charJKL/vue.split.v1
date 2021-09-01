@@ -1,8 +1,8 @@
 <template>
 <main ref="main">
 	<article :style="style">
-		<img ref="image" class="image" :style="style" v-if="current" :src="current.src"  />
-		<the-line v-for="(line, index) in lines" :key="index" :type="line.type" v-model:value="line.value"></the-line>
+		<img class="image" :style="style" v-if="current" :src="current.src"  />
+		<the-line v-for="(line, index) in lines" :key="index" v-model:value="line.value" :type="line.type" :name="line.name"></the-line>
 	</article>
 </main>
 </template>
@@ -20,28 +20,24 @@ export default
 	},
 	data()
 	{
-		return{
-			style: { width: 100 }
+		return {
+			preview: null,
+			style: { width: 0, height: 0 },
 		}
+	},
+	mounted()
+	{
+		const rect = this.$refs.main.getBoundingClientRect();
+				rect.height = rect.height - 20;
+		this.preview = rect;
 	},
 	watch:
 	{
-		current()
+		current(value)
 		{
-			console.log(this.$refs);
-			console.log(this.image);
-			const preview = this.$refs.main.getBoundingClientRect();
-			const image = {width: this.$refs.image.naturalWidth, height: this.$refs.image.naturalHeight };
-			const scale = image.height / preview.height;
-			
-			
-			console.log(preview, image, scale);
-			
-			
-			const width = 500;
-			const height = 600;
-			
-			this.style = { width: width+'px', height: height+'px' };
+			const image = new Image();
+			image.onload = (e) => this.onImageLoad.call(this, e);
+			image.src = value.src;
 		}
 	},
 	computed:
@@ -50,7 +46,14 @@ export default
 	},
 	methods: 
 	{
-		
+		onImageLoad(e)
+		{
+			const size = { width: e.target.naturalWidth, height: e.target.naturalHeight };
+			const scale = this.preview.height / size.height;
+			const width = size.width * scale;
+			const height = size.height * scale;
+			this.style = { width: width+'px', height: height+'px' };
+		}
 	}
 }
 </script>
