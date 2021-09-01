@@ -1,7 +1,9 @@
 <template>
 <header>
 	<div>
-		<input type="file" multiple @change="onChange"/>
+		<input ref="loadFile" style="display:none" type="file" @change="onLoadFile"/>
+		<button @click="this.$refs.loadFile.click()">Load file</button>
+		<input type="file" multiple @change="onPickFiles"/>
 	</div>
 </header>
 </template>
@@ -11,9 +13,13 @@ export default
 {
 	methods: 
 	{
-		onChange(e)
+		onLoadFile(e)
 		{
-			this.$emit('files', e.target.files);
+			this.$emit('load-file', e.target.files[0]);
+		},
+		onPickFiles(e)
+		{
+			this.$emit('pick-files', e.target.files);
 		}
 	}
 }

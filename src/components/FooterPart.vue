@@ -3,6 +3,7 @@
 	<div>
 		<template v-if="current">
 		[
+			<input :value="current.name" />,
 			<template  v-for="(metric, key, index) in current.metrics" :key="index">
 				{{ key }}:
 				<input v-if="metric.type === 'value'" class="input" step="0.1" type="number" v-model="metric.value" @input="onInputFloatEvent(key, $event)" />
@@ -13,7 +14,7 @@
 	</div>
 	<div>
 		<button id="preview">Preview</button>
-		<button id="save">Save</button>
+		<button id="save" @click="this.$emit('save')">Save</button>
 	</div>
 </footer>
 </template>

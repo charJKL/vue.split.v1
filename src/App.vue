@@ -1,8 +1,9 @@
 <template>
-	<header-part @files="onFiles"></header-part>
+	<header-part @pick-files="onPickFiles" @load-file="onLoadFile"></header-part>
 	<list-part :list="list" @current="onCurrent"></list-part>
 	<main-part v-model:current="current"></main-part>
-	<footer-part v-model:current="current"></footer-part>
+	<footer-part v-model:current="current" @save="onSave"></footer-part>
+	<a ref="download" style="display:none"/>
 </template>
 
 <script>
@@ -10,6 +11,7 @@ import HeaderPart from './components/HeaderPart.vue';
 import ListPart from './components/ListPart.vue';
 import MainPart from './components/MainPart.vue';
 import FooterPart from './components/FooterPart.vue';
+import _ from 'lodash';
 
 export default 
 {
@@ -18,7 +20,7 @@ export default
 	data()
 	{
 		return{
-			list: [],
+			list: {},
 			current: null,
 			metrics: {
 				x1: { type: 'vertical', value: 0 },
@@ -31,25 +33,48 @@ export default
 	},
 	methods:
 	{
-		onFiles(files)
+		onLoadFile(file)
 		{
-			this.list = [];
+			console.log(file);
+			const reader = new FileReader();
+					reader.onload = this.onLoad;
+					reader.readAsText(file);
+		},
+		onPickFiles(files)
+		{
+			console.log(files);
 			for(const file of files)
 			{
 				const object = {};
 					object.name = file.name;
 					object.src = URL.createObjectURL(file);
-					object.metrics =  JSON.parse(JSON.stringify(this.metrics));
-				this.list.push(object);
+					object.metrics = _.cloneDeep(this.metrics);
+				this.list[file.name] = object;
 			}
 		},
 		onCurrent(index)
 		{
 			this.current = this.list[index];
 		},
-		onMetricsChanged(metrics)
+		onLoad(e)
 		{
-			console.log(metrics);
+			const result = e.target.result;
+			const list = JSON.parse(result);
+			for(let [name, value] of Object.entries(list))
+			{
+				if(this.list[name] === undefined) continue;
+				this.list[name] = _.mergeWith(this.list[name], value, (v,s,k) => { if(k === 'src') return v; } );
+			}
+		},
+		onSave()
+		{
+			const content = JSON.stringify(this.list);
+			console.log(this.list);
+			const blob = new Blob([content], { type: "application/json" });
+			
+			this.$refs.download.href = URL.createObjectURL(blob);
+			this.$refs.download.download = 'data.json';
+			this.$refs.download.click();
 		}
 	}
 }

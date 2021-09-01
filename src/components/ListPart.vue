@@ -9,7 +9,7 @@ export default
 {
 	props:
 	{
-		list: { type: Array, requred: true },
+		list: { type: Object, requred: true },
 	},
 	data()
 	{
