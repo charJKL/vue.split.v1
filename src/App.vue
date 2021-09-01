@@ -33,12 +33,13 @@ export default
 	{
 		onFiles(files)
 		{
+			this.list = [];
 			for(const file of files)
 			{
-				let object = {};
+				const object = {};
 					object.name = file.name;
 					object.src = URL.createObjectURL(file);
-					object.metrics = Object.assign({}, this.metrics);
+					object.metrics =  JSON.parse(JSON.stringify(this.metrics));
 				this.list.push(object);
 			}
 		},
