@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 export default
 {
 	props:
@@ -38,7 +40,7 @@ export default
 		},
 		onInputEvent(key, value)
 		{
-			const current = Object.assign({}, this.current);
+			const current = _.cloneDeep(this.current);
 					current.metrics[key].value = value;
 			this.$emit('update:current', current);
 		}

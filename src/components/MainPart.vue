@@ -1,6 +1,6 @@
 <template>
 <main ref="main">
-	<article class="preview" v-if="src" :style="getPreviewStyle" @wheel.prevent="onMouseWhell($event), updateRotatePreviewLayout(), onMetricsChanged()">
+	<article class="preview" v-if="src" :style="getPreviewStyle" @wheel.prevent="onMouseWhell($event), onMetricsChanged()">
 		<div class="desktop">
 			<img class="image" :style="getImageStyle" :src="src" />
 		</div>
@@ -64,7 +64,8 @@ export default
 		},
 		getImageStyle()
 		{
-			return { width: `${this.preview.width}px`, height: `${this.preview.height}px`, transform: `rotate(${this.preview.rotate}deg)` }
+			console.log('getImageStyle');
+			return { width: `${this.preview.width}px`, height: `${this.preview.height}px`, transform: `rotate(${this.values.rotate.value}deg)` }
 		}
 	},
 	methods: 
@@ -77,13 +78,10 @@ export default
 			this.preview.height = size.height * this.scale;
 			this.preview.rotate = 0;
 		},
-		updateRotatePreviewLayout()
-		{
-			this.preview.rotate = this.values.rotate.value;
-		},
 		onMouseWhell(e)
 		{
 			this.values.rotate.value += e.deltaY * this.sensitivity;
+			console.log('on-mouse-wheel', this.values.rotate.value);
 		},
 		onValueChanged(name, value)
 		{
