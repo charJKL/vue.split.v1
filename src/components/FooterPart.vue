@@ -7,7 +7,8 @@
 			<template  v-for="(metric, key, index) in current.metrics" :key="index">
 				{{ key }}:
 				<input v-if="metric.type === 'value'" class="input" step="0.1" type="number" v-model="metric.value" @input="onInputFloatEvent(key, $event)" />
-				<input v-else class="input" type="number" v-model="metric.value" @input="onInputIntEvent(key, $event)" />
+				<input v-else-if="metric.type === 'manual'" class="input" type="checkbox" v-model="metric.value" @checked="onInputEvent(key, $event)"/>
+				<input v-else class="input" type="number" v-model="metric.value" @input="onInputIntEvent(key, $event)" />,
 			</template>
 		]
 		</template>
@@ -58,8 +59,17 @@ footer
 	padding: 10px;
 	background: var(--gray);
 }
-.input
+.input[type='number']
 {
 	width: 100px;
+}
+.input[type='checkbox']
+{
+	position: relative;
+	top: 6px;
+	height: 25px;
+	width: 25px;
+	margin: 0px;
+	padding: 0px;
 }
 </style>

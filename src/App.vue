@@ -1,7 +1,7 @@
 <template>
 	<header-part @pick-files="onPickFiles" @load-file="onLoadFile"></header-part>
 	<list-part :list="list" @current="onCurrent"></list-part>
-	<main-part :src="current.src" v-model:metrics="current.metrics"></main-part>
+	<main-part :src="current.src" v-model:metrics="current.metrics" @update:metrics="onMetricsUpdate"></main-part>
 	<footer-part v-model:current="current" @save="onSave"></footer-part>
 	<a ref="download" style="display:none"/>
 </template>
@@ -28,6 +28,7 @@ export default
 				y1: { type: 'line', subtype: 'horizontal', value: 0 },
 				y2: { type: 'line', subtype: 'horizontal', value: 0 },
 				rotate: { type: 'value', value: 0},
+				layout: { type: 'manual', value: false },
 			},
 		}
 	},
@@ -54,6 +55,11 @@ export default
 		onCurrent(index)
 		{
 			this.current = this.list[index];
+		},
+		onMetricsUpdate()
+		{
+			
+			console.log('metrics');
 		},
 		onLoad(e)
 		{

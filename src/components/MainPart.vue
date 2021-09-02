@@ -1,8 +1,9 @@
 <template>
 <main ref="main">
 	<article class="preview" v-if="src" :style="getPreviewStyle" @wheel.prevent="onMouseWhell($event), onMetricsChanged()">
-		<div class="desktop">
+		<div class="desktop" @click.right.prevent.stop="onMouseRightClick($event), onMetricsChanged()" @click.left.prevent.stop="onMouseLeftClick(), onMetricsChanged()">
 			<img class="image" :style="getImageStyle" :src="src" />
+			<div v-if="values.layout.value" class="mark" :style="getMarkStyle"></div>
 		</div>
 		<template v-for="(metric, name, index) in values" :key="index">
 			<the-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" :value="metric.value" @update:value="onValueChanged(name, $event), onMetricsChanged()" ></the-line>
@@ -20,8 +21,8 @@ export default
 	components: { TheLine },
 	props:
 	{
-		src: { type: String, requred: true},
-		metrics: { type: Object, requred: true},
+		src: { type: String, requred: true },
+		metrics: { type: Object, requred: true },
 	},
 	data()
 	{
@@ -29,6 +30,7 @@ export default
 			desktop: {width: 0, height: 0},
 			preview: {width: 0, height: 0, rotate: 0},
 			values: {},
+			mark: {top: 0, left: 0},
 			sensitivity: 0.001,
 			scale: 0,
 		}
@@ -64,8 +66,11 @@ export default
 		},
 		getImageStyle()
 		{
-			console.log('getImageStyle');
 			return { width: `${this.preview.width}px`, height: `${this.preview.height}px`, transform: `rotate(${this.values.rotate.value}deg)` }
+		},
+		getMarkStyle()
+		{
+			return { top: `${this.mark.top}px`, left: `${this.mark.left}px` };
 		}
 	},
 	methods: 
@@ -81,7 +86,15 @@ export default
 		onMouseWhell(e)
 		{
 			this.values.rotate.value += e.deltaY * this.sensitivity;
-			console.log('on-mouse-wheel', this.values.rotate.value);
+		},
+		onMouseRightClick(e)
+		{
+			this.values.layout.value = true;
+			this.mark = {left: e.offsetX, top: e.offsetY};
+		},
+		onMouseLeftClick()
+		{
+			this.values.layout.value = false;
 		},
 		onValueChanged(name, value)
 		{
@@ -118,5 +131,15 @@ main
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+}
+.mark
+{
+	position: absolute;
+	transform: translate(-50%, -50%);
+	width: 250px;
+	height: 250px;
+	z-index: 1;
+	border-radius: 50%;
+	border: solid 10px rgba(255, 0, 0, .2);
 }
 </style>

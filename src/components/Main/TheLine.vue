@@ -84,6 +84,7 @@ export default
 {
 	position: absolute;
 	cursor: grab;
+	z-index: 2;
 }
 .line span
 {
@@ -107,8 +108,8 @@ export default
 {
 	height: calc(100% + 10px);
 	top: -5px;
-	transform: translate(-10px, 0);
-	padding: 0px 10px;
+	transform: translate(-15px, 0);
+	padding: 0px 15px;
 }
 .vertical hr
 {
@@ -118,14 +119,14 @@ export default
 .vertical span
 {
 	top: 6px;
-	left: 15px;
+	left: 20px;
 }
 .horizontal
 {
 	width: calc(100% + 10px);
 	left: -5px;
-	transform: translate(0, -10px);
-	padding: 10px 0px;
+	transform: translate(0, -15px);
+	padding: 15px 0px;
 }
 .horizontal hr
 {
@@ -134,7 +135,7 @@ export default
 }
 .horizontal span
 {
-	bottom: 14px;
+	bottom: 19px;
 	right: -10px;
 	text-align: left;
 }
