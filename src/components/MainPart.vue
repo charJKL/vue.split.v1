@@ -5,7 +5,7 @@
 			<img class="image" :style="getImageStyle" :src="src" />
 		</div>
 		<template v-for="(metric, name, index) in values" :key="index">
-			<the-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" v-model:value="metric.value" @update:value="onMetricsChanged" ></the-line>
+			<the-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" :value="metric.value" @update:value="onValueChanged(name, $event), onMetricsChanged()" ></the-line>
 		</template>
 	</article>
 </main>
@@ -83,15 +83,18 @@ export default
 		},
 		onMouseWhell(e)
 		{
-			console.log(e);
 			this.values.rotate.value += e.deltaY * this.sensitivity;
+		},
+		onValueChanged(name, value)
+		{
+			this.values[name].value = value;
 		},
 		onMetricsChanged()
 		{
 			const metrics = _.cloneDeep(this.values);
-			for(let [name, metric] of Object.entries(this.metrics))
+			for(let [name, metric] of Object.entries(metrics))
 			{
-				metric.value = metric.type === 'line' ? this.metrics[name].value / this.scale : this.metrics[name].value;
+				metric.value = metric.type === 'line' ? metrics[name].value / this.scale : metrics[name].value;
 			}
 			this.$emit('update:metrics', metrics);
 		},

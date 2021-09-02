@@ -41,7 +41,6 @@ export default
 		},
 		onPickFiles(files)
 		{
-			console.log(files);
 			for(const file of files)
 			{
 				const object = {};
@@ -68,7 +67,6 @@ export default
 		onSave()
 		{
 			const content = JSON.stringify(this.list);
-			console.log(this.list);
 			const blob = new Blob([content], { type: "application/json" });
 			
 			this.$refs.download.href = URL.createObjectURL(blob);
