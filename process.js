@@ -18,7 +18,8 @@ if(output === undefined) throw new Error(`Missing output directory.`);
 if(path.isAbsolute(output) === false) throw new Error(`Output directory must be absolute path ${output}.`);
 if(fs.existsSync(output) === false) throw new Error(`Output directory doesn't exists ${output}.`);
 
-const files = [];
+const work = [];
+const processed = [];
 const skipped = [];
 const invalid = [];
 console.skipped = function(...msg)
@@ -62,11 +63,16 @@ fs.readdir(input, function(error, files)
 			if(width <= 0) return console.invalid(filepath, 'invalid width');
 			if(height <= 0) return console.invalid(filepath, 'invalid height');
 			
-			sharp(filepath).rotate(angle).extract(extract).jpeg(options).toFile(dest).catch(e => console.catch(filepath, e));
+			work.push(sharp(filepath).rotate(angle).extract(extract).jpeg(options).toFile(dest).then(() => processed.push(dest)).catch(e => console.catch(filepath, e)));
 		});
 		
-		console.log("--------------------------------------");
-		skipped.forEach(e => console.log(e));
-		invalid.forEach(e => console.log(e));
+		Promise.all(work).then(function(values){
+			const dest = path.join(output, 'files.txt');
+			fs.writeFileSync(dest, processed.join('\n'));
+
+			console.log("--------------------------------------");
+			skipped.forEach(e => console.log(e));
+			invalid.forEach(e => console.log(e));
+		});
 	});
 });
