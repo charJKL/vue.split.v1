@@ -41,6 +41,7 @@ export default
 		},
 		onPickFiles(files)
 		{
+			this.list = {};
 			for(const file of files)
 			{
 				const object = {};
