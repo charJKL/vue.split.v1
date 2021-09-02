@@ -107,7 +107,7 @@ export default
 {
 	height: calc(100% + 10px);
 	top: -5px;
-	transform: translate(-5px, 0);
+	transform: translate(-10px, 0);
 	padding: 0px 10px;
 }
 .vertical hr
@@ -124,7 +124,7 @@ export default
 {
 	width: calc(100% + 10px);
 	left: -5px;
-	transform: translate(0, -5px);
+	transform: translate(0, -10px);
 	padding: 10px 0px;
 }
 .horizontal hr

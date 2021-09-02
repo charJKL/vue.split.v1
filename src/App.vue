@@ -1,7 +1,7 @@
 <template>
 	<header-part @pick-files="onPickFiles" @load-file="onLoadFile"></header-part>
 	<list-part :list="list" @current="onCurrent"></list-part>
-	<main-part v-model:current="current"></main-part>
+	<main-part :src="current.src" v-model:metrics="current.metrics"></main-part>
 	<footer-part v-model:current="current" @save="onSave"></footer-part>
 	<a ref="download" style="display:none"/>
 </template>
@@ -21,12 +21,12 @@ export default
 	{
 		return{
 			list: {},
-			current: null,
+			current: {src: "", metrics: {}},
 			metrics: {
-				x1: { type: 'vertical', value: 0 },
-				x2: { type: 'vertical', value: 0 },
-				y1: { type: 'horizontal', value: 0 },
-				y2: { type: 'horizontal', value: 0 },
+				x1: { type: 'line', subtype: 'vertical', value: 0 },
+				x2: { type: 'line', subtype: 'vertical', value: 0 },
+				y1: { type: 'line', subtype: 'horizontal', value: 0 },
+				y2: { type: 'line', subtype: 'horizontal', value: 0 },
 				rotate: { type: 'value', value: 0},
 			},
 		}
@@ -35,7 +35,6 @@ export default
 	{
 		onLoadFile(file)
 		{
-			console.log(file);
 			const reader = new FileReader();
 					reader.onload = this.onLoad;
 					reader.readAsText(file);

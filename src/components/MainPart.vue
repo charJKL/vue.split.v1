@@ -1,11 +1,11 @@
 <template>
 <main ref="main">
-	<article class="preview" v-if="current" :style="getPreviewStyle" @wheel.prevent="onMouseWhell">
+	<article class="preview" v-if="src" :style="getPreviewStyle" @wheel.prevent="onMouseWhell($event), updateRotatePreviewLayout(), onMetricsChanged()">
 		<div class="desktop">
-			<img class="image" :style="getImageStyle" :src="current.src" />
+			<img class="image" :style="getImageStyle" :src="src" />
 		</div>
-		<template v-for="(metric, key, index) in current.metrics" :key="index">
-			<the-line v-if="isLine(metric.type)" :type="metric.type" :name="key" :value="metric.value" @update:value="onValueChanged(key, $event)" ></the-line>
+		<template v-for="(metric, name, index) in values" :key="index">
+			<the-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" v-model:value="metric.value" @update:value="onMetricsChanged" ></the-line>
 		</template>
 	</article>
 </main>
@@ -13,77 +13,87 @@
 
 <script>
 import TheLine from './main/TheLine';
+import _ from 'lodash';
 
 export default
 {
 	components: { TheLine },
 	props:
 	{
-		current: { type: Object, requred: true },
+		src: { type: String, requred: true},
+		metrics: { type: Object, requred: true},
 	},
 	data()
 	{
 		return {
-			main: null,
-			width: 0,
-			height: 0,
-			rotate: 0,
+			desktop: {width: 0, height: 0},
+			preview: {width: 0, height: 0, rotate: 0},
+			values: {},
+			sensitivity: 0.001,
+			scale: 0,
 		}
 	},
 	mounted()
 	{
 		const rect = this.$refs.main.getBoundingClientRect();
-				rect.height = rect.height - 20;
-		this.main = rect;
+				rect.height = rect.height - 20; // minus vertical margin
+		this.desktop = rect;
 	},
 	watch:
 	{
-		current(value)
+		src(value)
 		{
 			const image = new Image();
-					image.onload = (e) => this.onImageLoad.call(this, e);
-					image.src = value.src;
+			image.addEventListener('load', this.updatePreviewLayout.bind(this));
+			image.src = value;
+		},
+		metrics(value)
+		{
+			this.values = _.cloneDeep(value);
+			for(let [name, metric] of Object.entries(this.values))
+			{
+				metric.value = metric.type === 'line' ? this.metrics[name].value * this.scale : this.metrics[name].value;
+			}
 		}
 	},
 	computed:
 	{
 		getPreviewStyle()
 		{
-			return { width: `${this.width}px`, height: `${this.height}px` }
+			return { width: `${this.preview.width}px`, height: `${this.preview.height}px` }
 		},
 		getImageStyle()
 		{
-			return { width: `${this.width}px`, height: `${this.height}px`, transform: `rotate(${this.rotate}deg)` }
+			return { width: `${this.preview.width}px`, height: `${this.preview.height}px`, transform: `rotate(${this.preview.rotate}deg)` }
 		}
 	},
 	methods: 
 	{
-		isLine(type)
-		{
-			return ['vertical','horizontal'].includes(type);
-		},
-		onImageLoad(e)
+		updatePreviewLayout(e)
 		{
 			const size = { width: e.target.naturalWidth, height: e.target.naturalHeight };
-			const scale = this.main.height / size.height;
-			this.width = size.width * scale;
-			this.height = size.height * scale;
-			this.rotate = this.current.metrics.rotate.value;
+			this.scale = this.desktop.height / size.height;
+			this.preview.width = size.width * this.scale;
+			this.preview.height = size.height * this.scale;
+			this.preview.rotate = 0;
+		},
+		updateRotatePreviewLayout()
+		{
+			this.preview.rotate = this.values.rotate.value;
 		},
 		onMouseWhell(e)
 		{
-			const scale = 0.001;
-			this.rotate += e.deltaY * scale;
-			
-			const current = Object.assign({}, this.current);
-					current.metrics.rotate.value = this.rotate;
-			this.$emit('update:current', current);
+			console.log(e);
+			this.values.rotate.value += e.deltaY * this.sensitivity;
 		},
-		onValueChanged(key, value)
+		onMetricsChanged()
 		{
-			const current = Object.assign({}, this.current);
-					current.metrics[key].value = value;
-			this.$emit('update:current', current);
+			const metrics = _.cloneDeep(this.values);
+			for(let [name, metric] of Object.entries(this.metrics))
+			{
+				metric.value = metric.type === 'line' ? this.metrics[name].value / this.scale : this.metrics[name].value;
+			}
+			this.$emit('update:metrics', metrics);
 		},
 	}
 }
