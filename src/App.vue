@@ -43,6 +43,7 @@ export default
 		onPickFiles(files)
 		{
 			this.list = {};
+			this.current = {src: "", metrics: {}};
 			for(const file of files)
 			{
 				const object = {};
