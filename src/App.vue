@@ -70,7 +70,7 @@ export default
 			const blob = new Blob([content], { type: "application/json" });
 			
 			this.$refs.download.href = URL.createObjectURL(blob);
-			this.$refs.download.download = 'data.json';
+			this.$refs.download.download = 'metrics.json';
 			this.$refs.download.click();
 		}
 	}
