@@ -63,16 +63,19 @@ fs.readdir(input, function(error, files)
 			if(width <= 0) return console.invalid(filepath, 'invalid width');
 			if(height <= 0) return console.invalid(filepath, 'invalid height');
 			
-			work.push(sharp(filepath).rotate(angle).extract(extract).jpeg(options).toFile(dest).then(() => processed.push(dest)).catch(e => console.catch(filepath, e)));
+			const notify = function(){ processed.push(dest); console.log(filepath, 'is done.'); }
+			work.push(sharp(filepath).rotate(angle).extract(extract).jpeg(options).toFile(dest).then(notify).catch(e => console.catch(filepath, e)));
 		});
 		
 		Promise.all(work).then(function(values){
+			processed.sort();
 			const dest = path.join(output, 'files.txt');
 			fs.writeFileSync(dest, processed.join('\n'));
 
 			console.log("--------------------------------------");
 			skipped.forEach(e => console.log(e));
 			invalid.forEach(e => console.log(e));
+			console.log(`Done for ${processed.length} files.`);
 		});
 	});
 });
