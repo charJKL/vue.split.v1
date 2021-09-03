@@ -2,6 +2,7 @@
 <section class="list">
 	<div v-for="(image, index) in list" :key="image.name" class="thumbnail" :class="isCurrent(image.name)" @click="selectCurrent(image.name, index)">
 		<img :src="image.src" />
+		<div class="name">{{ image.name }}</div> 
 	</div>
 </section>
 </template>
@@ -47,6 +48,7 @@ export default
 }
 .thumbnail
 {
+	position: relative;
 	box-sizing: border-box;
 	height: 100px;
 	margin: 0px 5px;
@@ -65,5 +67,16 @@ export default
 {
 	height: 100%;
 	object-fit: cover;
+}
+.name
+{
+	position: absolute;
+	width: 100%;
+	bottom: 0px;
+	left: 0px;
+	text-align: center;
+	font: 11px / 20px var(--font);
+	background: rgba(0, 0, 0, .5);
+	color: #fff;
 }
 </style>
