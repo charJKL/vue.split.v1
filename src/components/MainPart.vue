@@ -1,7 +1,7 @@
 <template>
 <main ref="main">
-	<article class="preview" v-if="src" :style="getPreviewStyle" @wheel.prevent="onMouseWhell($event), onMetricsChanged()">
-		<div class="desktop" @click.right.prevent.stop="onMouseRightClick($event), onMetricsChanged()" @click.left.prevent.stop="onMouseLeftClick(), onMetricsChanged()">
+	<article ref="preview" class="preview" v-if="src" :style="getPreviewStyle" @click.right.prevent.stop="onMouseRightClick($event), onMetricsChanged()" @click.left.prevent.stop="onMouseLeftClick($event), onMetricsChanged()" @wheel.prevent="onMouseWhell($event), onMetricsChanged()">
+		<div class="desktop">
 			<img class="image" :style="getImageStyle" :src="src" />
 			<div v-if="values.layout.value" class="mark" :style="getMarkStyle"></div>
 		</div>
@@ -89,11 +89,16 @@ export default
 		},
 		onMouseRightClick(e)
 		{
+			const preview = this.$refs.preview.getBoundingClientRect();
+			const left = e.clientX - preview.left;
+			const top = e.clientY - preview.top;
+			
 			this.values.layout.value = true;
-			this.mark = {left: e.offsetX, top: e.offsetY};
+			this.mark = {left: left, top: top};
 		},
-		onMouseLeftClick()
+		onMouseLeftClick(e)
 		{
+			if(e.target.classList.contains('line')) return;
 			this.values.layout.value = false;
 		},
 		onValueChanged(name, value)
