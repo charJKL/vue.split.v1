@@ -8,6 +8,8 @@
 		<template v-for="(metric, name, index) in values" :key="index">
 			<the-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" :value="metric.value" @update:value="onValueChanged(name, $event), onMetricsChanged()" ></the-line>
 		</template>
+		<div class="vertical-line-invalid" :style="getInvalidVerticalLineStyle"></div>
+		<div class="horizontal-line-invalid" :style="getInvalidHorizontalLineStyle"></div>
 	</article>
 </main>
 </template>
@@ -71,7 +73,20 @@ export default
 		getMarkStyle()
 		{
 			return { top: `${this.mark.top}px`, left: `${this.mark.left}px` };
-		}
+		},
+		getInvalidVerticalLineStyle()
+		{
+			let left = this.values.x2.value;
+			let width = Math.max(0, this.values.x1.value - this.values.x2.value);
+			return { left: `${left}px`, width: `${width}px` };
+		},
+		getInvalidHorizontalLineStyle()
+		{
+			let top = this.values.y2.value;
+			let height = Math.max(0, this.values.y1.value - this.values.y2.value);
+			return { top: `${top}px`, height: `${height}px` };
+		},
+		
 	},
 	methods: 
 	{
@@ -146,5 +161,19 @@ main
 	z-index: 1;
 	border-radius: 50%;
 	border: solid 10px rgba(255, 0, 0, .2);
+}
+.vertical-line-invalid
+{
+	background: red;
+	position:absolute;
+	top: 50%;
+	height: 5px;
+}
+.horizontal-line-invalid
+{
+	background: red;
+	position:absolute;
+	left: 50%;
+	width: 5px;
 }
 </style>
