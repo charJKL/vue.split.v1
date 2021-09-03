@@ -2,26 +2,28 @@
 	<header-part @pick-files="onPickFiles" @load-file="onLoadFile"></header-part>
 	<list-part :list="list" @current="onCurrent"></list-part>
 	<main-part :src="current.src" v-model:metrics="current.metrics" @update:metrics="onMetricsUpdate"></main-part>
+	<default-part :metrics="current.metrics"></default-part>
 	<footer-part v-model:current="current" @save="onSave"></footer-part>
 	<a ref="download" style="display:none"/>
 </template>
 
 <script>
-import HeaderPart from './components/HeaderPart.vue';
-import ListPart from './components/ListPart.vue';
-import MainPart from './components/MainPart.vue';
-import FooterPart from './components/FooterPart.vue';
+import HeaderPart from './components/HeaderPart';
+import ListPart from './components/ListPart';
+import MainPart from './components/MainPart';
+import DefaultPart from './components/DefaultPart';
+import FooterPart from './components/FooterPart';
 import _ from 'lodash';
 
 export default 
 {
-	components: { HeaderPart, ListPart, MainPart, FooterPart },
+	components: { HeaderPart, ListPart, MainPart, DefaultPart, FooterPart },
 	name: 'App',
 	data()
 	{
 		return{
 			list: {},
-			current: {src: "", metrics: {}},
+			current: this.getNullCurrent(),
 			metrics: {
 				x1: { type: 'line', subtype: 'vertical', value: 0 },
 				x2: { type: 'line', subtype: 'vertical', value: 0 },
@@ -34,6 +36,10 @@ export default
 	},
 	methods:
 	{
+		getNullCurrent()
+		{
+			return { src: '', metrics: {}, wasEdited: false};
+		},
 		onLoadFile(file)
 		{
 			const reader = new FileReader();
@@ -43,7 +49,7 @@ export default
 		onPickFiles(files)
 		{
 			this.list = {};
-			this.current = {src: "", metrics: {}};
+			this.current = this.getNullCurrent();
 			for(const file of files)
 			{
 				const object = {};
@@ -59,8 +65,7 @@ export default
 		},
 		onMetricsUpdate()
 		{
-			
-			console.log('metrics');
+			this.current.wasEdited = true;
 		},
 		onLoad(e)
 		{
