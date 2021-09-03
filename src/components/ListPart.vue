@@ -2,6 +2,8 @@
 <section class="list">
 	<div v-for="(image, index) in list" :key="image.name" class="thumbnail" :class="isCurrent(image.name)" @click="selectCurrent(image.name, index)">
 		<img :src="image.src" />
+		<div v-if="image.wasEdited" class="check">✓</div>
+		<div v-if="image.metrics.layout.value" class="marked">◯</div>
 		<div class="name">{{ image.name }}</div> 
 	</div>
 </section>
@@ -68,12 +70,31 @@ export default
 	height: 100%;
 	object-fit: cover;
 }
+.check
+{
+	position: absolute;
+	width: 100%;
+	left: 0px; top: 25px;
+	text-align: center;
+	font: 50px / 50px var(--font);
+	color: #0d0;
+	z-index: 2;
+}
+.marked
+{
+	position: absolute;
+	width: 100%;
+	left: 0px; top: 25px;
+	text-align: center;
+	font: 40px / 40px var(--font);
+	color: #f00;
+	z-index: 1;
+}
 .name
 {
 	position: absolute;
 	width: 100%;
-	bottom: 0px;
-	left: 0px;
+	left: 0px; bottom: 0px;
 	text-align: center;
 	font: 11px / 20px var(--font);
 	background: rgba(0, 0, 0, .5);
