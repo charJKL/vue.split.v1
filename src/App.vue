@@ -2,7 +2,7 @@
 	<header-part @pick-files="onPickFiles" @load-file="onLoadFile"></header-part>
 	<list-part :list="list" @current="onCurrent"></list-part>
 	<main-part :src="current.src" v-model:metrics="current.metrics" @update:metrics="onMetricsUpdate"></main-part>
-	<default-part :metrics="current.metrics"></default-part>
+	<default-part :metrics="metrics"></default-part>
 	<footer-part v-model:current="current" @save="onSave"></footer-part>
 	<a ref="download" style="display:none"/>
 </template>
@@ -117,16 +117,33 @@ body
 	max-height: 100%;
 	overflow-y: none;
 }
-input
-{
-	padding: 3px 5px;
-	margin: 0px 5px;
-	font: 16px / 20px var(--font);
-}
 button
 {
 	padding: 3px 5px;
 	margin: 0px 5px;
 	font: 16px / 20px var(--font);
+}
+.input-text
+{
+	padding: 3px 5px;
+	margin: 0px 5px;
+	font: 16px / 20px var(--font);
+}
+.input-float,
+.input-int
+{
+	padding: 3px 5px;
+	margin: 0px 5px;
+	font: 16px / 20px var(--font);
+	width: 100px;
+}
+.input-checkbox
+{
+	position: relative;
+	top: 6px;
+	height: 25px;
+	width: 25px;
+	margin: 0px;
+	padding: 0px;
 }
 </style>
