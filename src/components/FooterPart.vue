@@ -5,10 +5,11 @@
 		[
 			<input class="input-text" :value="current.name" />,
 			<template  v-for="(metric, name, index) in current.metrics" :key="index">
-				{{ name }}:
-				<input v-if="metric.type === 'value'" class="input-float" step="0.1" type="number" v-model="metric.value" @input="onInputFloatEvent(name, $event)" />
-				<input v-else-if="metric.type === 'manual'" class="input-checkbox" type="checkbox" v-model="metric.value" @checked="onInputEvent(name, $event)"/>
-				<input v-else class="input-int" type="number" v-model="metric.value" @input="onInputIntEvent(name, $event)" />,
+				<label>{{ name }}:
+					<input v-if="metric.type === 'value'" class="input-float" step="0.1" type="number" v-model="metric.value" @input="onInputFloatEvent(name, $event)" />
+					<input v-else-if="metric.type === 'manual'" class="input-checkbox" type="checkbox" v-model="metric.value" @checked="onInputEvent(name, $event)"/>
+					<input v-else class="input-int" type="number" v-model="metric.value" @input="onInputIntEvent(name, $event)" />
+				</label>,
 			</template>
 		]
 		</template>
