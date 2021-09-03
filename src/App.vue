@@ -149,8 +149,8 @@ button
 .input-checkbox
 {
 	position: relative;
-	top: 6px;
-	height: 25px;
+	top: 3px;
+	height: 20px;
 	width: 25px;
 	margin: 0px;
 	padding: 0px;

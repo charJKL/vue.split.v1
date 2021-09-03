@@ -15,7 +15,6 @@
 		</template>
 	</div>
 	<div>
-		<button id="preview">Preview</button>
 		<button id="save" @click="this.$emit('save')">Save</button>
 	</div>
 </footer>
