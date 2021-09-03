@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import sharp from 'sharp';
+const fs = require('fs');
+const path = require('path');
+const sharp = require('sharp');
 
 const argv = process.argv.slice(2);
 const input = argv[0];
