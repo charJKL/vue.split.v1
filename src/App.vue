@@ -2,7 +2,7 @@
 	<header-part @pick-files="onPickFiles" @load-file="onLoadFile"></header-part>
 	<list-part :list="list" @current="onCurrent"></list-part>
 	<main-part :src="current.src" v-model:metrics="current.metrics" @update:metrics="onMetricsUpdate"></main-part>
-	<default-part :metrics="metrics"></default-part>
+	<default-part :metrics="metrics" @apply-blueprint="onApplyBlueprint"></default-part>
 	<footer-part v-model:current="current" @save="onSave"></footer-part>
 	<a ref="download" style="display:none"/>
 </template>
@@ -66,6 +66,15 @@ export default
 		onMetricsUpdate()
 		{
 			this.current.wasEdited = true;
+		},
+		onApplyBlueprint(blueprint)
+		{
+			for(let [name, value] of Object.entries(this.list))
+			{
+				if(value.wasEdited === true) continue;
+				if(name.match(blueprint.regexp) === null) continue;
+				this.list[name].metrics = _.cloneDeep(blueprint.metrics);
+			}
 		},
 		onLoad(e)
 		{
