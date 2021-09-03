@@ -1,11 +1,15 @@
 <template>
-<section class="default">
-	<div class="row">
+<section v-if="show === false" class="default-collapsed">
+	<toggle-button v-model="show" on="Hide defaults" off="Show defaults" ></toggle-button>
+</section>
+<section v-else class="default-list">
+	<div class="default-list-row">
+		<toggle-button v-model="show" on="Hide defaults" off="Show defaults" ></toggle-button>
 		<button @click="onAdd">Add</button>
 	</div>
-	<div v-for="(blueprint, index) in blueprints" :key="index" class="blueprint">
+	<div v-for="(blueprint, index) in blueprints" :key="index" class="default-list-row">
 		[
-			regexp:<input class="input-text" v-model="blueprint.regexp" />,
+			name:<input class="input-text" v-model="blueprint.regexp" />,
 			<template v-for="(metric, name) in blueprint.metrics" :key="name">
 				<label>{{ name }}:
 					<input v-if="metric.type === 'value'" class="input-float" step="0.1" type="number" v-model="metric.value" />
@@ -20,10 +24,12 @@
 </template>
 
 <script>
+import ToggleButton from './utils/ToggleButton';
 import _ from 'lodash';
 
 export default
 {
+	components: { ToggleButton },
 	props:
 	{
 		metrics: { type: Object, requred: true }
@@ -33,6 +39,7 @@ export default
 	{
 		return {
 			blueprints: [],
+			show: false,
 		}
 	},
 	created()
@@ -55,22 +62,26 @@ export default
 </script>
 
 <style>
-.default
+.default-collapsed
 {
-	width: 100%;
 	position: absolute;
 	left: 0px;
 	bottom: 50px;
-	background: var(--gray-light);
-	z-index: 5;
-}
-.row
-{
-	padding: 10px 10px 0 10px;
-}
-.blueprint
-{
 	padding: 10px;
+}
+.default-list
+{
+	width: calc(100% - 20px);
+	position: absolute;
+	left: 0px;
+	bottom: 50px;
+	padding: 10px;
+	z-index: 5;
+	background: var(--gray-light);
+}
+.default-list-row:not(:last-child)
+{
+	margin: 0 0 10px 0px;
 }
 </style>
 
