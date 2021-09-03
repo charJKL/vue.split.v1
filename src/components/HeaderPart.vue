@@ -1,8 +1,8 @@
 <template>
 <header>
 	<div>
-		<input ref="loadFile" style="display:none" type="file" @change="onLoadFile"/>
 		<button @click="this.$refs.loadFile.click()">Load file</button>
+		<input ref="loadFile" style="display:none" type="file" @change="onLoadFile"/>
 		<input type="file" multiple @change="onPickFiles"/>
 	</div>
 </header>

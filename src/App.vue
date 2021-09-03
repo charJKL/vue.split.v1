@@ -132,6 +132,8 @@ button
 	margin: 0px 5px;
 	font: 16px / 20px var(--font);
 }
+button:last-child{ margin: 0px 0px 0px 5px; }
+button:first-child{ margin: 0px 5px 0px 0px; }
 .input-text
 {
 	padding: 3px 5px;

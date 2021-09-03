@@ -3,7 +3,7 @@
 	<div>
 		<template v-if="current">
 		[
-			<input class="input-text" :value="current.name" />,
+			name:<input class="input-text" :value="current.name" />,
 			<template  v-for="(metric, name, index) in current.metrics" :key="index">
 				<label>{{ name }}:
 					<input v-if="metric.type === 'value'" class="input-float" step="0.1" type="number" v-model="metric.value" @input="onInputFloatEvent(name, $event)" />
