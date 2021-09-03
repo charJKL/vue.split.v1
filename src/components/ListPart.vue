@@ -1,5 +1,5 @@
 <template>
-<section>
+<section class="list">
 	<div v-for="(image, index) in list" :key="image.name" class="thumbnail" :class="isCurrent(image.name)" @click="selectCurrent(image.name, index)">
 		<img :src="image.src" />
 	</div>
@@ -35,7 +35,7 @@ export default
 </script>
 
 <style>
-section
+.list
 {
 	flex: 0 0 auto;
 	display: flex;
