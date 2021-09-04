@@ -1,5 +1,5 @@
 <template>
-	<header-part @pick-files="onPickFiles" @load-file="onLoadFile"></header-part>
+	<the-header @load-save="onLoadSave" @load-files="onLoadFiles"></the-header>
 	<list-part :list="list" @current="onCurrent"></list-part>
 	<main-part :src="current.src" v-model:metrics="current.metrics" @update:metrics="onMetricsUpdate"></main-part>
 	<default-part :metrics="metrics" @apply-blueprint="onApplyBlueprint"></default-part>
@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import HeaderPart from './components/HeaderPart';
+import TheHeader from './components/TheHeader';
 import ListPart from './components/ListPart';
 import MainPart from './components/MainPart';
 import DefaultPart from './components/DefaultPart';
@@ -17,7 +17,7 @@ import _ from 'lodash';
 
 export default 
 {
-	components: { HeaderPart, ListPart, MainPart, DefaultPart, FooterPart },
+	components: { TheHeader, ListPart, EditorGui, DefaultPart, FooterPart },
 	name: 'App',
 	data()
 	{
