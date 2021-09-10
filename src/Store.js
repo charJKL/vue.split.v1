@@ -17,13 +17,18 @@ const actions =
 {
 	loadFile({commit}, value)
 	{
-		console.log('load-file actions');
+		console.log('loadFile');
 		commit('setList', value);
 	},
-	loadSave()
+	loadSave({commit}, value)
 	{
-		console.log('load-save action');
-	}
+		console.log('loadSave', value, commit);
+	},
+	changeCurrent({commit}, value)
+	{
+		console.log('changeCurrent', value);
+		commit('setCurrent', value);
+	},
 }
 
 

@@ -17,7 +17,6 @@
 <script>
 export default
 {
-	emits: ['load-save', 'load-files'],
 	data()
 	{
 		return {
@@ -35,12 +34,11 @@ export default
 	{
 		onLoadSave(e)
 		{
-			this.$emit('load-save', e.target.files[0]);
+			this.$store.dispath('loadSave', e.target.files[0]);
 		},
 		onLoadFiles(e)
 		{
-			this.files = Array.from(e.target.files);
-			this.$emit('load-files', this.files);
+			this.$store.dispatch('loadFile', Array.from(e.target.files));
 		}
 	}
 }
