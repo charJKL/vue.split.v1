@@ -1,69 +1,47 @@
 <template>
-	<the-header @load-save="onLoadSave" @load-files="onLoadFiles"></the-header>
-	<list-part :list="list" @current="onCurrent"></list-part>
-	<main-part :src="current.src" v-model:metrics="current.metrics" @update:metrics="onMetricsUpdate"></main-part>
-	<default-part :metrics="metrics" @apply-blueprint="onApplyBlueprint"></default-part>
-	<footer-part v-model:current="current" @save="onSave"></footer-part>
+	<ui-header></ui-header>
+	<ui-list></ui-list>
+	<editor-metrics></editor-metrics>
+	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
 </template>
 
 <script>
-import TheHeader from './components/TheHeader';
-import ListPart from './components/ListPart';
-import MainPart from './components/MainPart';
-import DefaultPart from './components/DefaultPart';
-import FooterPart from './components/FooterPart';
+import UiHeader from './components/UiHeader';
+import UiList from './components/UiList';
+import EditorMetrics from './components/EditorMetrics';
+import UiFooter from './components/UiFooter';
 import _ from 'lodash';
 
 export default 
 {
-	components: { TheHeader, ListPart, EditorGui, DefaultPart, FooterPart },
+	components: { UiHeader, UiList, EditorMetrics, UiFooter },
 	name: 'App',
-	data()
+	computed:
 	{
-		return{
-			list: {},
-			current: this.getNullCurrent(),
-			metrics: {
-				x1: { type: 'line', subtype: 'vertical', value: 0 },
-				x2: { type: 'line', subtype: 'vertical', value: 0 },
-				y1: { type: 'line', subtype: 'horizontal', value: 0 },
-				y2: { type: 'line', subtype: 'horizontal', value: 0 },
-				rotate: { type: 'value', value: 0},
-				layout: { type: 'manual', value: false },
-			},
+		isCurrent()
+		{
+			return this.$store.getters.getCurrent !== null;
 		}
 	},
 	methods:
 	{
-		getNullCurrent()
+		onLoadSave(save)
 		{
-			return { src: '', metrics: {}, wasEdited: false};
-		},
-		onLoadFile(file)
-		{
-			const reader = new FileReader();
-					reader.onload = this.onLoad;
-					reader.readAsText(file);
-		},
-		onPickFiles(files)
-		{
-			this.list = {};
-			this.current = this.getNullCurrent();
-			for(const file of files)
+			function applySavedList(e)
 			{
-				const object = {};
-					object.name = file.name;
-					object.src = URL.createObjectURL(file);
-					object.metrics = _.cloneDeep(this.metrics);
-				this.list[file.name] = object;
+				const data = JSON.parse(e.target.result);
+				for(let [object, key] of Object.entries(data))
+				{
+					if(this.list[key] === undefined) continue;
+					this.list[key] = _.mergeWith(this.list[key], object);
+				}
 			}
+			const reader = new FileReader();
+					reader.onload = applySavedList.bind(this);
+					reader.readAsText(save);
 		},
-		onCurrent(index)
-		{
-			this.current = this.list[index];
-		},
-		onMetricsUpdate()
+		onCurrentEdited()
 		{
 			this.current.wasEdited = true;
 		},
@@ -74,16 +52,6 @@ export default
 				if(value.wasEdited === true) continue;
 				if(name.match(blueprint.regexp) === null) continue;
 				this.list[name].metrics = _.cloneDeep(blueprint.metrics);
-			}
-		},
-		onLoad(e)
-		{
-			const result = e.target.result;
-			const list = JSON.parse(result);
-			for(let [name, value] of Object.entries(list))
-			{
-				if(this.list[name] === undefined) continue;
-				this.list[name] = _.mergeWith(this.list[name], value, (v,s,k) => { if(k === 'src') return v; } );
 			}
 		},
 		onSave()
