@@ -2,7 +2,7 @@ export default
 {
 	wasEdited: false,
 	isSelected: false,
-	error: false,
+	errors: [],
 	source:
 	{
 		filename: '',
