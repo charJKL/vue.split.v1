@@ -19,6 +19,7 @@ const getters = {
 	},
 	getCurrent(state)
 	{
+		if(state.list[state.index] === undefined) return null;
 		return state.list[state.index];
 	},
 }
@@ -50,7 +51,7 @@ const actions =
 	},
 	[selectIndex]({getters, commit}, value)
 	{
-		if(getters.getCurrent !== undefined) getters.getCurrent.isSelected = false;
+		if(getters.getCurrent !== null) getters.getCurrent.isSelected = false;
 		commit('index', value);
 		getters.getCurrent.isSelected = true;
 	},
