@@ -1,3 +1,5 @@
+import Record from './components/Record';
+import {cloneDeep} from 'lodash';
 
 // access this by $this.store.state.<list>
 const state = {
@@ -13,32 +15,38 @@ const getters = {
 
 // access this by $this.store.dispatch(<load-file>, value)
 // in actions i should call commits()
+export const loadFile = 'load-file-action';
+export const loadSave = 'load-save-action';
+export const selectCurrent = 'select-current-action';
 const actions = 
 {
-	loadFile({commit}, value)
+	[loadFile]({commit}, files)
 	{
-		console.log('loadFile');
-		commit('setList', value);
+		let list = [];
+		for(let file of files)
+		{
+			let record = cloneDeep(Record);
+				record.name = file.name;
+			list.push(record);
+		}
+		commit('list', list);
 	},
-	loadSave({commit}, value)
+	[loadSave]({commit}, value)
 	{
 		console.log('loadSave', value, commit);
 	},
-	changeCurrent({commit}, value)
+	[selectCurrent]({commit}, value)
 	{
 		console.log('changeCurrent', value);
 		commit('setCurrent', value);
 	},
 }
 
-
-const LOAD_FILE = 'load-file';
 // access this by $this.store.commit(<setList>, value)
 const mutations = 
 {
-	[LOAD_FILE](state, value){ state.list = value; },
-	setList(state, value){ state.list = value; },
-	setCurrent(state, value){ state.current = value; }
+	list(state, value){ state.list = value; },
+	current(state, value){ state.current = value; }
 }
 
-export default{ namespaced: true, state, getters, actions, mutations };
+export default { state, getters, actions, mutations };
