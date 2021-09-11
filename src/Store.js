@@ -4,20 +4,30 @@ import {cloneDeep} from 'lodash';
 // access this by $this.store.state.<list>
 const state = {
 	list: [],
-	current: ''
+	index: null,
 }
 
 // access this by $this.store.getters.<getList>
 const getters = {
-	getList(state){ return state.list; },
-	getCurrent(state){ return state.current; }
+	getList(state)
+	{ 
+		return state.list; 
+	},
+	getIndex(state)
+	{
+		return state.index;
+	},
+	getCurrent(state)
+	{
+		return state.list[state.index];
+	},
 }
 
 // access this by $this.store.dispatch(<load-file>, value)
 // in actions i should call commits()
 export const loadFile = 'load-file-action';
 export const loadSave = 'load-save-action';
-export const selectCurrent = 'select-current-action';
+export const selectIndex = 'select-index-action';
 const readImageSize = 'read-image-size';
 const actions = 
 {
@@ -29,8 +39,8 @@ const actions =
 			let record = cloneDeep(Record);
 				record.source.filename = file.name;
 				record.source.url = URL.createObjectURL(file);
-				dispatch(readImageSize, record);
 			list.push(record);
+			dispatch(readImageSize, record);
 		}
 		commit('list', list);
 	},
@@ -38,15 +48,17 @@ const actions =
 	{
 		console.log('loadSave', value, commit);
 	},
-	[selectCurrent]({commit}, value)
+	[selectIndex]({getters, commit}, value)
 	{
-		console.log('changeCurrent', value);
-		commit('setCurrent', value);
+		if(getters.getCurrent !== undefined) getters.getCurrent.isSelected = false;
+		commit('index', value);
+		getters.getCurrent.isSelected = true;
 	},
 	[readImageSize](state, record)
 	{
 		const image = new Image();
 		image.addEventListener('load', e => record.source.size = { width: e.target.naturalWidth, height: e.target.naturalHeight });
+		image.addEventListener('error', () => record.errors.push("Cant read natural image size.") );
 		image.src = record.source.url;
 	}
 }
@@ -54,8 +66,8 @@ const actions =
 // access this by $this.store.commit(<setList>, value)
 const mutations = 
 {
-	list(state, value){ state.list = value; },
-	current(state, value){ state.current = value; }
+	list(state, list){ state.list = list; },
+	index(state, index){ state.index = index; }
 }
 
 export default { state, getters, actions, mutations };
