@@ -1,7 +1,14 @@
 export default
 {
-	name: '',
 	wasEdited: false,
+	isSelected: false,
+	error: false,
+	source:
+	{
+		filename: '',
+		url: '',
+		size: {width: 0, height: 0},
+	},
 	metrics:
 	{
 		x1: { type: 'line', subtype: 'vertical', value: 0 },
