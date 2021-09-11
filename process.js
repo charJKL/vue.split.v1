@@ -52,6 +52,7 @@ fs.readdir(input, function(error, files)
 			if(blueprint === undefined) return console.skipped(filepath, '-> skipped');
 			
 			const angle = blueprint.metrics.rotate.value;
+			const rotate = {background: '#000000'};
 			const x1 = Math.round(blueprint.metrics.x1.value);
 			const y1 = Math.round(blueprint.metrics.y1.value);
 			const width = Math.round(blueprint.metrics.x2.value - blueprint.metrics.x1.value);
@@ -63,8 +64,8 @@ fs.readdir(input, function(error, files)
 			if(width <= 0) return console.invalid(filepath, 'invalid width');
 			if(height <= 0) return console.invalid(filepath, 'invalid height');
 			
-			const notify = function(){ processed.push(dest); console.log(filepath, 'is done.'); }
-			work.push(sharp(filepath).rotate(angle).extract(extract).jpeg(options).toFile(dest).then(notify).catch(e => console.catch(filepath, e)));
+			const notify = function(){ processed.push(dest); console.log(filepath, x1, y1, width, height, angle, 'is done.'); }
+			work.push(sharp(filepath).rotate(angle,rotate).extract(extract).jpeg(options).toFile(dest).then(notify).catch(e => console.catch(filepath, e)));
 		});
 		
 		Promise.all(work).then(function(values){
