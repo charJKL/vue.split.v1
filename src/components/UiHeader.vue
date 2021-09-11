@@ -8,37 +8,33 @@
 		<span>
 			<button @click="this.$refs.loadFiles.click()">Load files</button>
 			<input class="hide-input" ref="loadFiles" @change="onLoadFiles" type="file" accept="image/*" multiple />
-			<input class="input-text" type="text" :value="getFilesList" readonly />
+			<input class="input-text" type="text" :value="getList" readonly />
 		</span>
 	</div>
 </header>
 </template>
 
 <script>
+import {loadSave, loadFile} from '../store';
+
 export default
 {
-	data()
-	{
-		return {
-			files: [],
-		}
-	},
 	computed:
 	{
-		getFilesList()
+		getList()
 		{
-			return this.files.flatMap(file => file.name);
+			return this.$store.getters.getList.flatMap(file => file.source.filename);
 		}
 	},
 	methods: 
 	{
 		onLoadSave(e)
 		{
-			this.$store.dispath('loadSave', e.target.files[0]);
+			this.$store.dispath(loadSave, e.target.files[0]);
 		},
 		onLoadFiles(e)
 		{
-			this.$store.dispatch('loadFile', Array.from(e.target.files));
+			this.$store.dispatch(loadFile, Array.from(e.target.files));
 		}
 	}
 }
