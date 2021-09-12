@@ -1,8 +1,8 @@
 <template>
 <div id="editor" ref="editor">
-	<div class="desktop" v-if="isCurrent">
+	<div class="desktop" :style="getDesktopStyle" v-if="isCurrent">
 		<img class="image" :src="getCurrentUrl" />
-		<svg class="canvas">
+		<svg class="canvas" :style="getCanvasStyle">
 			<template v-for="(metric, name) in metrics" :key="name">
 				<editor-metrics-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" :value="metric.value" />
 			</template>
@@ -24,7 +24,11 @@ export default
 	data()
 	{
 		return {
+			padding: { top: 40 },
 			metrics: Record.metrics,
+			editor: { width: 0, height: 0 },
+			offset: { left: -15, top: -15 },
+			scale: 0,
 		}
 	},
 	computed:
@@ -39,19 +43,51 @@ export default
 		},
 		getCurrentUrl()
 		{
-			return this.$store.getters.getCurrent.source.url;
+			return this.current.source.url;
 		},
+		getDesktopStyle()
+		{
+			return { width: `${this.desktopSize.width}px`, height: `${this.desktopSize.height}px` };
+		},
+		getCanvasStyle()
+		{
+			return { width: `${this.canvasSize.width}px`, height: `${this.canvasSize.height}px`, left: `${this.offset.left}px`, top: `${this.offset.top}px` };
+		},
+		desktopSize()
+		{
+			const width = Math.floor(this.current.source.size.width * this.scale);
+			const height = Math.floor(this.current.source.size.height * this.scale);
+			return { width: width, height: height };
+		},
+		canvasSize()
+		{
+			const width = this.desktopSize.width + Math.abs(this.offset.left) * 2;
+			const height = this.desktopSize.height + Math.abs(this.offset.top) * 2;
+			return { width: width, height: height };
+		}
 	},
 	watch:
 	{
 		current(value)
 		{
-			console.log('current changes', value);
+			console.log('watch-current', value);
+			this.updateScale();
 		}
+	},
+	mounted()
+	{
+		const rect = this.$refs.editor.getBoundingClientRect();
+				rect.height = rect.height - this.padding.top;
+		this.editor = rect;
 	},
 	methods:
 	{
-		
+		updateScale()
+		{
+			const x = this.editor.width / this.current.source.size.width;
+			const y = this.editor.height / this.current.source.size.height;
+			this.scale = Math.min(x, y);
+		}
 	},
 }
 </script>
@@ -82,10 +118,10 @@ export default
 .canvas
 {
 	position: absolute;
-	top: -2%; left: -2%;
+	top: 0px; left: 0px;
 	z-index: 2;
-	width: 104%;
-	height: 104%;
+	width: 0px;
+	height: 0px;
 	background: yellow;
 	opacity: 0.5;
 }
