@@ -15,13 +15,15 @@
 <script>
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
+import {updateMetrics} from '../store';
+import {isMatch} from '../core/isMatch';
+import Hover from './EditorMetricsHover';
 import Record from './Record';
-import {isMatch} from 'lodash';
 
 const blueprint = 
 {
 	offset: { left: -15, top: -15 },
-	padding: { top: 20, left: 20, bottom: 20, right: 20},
+	padding: { top: 20, left: 20, bottom: 20, right: 20 },
 }
 
 export default
@@ -29,8 +31,8 @@ export default
 	components: { EditorMetricsLine, EditorMetricsHighlight },
 	props:
 	{
-		offset: { type: Object, default: blueprint.offset, validator(value){ return isMatch(value, blueprint.offset); } },
-		padding: { type: Object, default: blueprint.padding, validator(value){ return isMatch(value, blueprint.padding); } },
+		offset: { type: Object, default: blueprint.offset, validator(value){ return isMatch(blueprint.offset, value); } },
+		padding: { type: Object, default: blueprint.padding, validator(value){ return isMatch(blueprint.padding, value); } },
 	},
 	data()
 	{

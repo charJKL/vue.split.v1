@@ -7,16 +7,19 @@
 </template>
 
 <script>
-import {isMatch} from 'lodash';
+import {isMatch} from '../core/isMatch';
 
-const blueprintRect = {x: 0, y:0, width: 0, height: 0};
+const blueprint = 
+{
+	rect: {x: 0, y:0, width: 0, height: 0},
+}
 
 export default
 {
 	props:
 	{
-		area: { type: Object, required: true, validator(value){ return isMatch(value, blueprintRect); } },
-		highlight: { type: Object, required: true, validator(value){ return isMatch(value, blueprintRect); } },
+		area: { type: Object, required: true, validator(value){ return isMatch(blueprint.rect, value); } },
+		highlight: { type: Object, required: true, validator(value){ return isMatch(blueprint.rect, value); } },
 	},
 	computed:
 	{
