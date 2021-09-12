@@ -1,5 +1,5 @@
 <template>
-	<line :x1="x1" :y1="y1" :x2="x2" :y2="y2" stroke="black" />
+	<line :class="['line', getLineClass]" :x1="x1" :y1="y1" :x2="x2" :y2="y2" />
 	<text :x="x1" :y="y1" class="small">{{ name }}</text>
 </template>
 
@@ -10,10 +10,15 @@ export default
 	{
 		value: { type: Number, requred: true },
 		type: { type: String, requred: true },
-		name: { type: String },
+		hover: { type: Boolean, requred: false },
+		name: { type: String, requred: false },
 	},
 	computed:
 	{
+		getLineClass()
+		{
+			return this.hover === true ? 'is-hover' : '';
+		},
 		x1()
 		{
 			if(this.type === 'horizontal') return 0;
@@ -46,6 +51,15 @@ export default
 }
 </script>
 
-<style>
-
+<style scoped>
+.line
+{
+	stroke: #000;
+	stroke-width: 1;
+	stroke-dasharray: 4 2;
+}
+.line.is-hover
+{
+	stroke: rgb(255, 50, 50);
+}
 </style>

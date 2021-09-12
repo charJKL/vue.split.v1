@@ -11,11 +11,11 @@ export default
 	},
 	metrics:
 	{
-		x1: { type: 'line', subtype: 'vertical', value: 0 },
-		x2: { type: 'line', subtype: 'vertical', value: 0 },
-		y1: { type: 'line', subtype: 'horizontal', value: 0 },
-		y2: { type: 'line', subtype: 'horizontal', value: 0 },
-		rotate: { type: 'value', value: 0},
-		layout: { type: 'manual', value: false },
+		x1: { type: 'line', subtype: 'vertical', hover: false, active: false, value: 50 },
+		x2: { type: 'line', subtype: 'vertical', hover: false, active: false, value: 250 },
+		y1: { type: 'line', subtype: 'horizontal', hover: false, active: false, value: 50 },
+		y2: { type: 'line', subtype: 'horizontal', hover: false, active: false, value: 250 },
+		rotate: { type: 'value', hover: false, active: false, value: 0 },
+		layout: { type: 'manual', hover: false, active: false, value: false },
 	}
 }

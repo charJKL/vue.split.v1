@@ -29,6 +29,7 @@ const getters = {
 export const loadFile = 'load-file-action';
 export const loadSave = 'load-save-action';
 export const selectIndex = 'select-index-action';
+export const updateMetrics = 'update-metrics-action';
 const readImageSize = 'read-image-size';
 const actions = 
 {
@@ -55,6 +56,10 @@ const actions =
 		commit('index', value);
 		getters.getCurrent.isSelected = true;
 	},
+	[updateMetrics]({commit}, value)
+	{
+		commit('metrics', value);
+	},
 	[readImageSize](state, record)
 	{
 		const image = new Image();
@@ -68,7 +73,8 @@ const actions =
 const mutations = 
 {
 	list(state, list){ state.list = list; },
-	index(state, index){ state.index = index; }
+	index(state, index){ state.index = index; },
+	metrics(state, metrics){ console.log(metrics); },
 }
 
 export default { state, getters, actions, mutations };

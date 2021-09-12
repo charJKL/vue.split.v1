@@ -1,12 +1,12 @@
 <template>
-<div id="editor" ref="editor">
+<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onMouseLeftDown" @mouseup.left.prevent.stop="onMouseLeftUp" @mousemove.prevent.stop="onMouseMove">
 	<div class="desktop" :style="getDesktopStyle" v-if="isCurrent">
 		<img class="image" :src="getCurrentUrl" />
-		<svg class="canvas" :style="getCanvasStyle">
-			<template v-for="(metric, name) in metrics" :key="name">
-				<editor-metrics-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" :value="metric.value" />
-			</template>
+		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
 			<editor-metrics-highlight :area="areaSize" :highlight="highlightSize"></editor-metrics-highlight>
+			<template v-for="(metric, name) in metrics" :key="name">
+				<editor-metrics-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" :value="metric.value" :hover="metric.hover"/>
+			</template>
 		</svg>
 	</div>
 </div>
@@ -15,7 +15,6 @@
 <script>
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
-import {updateMetrics} from '../store';
 import {isMatch} from '../core/isMatch';
 import Hover from './EditorMetricsHover';
 import Record from './Record';
@@ -40,6 +39,10 @@ export default
 			metrics: Record.metrics,
 			editor: { width: 0, height: 0 },
 			scale: 0,
+			start: {x: 0, y: 0},
+			mouse: Hover,
+			hover: null,
+			active: null,
 		}
 	},
 	computed:
@@ -55,6 +58,12 @@ export default
 		getCurrentUrl()
 		{
 			return this.current.source.url;
+		},
+		getEditorClasses()
+		{
+			const isGrab = this.hover ? 'cursor-grab' : '';
+			const isGrabbing = this.active ? 'cursor-grabbing' : '';
+			return [isGrab, isGrabbing];
 		},
 		getDesktopStyle()
 		{
@@ -80,6 +89,18 @@ export default
 		{
 			return Math.max(this.metrics.y1.value, this.metrics.y2.value);
 		},
+		onMouseLeftDown()
+		{
+			return this.mouse.onLeftDown ? this.mouse.onLeftDown.bind(this) : new Function();
+		},
+		onMouseLeftUp()
+		{
+			return this.mouse.onLeftUp ? this.mouse.onLeftUp.bind(this) : new Function();
+		},
+		onMouseMove()
+		{
+			return this.mouse.onMove ? this.mouse.onMove.bind(this) : new Function();
+		},
 		highlightSize()
 		{
 			const width = this.secondXLine - this.firstXLine;
@@ -103,15 +124,20 @@ export default
 			const width = this.desktopSize.width + Math.abs(this.offset.left) * 2;
 			const height = this.desktopSize.height + Math.abs(this.offset.top) * 2;
 			return { width: width, height: height };
-		}
+		},
 	},
 	watch:
 	{
+		hover(value, old)
+		{
+			if(old !== null) old.hover = false;
+			if(value !== null) value.hover = true;
+		},
 		current(value)
 		{
 			console.log('watch-current', value);
 			this.updateScale();
-		}
+		},
 	},
 	mounted()
 	{
@@ -126,20 +152,27 @@ export default
 			const x = width / this.current.source.size.width;
 			const y = height / this.current.source.size.height;
 			this.scale = Math.min(x, y);
-		}
+		},
+		resolvePosition(x, y)
+		{
+			const canvas = this.$refs.canvas.getBoundingClientRect();
+			return { x: x - canvas.left, y: y - canvas.top };
+		},
 	},
 }
 </script>
 
 <style scoped>
-#editor
+.editor
 {
 	flex: 1 0 0;
 	display:flex;
 	justify-content: center;
 	align-items: center;
-	background: red;
+	user-select: none;
 }
+.editor.cursor-grab{ cursor: grab; }
+.editor.cursor-grabbing{ cursor: grabbing; }
 .desktop
 {
 	position: relative;
@@ -159,5 +192,4 @@ export default
 	position: absolute;
 	z-index: 2;
 }
-
 </style>
