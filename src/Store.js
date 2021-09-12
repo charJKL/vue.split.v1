@@ -74,7 +74,7 @@ const mutations =
 {
 	list(state, list){ state.list = list; },
 	index(state, index){ state.index = index; },
-	metrics(state, metrics){ console.log(metrics); },
+	metrics(state, metrics){ state.list[state.index].metrics = metrics; },
 }
 
 export default { state, getters, actions, mutations };

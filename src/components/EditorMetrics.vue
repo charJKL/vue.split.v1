@@ -136,6 +136,7 @@ export default
 		current(value)
 		{
 			console.log('watch-current', value);
+			this.metrics = value.metrics;
 			this.updateScale();
 		},
 	},

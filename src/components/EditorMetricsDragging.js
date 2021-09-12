@@ -1,5 +1,7 @@
 import Hover from './EditorMetricsHover';
 import {updateMetrics} from '../store';
+import {cloneDeep} from 'lodash';
+
 const dragging = {};
 var location = {x: 0, y: 0};
 var value = 0;
@@ -24,7 +26,7 @@ dragging.onMove = function(e)
 	const displacement = this.hover.subtype === 'vertical' ? diff.x : diff.y;
 	
 	this.active.value = value + displacement;
-	this.$store.dispatch(updateMetrics, {});
+	this.$store.dispatch(updateMetrics, cloneDeep(this.metrics));
 }
 
 dragging.onLeftUp = function(e)
