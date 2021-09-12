@@ -6,7 +6,7 @@
 			<template v-for="(metric, name) in metrics" :key="name">
 				<editor-metrics-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" :value="metric.value" />
 			</template>
-			<path d="M 0,0 M 100%,0 M 100%,100% M 0,100% z" fill-rule="evenodd" fill="blue" stroke="black" stroke-width="3" />
+			<editor-metrics-highlight :area="areaSize" :highlight="highlightSize"></editor-metrics-highlight>
 		</svg>
 	</div>
 </div>
@@ -14,13 +14,14 @@
 
 <script>
 import EditorMetricsLine from './EditorMetricsLine';
+import EditorMetricsHighlight from './EditorMetricsHighlight';
 import Record from './Record';
 
 //import _ from 'lodash';
 
 export default
 {
-	components: { EditorMetricsLine },
+	components: { EditorMetricsLine, EditorMetricsHighlight },
 	data()
 	{
 		return {
@@ -52,6 +53,34 @@ export default
 		getCanvasStyle()
 		{
 			return { width: `${this.canvasSize.width}px`, height: `${this.canvasSize.height}px`, left: `${this.offset.left}px`, top: `${this.offset.top}px` };
+		},
+		firstXLine()
+		{
+			return Math.min(this.metrics.x1.value, this.metrics.x2.value);
+		},
+		secondXLine()
+		{
+			return Math.max(this.metrics.x1.value, this.metrics.x2.value);
+		},
+		firstYLine()
+		{
+			return Math.min(this.metrics.y1.value, this.metrics.y2.value);
+		},
+		secondYLine()
+		{
+			return Math.max(this.metrics.y1.value, this.metrics.y2.value);
+		},
+		highlightSize()
+		{
+			const width = this.secondXLine - this.firstXLine;
+			const height = this.secondYLine - this.firstYLine;
+			return {x: this.firstXLine, y: this.firstYLine, width: width, height: height };
+		},
+		areaSize()
+		{
+			const x = Math.abs(this.offset.top);
+			const y = Math.abs(this.offset.left);
+			return {x: x, y: y, width: this.desktopSize.width, height: this.desktopSize.height };
 		},
 		desktopSize()
 		{
@@ -122,7 +151,6 @@ export default
 	z-index: 2;
 	width: 0px;
 	height: 0px;
-	background: yellow;
-	opacity: 0.5;
 }
+
 </style>
