@@ -1,6 +1,6 @@
 <template>
 	<line :x1="x1" :y1="y1" :x2="x2" :y2="y2" stroke="black" />
-	<text :x="x1" :y="y1" class="small">My</text>
+	<text :x="x1" :y="y1" class="small">{{ name }}</text>
 </template>
 
 <script>
@@ -45,9 +45,6 @@ export default
 	}
 }
 </script>
-
-const attr = this.type === 'vertical' ? 'left' : 'top';
-
 
 <style>
 

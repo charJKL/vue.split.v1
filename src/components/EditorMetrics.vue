@@ -16,19 +16,27 @@
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
 import Record from './Record';
+import {isMatch} from 'lodash';
 
-//import _ from 'lodash';
+const blueprint = 
+{
+	offset: { left: -15, top: -15 },
+	padding: { top: 20, left: 20, bottom: 20, right: 20},
+}
 
 export default
 {
 	components: { EditorMetricsLine, EditorMetricsHighlight },
+	props:
+	{
+		offset: { type: Object, default: blueprint.offset, validator(value){ return isMatch(value, blueprint.offset); } },
+		padding: { type: Object, default: blueprint.padding, validator(value){ return isMatch(value, blueprint.padding); } },
+	},
 	data()
 	{
 		return {
-			padding: { top: 40 },
 			metrics: Record.metrics,
 			editor: { width: 0, height: 0 },
-			offset: { left: -15, top: -15 },
 			scale: 0,
 		}
 	},
@@ -105,16 +113,16 @@ export default
 	},
 	mounted()
 	{
-		const rect = this.$refs.editor.getBoundingClientRect();
-				rect.height = rect.height - this.padding.top;
-		this.editor = rect;
+		this.editor = this.$refs.editor.getBoundingClientRect();
 	},
 	methods:
 	{
 		updateScale()
 		{
-			const x = this.editor.width / this.current.source.size.width;
-			const y = this.editor.height / this.current.source.size.height;
+			const width = this.editor.width - this.padding.left - this.padding.right;
+			const height = this.editor.height - this.padding.left - this.padding.right;
+			const x = width / this.current.source.size.width;
+			const y = height / this.current.source.size.height;
 			this.scale = Math.min(x, y);
 		}
 	},
@@ -147,10 +155,7 @@ export default
 .canvas
 {
 	position: absolute;
-	top: 0px; left: 0px;
 	z-index: 2;
-	width: 0px;
-	height: 0px;
 }
 
 </style>
