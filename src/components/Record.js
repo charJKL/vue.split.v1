@@ -11,11 +11,10 @@ export default
 	},
 	metrics:
 	{
-		x1: { type: 'line', subtype: 'vertical', hover: false, active: false, value: 50 },
-		x2: { type: 'line', subtype: 'vertical', hover: false, active: false, value: 250 },
-		y1: { type: 'line', subtype: 'horizontal', hover: false, active: false, value: 50 },
-		y2: { type: 'line', subtype: 'horizontal', hover: false, active: false, value: 250 },
-		rotate: { type: 'value', hover: false, active: false, value: 0 },
-		layout: { type: 'manual', hover: false, active: false, value: false },
+		x1: { name: 'x1', type: 'line', subtype: 'vertical', value: 50 },
+		x2: { name: 'x2', type: 'line', subtype: 'vertical', value: 250 },
+		y1: { name: 'y1', type: 'line', subtype: 'horizontal', value: 50 },
+		y2: { name: 'y2', type: 'line', subtype: 'horizontal', value: 250 },
+		rotate: { name: 'rotate', type: 'value', value: 0 },
 	}
 }
