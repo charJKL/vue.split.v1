@@ -1,4 +1,4 @@
-import Record from './components/Record';
+import Record from '../components/Record';
 import {cloneDeep} from 'lodash';
 
 // access this by $this.store.state.<list>

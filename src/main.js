@@ -1,9 +1,10 @@
 import { createApp } from 'vue'
 import { createStore } from 'vuex'
 import App from './App.vue'
-import store from './store.js'
+import records from './store/records'
+import ui from './store/ui';
 
-const stosre = createStore(store);
+const store = createStore({ modules: {records, ui} });
 const app = createApp(App);
-		app.use(stosre);
+		app.use(store);
 		app.mount('#app');
