@@ -6,7 +6,7 @@
 
 <script>
 import UiListImage from './UiListImage';
-import {selectIndex} from '../store.js';
+import {selectIndex} from '../store/records';
 
 export default
 {

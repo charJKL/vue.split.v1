@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {loadSave, loadFile} from '../store';
+import {loadSave, loadFile} from '../store/records';
 
 export default
 {

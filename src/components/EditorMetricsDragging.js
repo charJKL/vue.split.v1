@@ -1,5 +1,5 @@
 import Hover from './EditorMetricsHover';
-import {updateMetrics} from '../store';
+import {updateMetrics} from '../store/records';
 import {cloneDeep} from 'lodash';
 
 const dragging = {};
