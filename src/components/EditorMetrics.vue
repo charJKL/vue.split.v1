@@ -4,8 +4,8 @@
 		<img class="image" :src="getCurrentUrl" />
 		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
 			<editor-metrics-highlight :area="areaSize" :highlight="highlightSize"></editor-metrics-highlight>
-			<template v-for="(metric, name) in metrics" :key="name">
-				<editor-metrics-line v-if="metric.type === 'line'" :type="metric.subtype" :name="name" :value="metric.value" :hover="metric.hover"/>
+			<template v-for="metric in metrics" :key="metric.name">
+				<editor-metrics-line v-if="metric.type === 'line'" :type="metric.subtype" :name="metric.name" :value="metric.value" :hover="isHover(metric.name)"/>
 			</template>
 		</svg>
 	</div>
@@ -16,6 +16,7 @@
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
 import {isMatch} from '../core/isMatch';
+import {changeHover} from '../store/ui';
 import Hover from './EditorMetricsHover';
 import Record from './Record';
 
@@ -39,7 +40,7 @@ export default
 			metrics: Record.metrics,
 			editor: { width: 0, height: 0 },
 			scale: 0,
-			start: {x: 0, y: 0},
+			start: { x: 0, y: 0 },
 			mouse: Hover,
 			hover: null,
 			active: null,
@@ -128,14 +129,12 @@ export default
 	},
 	watch:
 	{
-		hover(value, old)
+		hover(value)
 		{
-			if(old !== null) old.hover = false;
-			if(value !== null) value.hover = true;
+			this.$store.dispatch(changeHover, value);
 		},
 		current(value)
 		{
-			console.log('watch-current', value);
 			this.metrics = value.metrics;
 			this.updateScale();
 		},
@@ -146,6 +145,10 @@ export default
 	},
 	methods:
 	{
+		isHover(name)
+		{
+			return this.$store.getters.getHover === name;
+		},
 		updateScale()
 		{
 			const width = this.editor.width - this.padding.left - this.padding.right;
