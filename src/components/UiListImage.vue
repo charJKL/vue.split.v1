@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import {Record} from './Record.js';
-import {isMatch} from 'lodash';
+import Record from './Record.js';
+import {isMatch} from '../core/isMatch';
 
 export default
 {
