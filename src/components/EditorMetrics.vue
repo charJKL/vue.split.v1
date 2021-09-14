@@ -135,6 +135,7 @@ export default
 		},
 		current(value)
 		{
+			if(value === null) return;
 			this.metrics = value.metrics;
 			this.updateScale();
 		},
