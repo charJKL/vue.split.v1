@@ -1,5 +1,5 @@
 import Record from '../components/Record';
-import {cloneDeep} from 'lodash';
+import {cloneDeep, findIndex} from 'lodash';
 
 // access this by $this.store.state.<list>
 const state = {
@@ -28,6 +28,7 @@ const getters = {
 // in actions i should call commits()
 export const loadFile = 'load-file-action';
 export const loadSave = 'load-save-action';
+export const changeCurrent = 'change-current-action';
 export const selectIndex = 'select-index-action';
 export const updateMetrics = 'update-metrics-action';
 const readImageSize = 'read-image-size';
@@ -46,14 +47,20 @@ const actions =
 		}
 		commit('list', list);
 	},
-	[loadSave]({commit}, value)
+	[loadSave]({commit}, filepath)
 	{
-		console.log('loadSave', value, commit);
+		console.log('loadSave', filepath, commit);
 	},
-	[selectIndex]({getters, commit}, value)
+	[changeCurrent]({getters, commit}, filename)
+	{
+		let find = findIndex(getters.getList, (o) => o.source.filename === filename);
+		if(find === -1) find = null;
+		commit('index', find);
+	},
+	[selectIndex]({getters, commit}, index)
 	{
 		if(getters.getCurrent !== null) getters.getCurrent.isSelected = false;
-		commit('index', value);
+		commit('index', index);
 		getters.getCurrent.isSelected = true;
 	},
 	[updateMetrics]({commit}, value)
