@@ -51,17 +51,17 @@ const actions =
 	{
 		console.log('loadSave', filepath, commit);
 	},
-	[changeCurrent]({getters, commit}, filename)
+	[changeCurrent]({getters, dispatch}, filename)
 	{
 		let find = findIndex(getters.getList, (o) => o.source.filename === filename);
 		if(find === -1) find = null;
-		commit('index', find);
+		dispatch(selectIndex, find);
 	},
 	[selectIndex]({getters, commit}, index)
 	{
 		if(getters.getCurrent !== null) getters.getCurrent.isSelected = false;
 		commit('index', index);
-		getters.getCurrent.isSelected = true;
+		if(getters.getCurrent !== null) getters.getCurrent.isSelected = true;
 	},
 	[updateMetrics]({commit}, value)
 	{
