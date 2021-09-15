@@ -1,12 +1,12 @@
-<template>
-	name: <input class="input-text" :value="getCurrentName" @input="onCurrentNameInput" />
+<template>[
+	name: <input class="input-text" ref="name" :value="getCurrentName" @input="onCurrentNameInput" />
 	<template v-for="metric in metrics" :key="metric.name">
 		<label>
 			{{ metric.name }}:
 			<input class="input-int" v-if="isLine(metric.type)" type="number" :disabled="!isCurrent" :value="getValue(metric.name)" @input="onInputIntEvent(metric.name, $event)" />
 			<input class="input-float" v-else-if="isFloat(metric.type)" type="number" step="0.1" :disabled="!isCurrent" :value="getValue(metric.name) " @input="onInputFloatEvent(metric.name, $event)" />
 		</label>,
-	</template>
+	</template>]
 </template>
 
 <script>
@@ -34,6 +34,7 @@ export default
 		},
 		getCurrentName()
 		{
+			if(document.activeElement === this.$refs.name) return this.$refs.name.value;
 			return this.isCurrent === true ? this.current.source.filename : '';
 		}
 	},
@@ -73,6 +74,6 @@ export default
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>
