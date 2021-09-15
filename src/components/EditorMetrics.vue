@@ -1,8 +1,8 @@
 <template>
-<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onMouseLeftDown" @mouseup.left.prevent.stop="onMouseLeftUp" @mousemove.prevent.stop="onMouseMove">
+<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onMouseLeftDown" @mouseup.left.prevent.stop="onMouseLeftUp" @mousemove.prevent.stop="onMouseMove" @wheel.prevent.stop="onMouseWheel">
 	<div class="desktop" :style="getDesktopStyle" v-if="isCurrent">
-		<img class="image" :src="getCurrentUrl" />
-		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
+		<img class="image" :style="getImageStyle" :src="getCurrentUrl" />
+		<svg class="canvas" :style="getCanvasStyle" ref="canvas">
 			<editor-metrics-highlight :area="areaSize" :highlight="highlightSize"></editor-metrics-highlight>
 			<template v-for="metric in metrics" :key="metric.name">
 				<editor-metrics-line v-if="metric.type === 'line'" :type="metric.subtype" :name="metric.name" :value="metric.value" :hover="isHover(metric.name)"/>
@@ -26,6 +26,8 @@ const blueprint =
 	padding: { top: 20, left: 20, bottom: 20, right: 20 },
 }
 
+function onDullMouseEvent(){ }
+
 export default
 {
 	components: { EditorMetricsLine, EditorMetricsHighlight },
@@ -40,6 +42,7 @@ export default
 			metrics: Record.metrics,
 			editor: { width: 0, height: 0 },
 			scale: 0,
+			rotate: 0,
 			start: { x: 0, y: 0 },
 			mouse: Hover,
 			hover: null,
@@ -70,6 +73,10 @@ export default
 		{
 			return { width: `${this.desktopSize.width}px`, height: `${this.desktopSize.height}px` };
 		},
+		getImageStyle()
+		{
+			return { transform: `rotate(${this.rotate}deg)` };
+		},
 		getCanvasStyle()
 		{
 			return { width: `${this.canvasSize.width}px`, height: `${this.canvasSize.height}px`, left: `${this.offset.left}px`, top: `${this.offset.top}px` };
@@ -92,15 +99,19 @@ export default
 		},
 		onMouseLeftDown()
 		{
-			return this.mouse.onLeftDown ? this.mouse.onLeftDown.bind(this) : new Function();
+			return this.mouse.onLeftDown ? this.mouse.onLeftDown.bind(this) : onDullMouseEvent;
 		},
 		onMouseLeftUp()
 		{
-			return this.mouse.onLeftUp ? this.mouse.onLeftUp.bind(this) : new Function();
+			return this.mouse.onLeftUp ? this.mouse.onLeftUp.bind(this) : onDullMouseEvent;
 		},
 		onMouseMove()
 		{
-			return this.mouse.onMove ? this.mouse.onMove.bind(this) : new Function();
+			return this.mouse.onMove ? this.mouse.onMove.bind(this) : onDullMouseEvent;
+		},
+		onMouseWheel()
+		{
+			return this.mouse.onWheel ? this.mouse.onWheel.bind(this) : onDullMouseEvent;
 		},
 		highlightSize()
 		{
