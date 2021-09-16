@@ -16,9 +16,8 @@ const getters = {
 export const changeHover = 'change-hover-action';
 const actions = 
 {
-	[changeHover]({commit}, metric)
+	[changeHover]({commit}, name)
 	{
-		const name = metric === null ? '' : metric.name;
 		commit('hover', name);
 	},
 }
