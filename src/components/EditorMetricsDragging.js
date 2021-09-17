@@ -12,7 +12,7 @@ dragging.onLeftDown = function(e)
 	
 	this.active = this.hover;
 	location = {x: e.clientX, y: e.clientY};
-	value = this[`get${this.active.toUpperCase()}LineValue`];
+	value = this[this.active].value;
 }
 
 dragging.onMove = function(e)
@@ -21,7 +21,8 @@ dragging.onMove = function(e)
 	if(this.active === null) return;
 	const position = {x: e.clientX, y: e.clientY};
 	const diff = {x: position.x - location.x, y: position.y - location.y};
-	const displacement = ['x1','x2'].includes(this.hover) ? diff.x : diff.y;
+	console.log(this.active);
+	const displacement = this.active.subtype === 'vertical' ? diff.x : diff.y;
 	const update = value + displacement;
 	
 	this.updateMetrics(this.active, update);

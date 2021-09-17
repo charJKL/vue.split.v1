@@ -4,10 +4,7 @@
 		<img class="image" :style="getImageStyle" :src="getCurrentUrl" />
 		<svg class="canvas" :style="getCanvasStyle" ref="canvas">
 			<editor-metrics-highlight :area="areaSize" :highlight="highlightSize"></editor-metrics-highlight>
-			<editor-metrics-line name="x1" type="vertical" :value="getX1LineValue" :hover="isHover('x1')" />
-			<editor-metrics-line name="x2" type="vertical" :value="getX2LineValue" :hover="isHover('x2')" />
-			<editor-metrics-line name="y1" type="horizontal" :value="getY1LineValue" :hover="isHover('y1')" />
-			<editor-metrics-line name="y2" type="horizontal" :value="getY2LineValue" :hover="isHover('y2')" />
+			<editor-metrics-line v-for="metric in [x1,x2,y1,y2]" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="metric.hover" />
 		</svg>
 	</div>
 </div>
@@ -20,8 +17,8 @@ import {updateMetrics} from '../store/records';
 import {changeHover} from '../store/ui';
 import {isMatch} from '../core/isMatch';
 import {cloneDeep} from 'lodash';
+import Record from './Record';
 import Hover from './EditorMetricsHover';
-
 
 const blueprint = 
 {
@@ -30,6 +27,14 @@ const blueprint =
 }
 
 function onDullMouseEvent(){ }
+
+function template(name)
+{
+	const metric = cloneDeep(Record.metrics[name]);
+			metric.value =  this.inApplyOffsetScale(name, this.current.metrics[name].value);
+			metric.hover = this.isHover(name);
+	return metric;
+}
 
 export default
 {
@@ -44,8 +49,6 @@ export default
 		return {
 			editor: { width: 0, height: 0 },
 			scale: 0,
-			rotate: 0,
-			start: { x: 0, y: 0 },
 			mouse: Hover,
 			hover: null,
 			active: null,
@@ -77,27 +80,31 @@ export default
 		},
 		getImageStyle()
 		{
-			return { transform: `rotate(${this.rotate}deg)` };
+			return { transform: `rotate(${this.getRotateValue}deg)` };
 		},
 		getCanvasStyle()
 		{
 			return { width: `${this.canvasSize.width}px`, height: `${this.canvasSize.height}px`, left: `${this.offset.left}px`, top: `${this.offset.top}px` };
 		},
-		getX1LineValue()
+		x1()
 		{
-			return this.inApplyOffsetScale('x1',this.current.metrics.x1.value);
+			return template.call(this, 'x1');
 		},
-		getX2LineValue()
+		x2()
 		{
-			return this.inApplyOffsetScale('x2', this.current.metrics.x2.value);
+			return template.call(this, 'x2');
 		},
-		getY1LineValue()
+		y1()
 		{
-			return this.inApplyOffsetScale('y1', this.current.metrics.y1.value);
+			return template.call(this, 'y1');
 		},
-		getY2LineValue()
+		y2()
 		{
-			return this.inApplyOffsetScale('y2', this.current.metrics.y2.value);
+			return template.call(this, 'y2');
+		},
+		getRotateValue()
+		{
+			return this.inApplyOffsetScale('rotate', this.current.metrics.rotate.value);
 		},
 		onMouseLeftDown()
 		{
@@ -117,9 +124,9 @@ export default
 		},
 		highlightSize()
 		{
-			const width = this.getX2LineValue - this.getX1LineValue;
-			const height = this.getY2LineValue - this.getY1LineValue;
-			return {x: this.getX1LineValue, y: this.getY1LineValue, width: width, height: height };
+			const width = this.x2.value - this.x1.value;
+			const height = this.y2.value - this.y1.value;
+			return {x: this.x1.value, y: this.y1.value, width: width, height: height };
 		},
 		areaSize()
 		{
@@ -144,6 +151,7 @@ export default
 	{
 		hover(value)
 		{
+			console.log(value);
 			this.$store.dispatch(changeHover, value);
 		},
 		current(value)

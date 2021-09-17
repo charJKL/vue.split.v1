@@ -15,23 +15,24 @@ hover.onMove = function(e)
 {
 	if(this.isCurrent === false) return;
 	const {x, y} = this.resolvePosition(e.clientX, e.clientY);
-	
 	const diffs = [];
-	diffs.push({name: 'x1', diff: Math.abs(x - this.getX1LineValue)});
-	diffs.push({name: 'x2', diff: Math.abs(x - this.getX2LineValue)});
-	diffs.push({name: 'y1', diff: Math.abs(y - this.getY1LineValue)});
-	diffs.push({name: 'y2', diff: Math.abs(y - this.getY2LineValue)});
+	for(let line of [this.x1, this.x2, this.y1, this.y2])
+	{
+		const diff = {};
+				diff.name = line.name;
+		const base = line.subtype === 'vertical' ? x : y;
+				diff.value = Math.abs(base - line.value);
+		diffs.push(diff);
+	}
 	
 	const threshold = 20;
-	const near = minBy(diffs, (o) => o.diff);
-	this.hover = (near.diff < threshold) ? near.name : null;
+	const near = minBy(diffs, (o) => o.value);
+	this.hover = (near.value < threshold) ? near.name : null;
 }
 
 hover.onWheel = function(e)
 {
-	const value = this.rotate + e.deltaY * sensitivity;
-	
-	this.rotate = value;
+	const value = this.getRotateValue + e.deltaY * sensitivity;
 	this.updateMetrics('rotate', value);
 }
 
