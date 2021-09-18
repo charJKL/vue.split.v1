@@ -28,7 +28,7 @@ const hover =
 	},
 	onWheel(e)
 	{
-		const value = this.getRotateValue + e.deltaY * sensitivity;
+		const value = this.rotate.value + e.deltaY * sensitivity;
 		this.updateMetrics('rotate', value);
 	}
 }
