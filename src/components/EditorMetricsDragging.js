@@ -23,6 +23,10 @@ const dragging =
 		const displacement = this.active.subtype === 'vertical' ? diff.x : diff.y;
 		const update = startValue + displacement;
 		
+		if(this.active.name === 'x1' && update > this.x2.value) this.hover = this.active = this.x2;
+		if(this.active.name === 'x2' && update < this.x1.value) this.hover = this.active = this.x1;
+		if(this.active.name === 'y1' && update > this.y2.value) this.hover = this.active = this.y2;
+		if(this.active.name === 'y2' && update < this.y1.value) this.hover = this.active = this.y1;
 		this.updateMetrics(this.active.name, update);
 	},
 	onLeftUp(e)
