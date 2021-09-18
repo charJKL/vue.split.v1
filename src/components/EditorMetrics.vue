@@ -149,10 +149,10 @@ export default
 	},
 	watch:
 	{
-		hover(value)
+		hover(metric)
 		{
-			console.log(value);
-			this.$store.dispatch(changeHover, value);
+			const name = (metric === null) ? null : metric.name;
+			this.$store.dispatch(changeHover, name);
 		},
 		current(value)
 		{
