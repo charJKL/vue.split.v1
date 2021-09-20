@@ -1,12 +1,12 @@
 <template>
-<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onMouseLeftDown" @mouseup.left.prevent.stop="onMouseLeftUp" @mousemove.prevent.stop="onMouseMove" @wheel.prevent.stop="onMouseWheel">
+<div :class="['editor']" ref="editor">
 	<div class="desktop" :style="getDesktopStyle" v-if="isCurrent">
 		<div class="window" ref="window">
-			<img class="image" ref="image" :style="getImageStyle" :src="getCurrentUrl" />
+			<img class="image" ref="image" :style="getImageStyle" :src="this.current.source.url" />
 		</div>
-		<svg class="canvas" :style="getCanvasStyle" ref="canvas">
-			<editor-metrics-highlight :area="areaSize" :highlight="highlightSize"></editor-metrics-highlight>
-			<editor-metrics-line v-for="metric in [x1,x2,y1,y2]" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="metric.hover" />
+		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
+			<editor-metrics-highlight :size="highlightSize" :spot="highlightSpot"></editor-metrics-highlight>
+			<editor-metrics-line v-for="metric in metrics.line" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="metric.hover"></editor-metrics-line>
 		</svg>
 	</div>
 </div>
@@ -15,27 +15,13 @@
 <script>
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
-import {updateMetrics} from '../store/records';
-import {changeHover} from '../store/ui';
 import {isMatch} from '../core/isMatch';
-import {cloneDeep} from 'lodash';
-import Record from './Record';
-import Hover from './EditorMetricsHover';
+//function onDullMouseEvent(){ }
 
 const blueprint = 
 {
-	outer: { left: -15, top: -15 },
-	padding: { top: 20, left: 20, bottom: 20, right: 20 },
-}
-
-function onDullMouseEvent(){ }
-
-function template(name)
-{
-	const metric = cloneDeep(Record.metrics[name]);
-			metric.value =  this.inApplyOffsetScale(name, this.current.metrics[name].value);
-			metric.hover = this.isHover(name);
-	return metric;
+	margin: { top: 15, right: 15, bottom: 15, left: 15 },
+	padding: { top: 12, right: 12, bottom: 12, left: 12 },
 }
 
 export default
@@ -43,39 +29,30 @@ export default
 	components: { EditorMetricsLine, EditorMetricsHighlight },
 	props:
 	{
-		outer: { type: Object, default: blueprint.outer, validator(value){ return isMatch(blueprint.outer, value); } },
+		margin: { type: Object, default: blueprint.margin, validator(value){ return isMatch(blueprint.margin, value); } },
 		padding: { type: Object, default: blueprint.padding, validator(value){ return isMatch(blueprint.padding, value); } },
 	},
 	data()
 	{
 		return {
 			editor: { width: 0, height: 0 },
-			offset: {x: 0, y: 0},
+			shift: { x: 0, y: 0 },
 			scale: 0,
-			mouse: Hover,
-			hover: null,
-			active: null,
 		}
 	},
 	computed:
 	{
-		isCurrent()
-		{
-			return this.$store.getters.getCurrent !== null;
-		},
 		current()
 		{
 			return this.$store.getters.getCurrent;
 		},
-		getCurrentUrl()
+		isCurrent()
 		{
-			return this.current.source.url;
+			return this.$store.getters.getCurrent !== null;
 		},
-		getEditorClasses()
+		metrics()
 		{
-			const isGrab = this.hover ? 'cursor-grab' : '';
-			const isGrabbing = this.active ? 'cursor-grabbing' : '';
-			return [isGrab, isGrabbing];
+			return this.isCurrent ? this.decorate(this.$store.getters.getCurrent.metrics) : null;
 		},
 		getDesktopStyle()
 		{
@@ -83,59 +60,11 @@ export default
 		},
 		getImageStyle()
 		{
-			return { transform: `rotate(${this.rotate.value}deg)` };
+			return { transform: `rotate(${this.metrics.rotate.value}deg)` };
 		},
 		getCanvasStyle()
 		{
-			return { width: `${this.canvasSize.width}px`, height: `${this.canvasSize.height}px`, left: `${this.outer.left}px`, top: `${this.outer.top}px` };
-		},
-		x1()
-		{
-			return template.call(this, 'x1');
-		},
-		x2()
-		{
-			return template.call(this, 'x2');
-		},
-		y1()
-		{
-			return template.call(this, 'y1');
-		},
-		y2()
-		{
-			return template.call(this, 'y2');
-		},
-		rotate()
-		{
-			return template.call(this, 'rotate');
-		},
-		onMouseLeftDown()
-		{
-			return this.mouse.onLeftDown ? this.mouse.onLeftDown.bind(this) : onDullMouseEvent;
-		},
-		onMouseLeftUp()
-		{
-			return this.mouse.onLeftUp ? this.mouse.onLeftUp.bind(this) : onDullMouseEvent;
-		},
-		onMouseMove()
-		{
-			return this.mouse.onMove ? this.mouse.onMove.bind(this) : onDullMouseEvent;
-		},
-		onMouseWheel()
-		{
-			return this.mouse.onWheel ? this.mouse.onWheel.bind(this) : onDullMouseEvent;
-		},
-		highlightSize()
-		{
-			const width = this.x2.value - this.x1.value;
-			const height = this.y2.value - this.y1.value;
-			return {x: this.x1.value, y: this.y1.value, width: width, height: height };
-		},
-		areaSize()
-		{
-			const x = Math.abs(this.outer.top);
-			const y = Math.abs(this.outer.left);
-			return {x: x, y: y, width: this.desktopSize.width, height: this.desktopSize.height };
+			return { width: `${this.canvasSize.width}px`, height: `${this.canvasSize.height}px`, left: `-${this.padding.left}px`, top: `-${this.padding.top}px` };
 		},
 		desktopSize()
 		{
@@ -145,23 +74,33 @@ export default
 		},
 		canvasSize()
 		{
-			const width = this.desktopSize.width + Math.abs(this.outer.left) * 2;
-			const height = this.desktopSize.height + Math.abs(this.outer.top) * 2;
+			const width = this.desktopSize.width + this.padding.left + this.padding.right;
+			const height = this.desktopSize.height + this.padding.top + this.padding.bottom;
 			return { width: width, height: height };
+		},
+		highlightSpot()
+		{
+			const width = this.metrics.x2.value - this.metrics.x1.value;
+			const height = this.metrics.y2.value - this.metrics.y1.value;
+			return { x: this.metrics.x1.value, y: this.metrics.y1.value, width: width, height: height };
+		},
+		highlightSize()
+		{
+			return { width: this.desktopSize.width, height: this.desktopSize.height, x: this.padding.left, y: this.padding.top };
 		},
 	},
 	watch:
 	{
-		hover(metric)
-		{
-			const name = (metric === null) ? null : metric.name;
-			this.$store.dispatch(changeHover, name);
-		},
 		current(value)
 		{
+			console.log('current changed', value);
 			if(value === null) return;
-			this.updateScale();
+			this.calcScale();
 		},
+		metrics(value)
+		{
+			console.log('watch-metrics', value);
+		}
 	},
 	mounted()
 	{
@@ -169,71 +108,38 @@ export default
 	},
 	methods:
 	{
-		isHover(name)
+		calcScale()
 		{
-			return this.$store.getters.getHover === name;
-		},
-		updateScale()
-		{
-			const width = this.editor.width - this.padding.left - this.padding.right;
-			const height = this.editor.height - this.padding.left - this.padding.right;
+			const width = this.editor.width - this.margin.left - this.margin.right;
+			const height = this.editor.height - this.margin.top - this.margin.bottom;
 			const x = width / this.current.source.size.width;
-			const y = height / this.current.source.size.height;
+			const y= height / this.current.source.size.height;
 			this.scale = Math.min(x, y);
 		},
-		updateOffset()
+		decorate(metrics)
 		{
-			const window = this.$refs.window.getBoundingClientRect();
-			const image = this.$refs.image.getBoundingClientRect();
-			this.offset.x = Math.abs(image.left - window.left);
-			this.offset.y = Math.abs(image.top - window.top);
-		},
-		inApplyOffsetScale(name, value)
-		{
-			const scale = (name === 'rotate') ? 1 : this.scale;
-			const offsetX = (name === 'x1' || name === 'x2') ? this.offset.x : 0; 
-			const offsetY = (name === 'y1' || name === 'y2') ? this.offset.y : 0;
-			return (value - offsetX - offsetY) * scale;
-		},
-		outApplyOffsetScale(name, value)
-		{
-			const scale = (name === 'rotate') ? 1 : this.scale;
-			const offsetX = (name === 'x1' || name === 'x2') ? this.offset.x : 0; 
-			const offsetY = (name === 'y1' || name === 'y2') ? this.offset.y : 0;
-			return (value + offsetX + offsetY) / scale;
-		},
-		updateMetrics(name, value)
-		{
-			const update = cloneDeep(this.current.metrics);
-			switch(name)
+			/*
+			for(let metric in metrics)
 			{
-				case 'x1':
-				case 'x2':
-				case 'y1':
-				case 'y2':
-					update[name].value = this.outApplyOffsetScale(name, value);
-					break;
-					
-				case 'rotate':
-					this.updateOffset();
-					update[name].value = this.outApplyOffsetScale(name, value);
-					for(let metric in update)
-					{
-						if(update[metric].type !== 'line') continue;
-						update[metric].value = this.outApplyOffsetScale(update[metric].name, this[metric].value);
-					}
-					break;
-				
-				default:
-					throw new Error('Metrics name is wrong');
+				//metrics[metric].position = this.removeShift(metrics[metric].subtype, metrics[metric].value);
+				//metrics[metric].position = this.stripScaleShift(type, scale, value);
 			}
-			this.$store.dispatch(updateMetrics, update);
+			*/
+			metrics.line = [metrics.x1, metrics.x2, metrics.y1, metrics.y2];
+			return metrics;
 		},
-		resolvePosition(x, y)
+		addShift(subtype, value)
 		{
-			const canvas = this.$refs.canvas.getBoundingClientRect();
-			return { x: x - canvas.left, y: y - canvas.top };
+			if(subtype === 'vertical') return value + this.shift.x;
+			if(subtype === 'horizontal') return value + this.shift.y;
+			return value;
 		},
+		removeShift(subtype, value)
+		{
+			if(subtype === 'vertical') return value - this.shift.x;
+			if(subtype === 'horizontal') return value - this.shift.y;
+			return value;
+		}
 	},
 }
 </script>

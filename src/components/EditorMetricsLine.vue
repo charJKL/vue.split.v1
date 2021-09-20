@@ -23,19 +23,19 @@ export default
 		{
 			if(this.type === 'horizontal') return 0;
 			if(this.type === 'vertical') return this.value;
-			throw new Error('Line type is wrong');
+			throw new Error(`Line type ${this.type} is wrong`);
 		},
 		x2()
 		{
 			if(this.type === 'horizontal') return '100%';
 			if(this.type === 'vertical') return this.value;
-			throw new Error('Line type is wrong');
+			throw new Error(`Line type ${this.type} is wrong`);
 		},
 		y1()
 		{
 			if(this.type === 'horizontal') return this.value;
 			if(this.type === 'vertical') return 0;
-			throw new Error('Line type is wrong');
+			throw new Error(`Line type ${this.type} is wrong`);
 		},
 		y2()
 		{

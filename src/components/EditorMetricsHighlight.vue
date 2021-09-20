@@ -1,9 +1,9 @@
 <template>
 	<mask id="view">
 		<rect class="view-shadow" />
-		<rect class="view-highlight" :style="getHighlightStyle" />
+		<rect class="view-spot" :style="getSpotStyle" />
 	</mask>
-	<rect class="area" mask="url(#view)" :style="getAreaStyle" />
+	<rect class="size" mask="url(#view)" :style="getSizeStyle" />
 </template>
 
 <script>
@@ -18,25 +18,25 @@ export default
 {
 	props:
 	{
-		area: { type: Object, required: true, validator(value){ return isMatch(blueprint.rect, value); } },
-		highlight: { type: Object, required: true, validator(value){ return isMatch(blueprint.rect, value); } },
+		size: { type: Object, required: true, validator(value){ return isMatch(blueprint.rect, value); } },
+		spot: { type: Object, required: true, validator(value){ return isMatch(blueprint.rect, value); } },
 	},
 	computed:
 	{
-		getAreaStyle()
+		getSizeStyle()
 		{
-			return {x: this.area.x, y: this.area.y, width: this.area.width, height: this.area.height };
+			return {x: this.size.x, y: this.size.y, width: this.size.width, height: this.size.height };
 		},
-		getHighlightStyle()
+		getSpotStyle()
 		{
-			return {x: this.highlight.x, y: this.highlight.y, width: this.highlight.width, height: this.highlight.height };
+			return {x: this.spot.x, y: this.spot.y, width: this.spot.width, height: this.spot.height };
 		},
 	}
 }
 </script>
 
 <style scoped>
-.area
+.size
 {
 	x: 0;
 	y: 0;
@@ -52,7 +52,7 @@ export default
 	width: 100%;
 	height: 100%;
 }
-.view-highlight
+.view-spot
 {
 	fill: #000;
 }

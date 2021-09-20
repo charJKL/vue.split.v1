@@ -15,6 +15,6 @@ export default
 		x2: { name: 'x2', type: 'line', subtype: 'vertical', value: 250 },
 		y1: { name: 'y1', type: 'line', subtype: 'horizontal', value: 50 },
 		y2: { name: 'y2', type: 'line', subtype: 'horizontal', value: 250 },
-		rotate: { name: 'rotate', type: 'float', value: 0 },
+		rotate: { name: 'rotate', type: 'float', subtype: 'float', value: 0 },
 	}
 }
