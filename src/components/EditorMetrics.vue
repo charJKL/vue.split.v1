@@ -6,7 +6,7 @@
 		</div>
 		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
 			<editor-metrics-highlight :size="highlightSize" :spot="highlightSpot"></editor-metrics-highlight>
-			<editor-metrics-line v-for="metric in metrics.line" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="metric.hover"></editor-metrics-line>
+			<editor-metrics-line v-for="metric in metrics.line" :key="metric.name" :type="metric.subtype" :value="metric.position" :hover="metric.hover"></editor-metrics-line>
 		</svg>
 	</div>
 </div>
@@ -15,7 +15,9 @@
 <script>
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
+import {updateMetrics} from '../store/records';
 import {isMatch} from '../core/isMatch';
+import {cloneDeep} from 'lodash';
 //function onDullMouseEvent(){ }
 
 const blueprint = 
@@ -80,9 +82,9 @@ export default
 		},
 		highlightSpot()
 		{
-			const width = this.metrics.x2.value - this.metrics.x1.value;
-			const height = this.metrics.y2.value - this.metrics.y1.value;
-			return { x: this.metrics.x1.value, y: this.metrics.y1.value, width: width, height: height };
+			const width = this.metrics.x2.position - this.metrics.x1.position;
+			const height = this.metrics.y2.position - this.metrics.y1.position;
+			return { x: this.metrics.x1.position, y: this.metrics.y1.position, width: width, height: height };
 		},
 		highlightSize()
 		{
@@ -108,6 +110,21 @@ export default
 	},
 	methods:
 	{
+		updateMetrics(name, value)
+		{
+			const update = cloneDeep(this.current.metrics);
+			update[name].value = value;
+			if(name === 'rotate') 
+			{
+				this.calcOffset();
+			}
+			
+			update.x1.value = this.addShiftAndUnscale(this.metrics.x1.subtype, this.metrics.x1.value, this.scale);
+			update.x2.value = this.addShiftAndUnscale(this.metrics.x2.subtype, this.metrics.x2.value, this.scale);
+			update.y1.value = this.addShiftAndUnscale(this.metrics.y1.subtype, this.metrics.y1.value, this.scale);
+			update.y2.value = this.addShiftAndUnscale(this.metrics.y2.subtype, this.metrics.y2.value, this.scale);
+			this.$store.dispatch(updateMetrics, update);
+		},
 		calcScale()
 		{
 			const width = this.editor.width - this.margin.left - this.margin.right;
@@ -116,17 +133,26 @@ export default
 			const y= height / this.current.source.size.height;
 			this.scale = Math.min(x, y);
 		},
+		calcOffset()
+		{
+			const window = this.$refs.window.getBoundingClientRect();
+			const image = this.$refs.image.getBoundingClientRect();
+			this.offset.x = Math.abs(image.left - window.left);
+			this.offset.y = Math.abs(image.top - window.top);
+		},
 		decorate(metrics)
 		{
-			/*
-			for(let metric in metrics)
-			{
-				//metrics[metric].position = this.removeShift(metrics[metric].subtype, metrics[metric].value);
-				//metrics[metric].position = this.stripScaleShift(type, scale, value);
-			}
-			*/
 			metrics.line = [metrics.x1, metrics.x2, metrics.y1, metrics.y2];
+			metrics.line.forEach(metric => metric.position = this.removeShiftAndScale(metric.subtype, metric.value, this.scale) );
 			return metrics;
+		},
+		addShiftAndUnscale(subtype, value, scale)
+		{
+			return this.addShift(subtype, value) / scale;
+		},
+		removeShiftAndScale(subtype, value, scale)
+		{
+			return this.removeShift(subtype, value * scale)
 		},
 		addShift(subtype, value)
 		{
