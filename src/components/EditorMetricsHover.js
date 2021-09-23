@@ -1,4 +1,4 @@
-//import Dragging from './EditorMetricsDragging';
+import Dragging from './EditorMetricsDragging';
 import {minBy} from 'lodash';
 
 const sensitivity = 0.001;
@@ -6,7 +6,6 @@ const threshold = 20;
 
 const hover = 
 {
-	/*
 	onLeftDown(e)
 	{
 		if(this.hover === null) return;
@@ -14,7 +13,6 @@ const hover =
 		this.mouse = Dragging;
 		this.onMouseLeftDown.call(this, e);
 	},
-	*/
 	onMove(e)
 	{
 		if(this.isCurrent === false) return;

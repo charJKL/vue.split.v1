@@ -147,15 +147,14 @@ export default
 		{
 			const update = cloneDeep(this.current.metrics);
 			if(name === 'rotate') this.calcShift(this.current.source.size, value);
-			update[name].value = value;
+			update[name].position = value;
 			
-			console.log(update);
-			
-			console.log('output', 'value:', update.x1.value, 'shift:', this.shift.x , 'position:', update.x1.position);
+			console.log(name, value);
 			update.x1.value = this.addShiftAndUnscale(update.x1.subtype, update.x1.position, this.scale);
 			update.x2.value = this.addShiftAndUnscale(update.x2.subtype, update.x2.position, this.scale);
 			update.y1.value = this.addShiftAndUnscale(update.y1.subtype, update.y1.position, this.scale);
 			update.y2.value = this.addShiftAndUnscale(update.y2.subtype, update.y2.position, this.scale);
+			update.rotate.value = update.rotate.position;
 			this.$store.dispatch(updateMetrics, update);
 		},
 		calcScale()
@@ -181,7 +180,7 @@ export default
 			metrics.lines = [metrics.x1, metrics.x2, metrics.y1, metrics.y2];
 			metrics.lines.forEach(metric => metric.position = this.removeShiftAndScale(metric.subtype, metric.value, this.scale) );
 			metrics.lines.forEach(metric => metric.isHover = this.isHover(metric.name) );
-			console.log('decorate', 'value:', metrics.x1.value, 'shift:', this.shift.x, 'position:', metrics.x1.position);
+			metrics.rotate.position = metrics.rotate.value;
 			return metrics;
 		},
 		addShiftAndUnscale(subtype, value, scale)
