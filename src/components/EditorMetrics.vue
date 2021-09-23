@@ -149,7 +149,6 @@ export default
 			if(name === 'rotate') this.calcShift(this.current.source.size, value);
 			update[name].position = value;
 			
-			console.log(name, value);
 			update.x1.value = this.addShiftAndUnscale(update.x1.subtype, update.x1.position, this.scale);
 			update.x2.value = this.addShiftAndUnscale(update.x2.subtype, update.x2.position, this.scale);
 			update.y1.value = this.addShiftAndUnscale(update.y1.subtype, update.y1.position, this.scale);
