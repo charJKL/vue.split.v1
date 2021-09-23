@@ -1,4 +1,4 @@
-import Dragging from './EditorMetricsDragging';
+//import Dragging from './EditorMetricsDragging';
 import {minBy} from 'lodash';
 
 const sensitivity = 0.001;
@@ -6,6 +6,7 @@ const threshold = 20;
 
 const hover = 
 {
+	/*
 	onLeftDown(e)
 	{
 		if(this.hover === null) return;
@@ -13,23 +14,24 @@ const hover =
 		this.mouse = Dragging;
 		this.onMouseLeftDown.call(this, e);
 	},
+	*/
 	onMove(e)
 	{
 		if(this.isCurrent === false) return;
-		const {x, y} = this.resolvePosition(e.clientX, e.clientY);
-		const metrics = [this.x1, this.x2, this.y1, this.y2];
-		for(let metric of metrics)
-		{
-			const base = metric.subtype === 'vertical' ? x : y;
-			metric.diff = Math.abs(base - metric.value);
-		}
-		const near = minBy(metrics, (metric) => metric.diff);
-		this.hover = (near.diff < threshold) ? near : null;
+		const position = this.resolveMousePosition(e.clientX, e.clientY);
+		this.metrics.lines.forEach(metric => metric.diff = hover.calcDiff(metric.subtype, position, metric.position));
+		const nearest = minBy(this.metrics.lines, (metric) => metric.diff);
+		this.hover = (nearest.diff < threshold) ? nearest : null;
 	},
 	onWheel(e)
 	{
-		const value = this.rotate.value + e.deltaY * sensitivity;
+		const value = this.metrics.rotate.value + e.deltaY * sensitivity;
+		this.metrics.rotate.position = value;
 		this.updateMetrics('rotate', value);
+	},
+	calcDiff(subtype, position, value)
+	{
+		return Math.abs((subtype === 'vertical' ? position.x : position.y) - value);
 	}
 }
 

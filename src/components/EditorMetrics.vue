@@ -1,12 +1,12 @@
 <template>
-<div :class="['editor']" ref="editor">
+<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onMouseLeftDown" @mouseup.left.prevent.stop="onMouseLeftUp" @mousemove.prevent.stop="onMouseMove" @wheel.prevent.stop="onMouseWheel">
 	<div class="desktop" :style="getDesktopStyle" v-if="isCurrent">
 		<div class="window" ref="window">
 			<img class="image" ref="image" :style="getImageStyle" :src="this.current.source.url" />
 		</div>
 		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
 			<editor-metrics-highlight :size="highlightSize" :spot="highlightSpot"></editor-metrics-highlight>
-			<editor-metrics-line v-for="metric in metrics.line" :key="metric.name" :type="metric.subtype" :value="metric.position" :hover="metric.hover"></editor-metrics-line>
+			<editor-metrics-line v-for="metric in metrics.lines" :key="metric.name" :type="metric.subtype" :value="metric.position" :hover="metric.isHover"></editor-metrics-line>
 		</svg>
 	</div>
 </div>
@@ -16,9 +16,11 @@
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
 import {updateMetrics} from '../store/records';
+import {changeHover} from '../store/ui';
+import Hover from './EditorMetricsHover';
 import {isMatch} from '../core/isMatch';
 import {cloneDeep} from 'lodash';
-//function onDullMouseEvent(){ }
+function onDullMouseEvent(){ }
 
 const blueprint = 
 {
@@ -40,6 +42,9 @@ export default
 			editor: { width: 0, height: 0 },
 			shift: { x: 0, y: 0 },
 			scale: 0,
+			mouse: Hover,
+			hover: null,
+			active: null,
 		}
 	},
 	computed:
@@ -55,6 +60,12 @@ export default
 		metrics()
 		{
 			return this.isCurrent ? this.decorate(this.$store.getters.getCurrent.metrics) : null;
+		},
+		getEditorClasses()
+		{
+			const isGrab = this.hover ? 'cursor-grab' : '';
+			const isGrabbing = this.active ? 'cursor-grabbing' : '';
+			return [isGrab, isGrabbing];
 		},
 		getDesktopStyle()
 		{
@@ -90,6 +101,22 @@ export default
 		{
 			return { width: this.desktopSize.width, height: this.desktopSize.height, x: this.padding.left, y: this.padding.top };
 		},
+		onMouseLeftDown()
+		{
+			return this.mouse.onLeftDown ? this.mouse.onLeftDown.bind(this) : onDullMouseEvent;
+		},
+		onMouseLeftUp()
+		{
+			return this.mouse.onLeftUp ? this.mouse.onLeftUp.bind(this) : onDullMouseEvent;
+		},
+		onMouseMove()
+		{
+			return this.mouse.onMove ? this.mouse.onMove.bind(this) : onDullMouseEvent;
+		},
+		onMouseWheel()
+		{
+			return this.mouse.onWheel ? this.mouse.onWheel.bind(this) : onDullMouseEvent;
+		},
 	},
 	watch:
 	{
@@ -98,10 +125,16 @@ export default
 			console.log('current changed', value);
 			if(value === null) return;
 			this.calcScale();
+			this.calcShift(this.current.source.size, this.metrics.rotate.value);
 		},
-		metrics(value)
+		metrics()
 		{
-			console.log('watch-metrics', value);
+			//console.log('watch-metrics', value);
+		},
+		hover(metric)
+		{
+			const name = (metric === null) ? null : metric.name;
+			this.$store.dispatch(changeHover, name);
 		}
 	},
 	mounted()
@@ -113,16 +146,16 @@ export default
 		updateMetrics(name, value)
 		{
 			const update = cloneDeep(this.current.metrics);
+			if(name === 'rotate') this.calcShift(this.current.source.size, value);
 			update[name].value = value;
-			if(name === 'rotate') 
-			{
-				this.calcOffset();
-			}
 			
-			update.x1.value = this.addShiftAndUnscale(this.metrics.x1.subtype, this.metrics.x1.value, this.scale);
-			update.x2.value = this.addShiftAndUnscale(this.metrics.x2.subtype, this.metrics.x2.value, this.scale);
-			update.y1.value = this.addShiftAndUnscale(this.metrics.y1.subtype, this.metrics.y1.value, this.scale);
-			update.y2.value = this.addShiftAndUnscale(this.metrics.y2.subtype, this.metrics.y2.value, this.scale);
+			console.log(update);
+			
+			console.log('output', 'value:', update.x1.value, 'shift:', this.shift.x , 'position:', update.x1.position);
+			update.x1.value = this.addShiftAndUnscale(update.x1.subtype, update.x1.position, this.scale);
+			update.x2.value = this.addShiftAndUnscale(update.x2.subtype, update.x2.position, this.scale);
+			update.y1.value = this.addShiftAndUnscale(update.y1.subtype, update.y1.position, this.scale);
+			update.y2.value = this.addShiftAndUnscale(update.y2.subtype, update.y2.position, this.scale);
 			this.$store.dispatch(updateMetrics, update);
 		},
 		calcScale()
@@ -133,26 +166,33 @@ export default
 			const y= height / this.current.source.size.height;
 			this.scale = Math.min(x, y);
 		},
-		calcOffset()
+		calcShift(size, rotate)
 		{
-			const window = this.$refs.window.getBoundingClientRect();
-			const image = this.$refs.image.getBoundingClientRect();
-			this.offset.x = Math.abs(image.left - window.left);
-			this.offset.y = Math.abs(image.top - window.top);
+			const radians = rotate * Math.PI / 180;
+			let x = size.width / 2;
+			let y = size.height / 2;
+			let nx = x * Math.cos(radians) + y * Math.sin(radians);
+			let ny = x * Math.sin(radians) + y * Math.cos(radians);
+			this.shift.x = Math.abs(x - nx);
+			this.shift.y = Math.abs(y - ny);
 		},
 		decorate(metrics)
 		{
-			metrics.line = [metrics.x1, metrics.x2, metrics.y1, metrics.y2];
-			metrics.line.forEach(metric => metric.position = this.removeShiftAndScale(metric.subtype, metric.value, this.scale) );
+			metrics.lines = [metrics.x1, metrics.x2, metrics.y1, metrics.y2];
+			metrics.lines.forEach(metric => metric.position = this.removeShiftAndScale(metric.subtype, metric.value, this.scale) );
+			metrics.lines.forEach(metric => metric.isHover = this.isHover(metric.name) );
+			console.log('decorate', 'value:', metrics.x1.value, 'shift:', this.shift.x, 'position:', metrics.x1.position);
 			return metrics;
 		},
 		addShiftAndUnscale(subtype, value, scale)
 		{
-			return this.addShift(subtype, value) / scale;
+			// first remove scale then add offset
+			return this.addShift(subtype, value / scale);
 		},
 		removeShiftAndScale(subtype, value, scale)
 		{
-			return this.removeShift(subtype, value * scale)
+			// first remove shift then scale
+			return this.removeShift(subtype, value) * scale;
 		},
 		addShift(subtype, value)
 		{
@@ -165,7 +205,16 @@ export default
 			if(subtype === 'vertical') return value - this.shift.x;
 			if(subtype === 'horizontal') return value - this.shift.y;
 			return value;
-		}
+		},
+		isHover(name)
+		{
+			return this.$store.getters.getHover === name;
+		},
+		resolveMousePosition(x, y)
+		{
+			const canvas = this.$refs.canvas.getBoundingClientRect();
+			return { x: x - canvas.left, y: y - canvas.top };
+		},
 	},
 }
 </script>
