@@ -45,6 +45,7 @@ const actions =
 			list.push(record);
 			dispatch(readImageSize, record);
 		}
+		commit('index', null);
 		commit('list', list);
 	},
 	[loadSave]({commit}, filepath)
