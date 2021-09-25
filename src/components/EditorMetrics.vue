@@ -220,19 +220,17 @@ export default
 <style scoped>
 .editor
 {
-	flex: 1 0 0;
+	height: 100%;
+	user-select: none;
 	display:flex;
 	justify-content: center;
 	align-items: center;
-	user-select: none;
 }
 .editor.cursor-grab{ cursor: grab; }
 .editor.cursor-grabbing{ cursor: grabbing; }
 .desktop
 {
 	position: relative;
-	width: 500px;
-	height: 500px;
 	border: solid 1px #000;
 }
 .window

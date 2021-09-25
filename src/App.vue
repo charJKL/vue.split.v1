@@ -1,7 +1,10 @@
 <template>
 	<ui-header></ui-header>
 	<ui-list></ui-list>
-	<editor-metrics></editor-metrics>
+	<main id="main">
+		<default-values-editor></default-values-editor>	
+		<editor-metrics></editor-metrics>
+	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
 </template>
@@ -9,13 +12,14 @@
 <script>
 import UiHeader from './components/UiHeader';
 import UiList from './components/UiList';
+import DefaultValuesEditor from './components/DefaultValuesEditor';
 import EditorMetrics from './components/EditorMetrics';
 import UiFooter from './components/UiFooter';
 import _ from 'lodash';
 
 export default 
 {
-	components: { UiHeader, UiList, EditorMetrics, UiFooter },
+	components: { UiHeader, UiList, DefaultValuesEditor, EditorMetrics, UiFooter },
 	name: 'App',
 	computed:
 	{
@@ -94,6 +98,13 @@ body
 	max-height: 100%;
 	overflow-y: none;
 }
+#main
+{
+	position: relative;
+	flex: 1 0 0;
+}
+
+
 button
 {
 	padding: 3px 5px;

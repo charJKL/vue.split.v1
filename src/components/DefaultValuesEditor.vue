@@ -61,12 +61,12 @@ export default
 }
 </script>
 
-<style>
+<style scoped>
 .default-collapsed
 {
 	position: absolute;
 	left: 0px;
-	bottom: 50px;
+	top: 0px;
 	padding: 10px;
 }
 .default-list
