@@ -1,41 +1,31 @@
 <template>[
-	name: <input class="input-text" ref="name" :value="getCurrentName" @input="onCurrentNameInput" />
+	name: <input class="input-text" ref="name" :value="name" @input="onInputNameEvent" />
 	<template v-for="metric in metrics" :key="metric.name">
 		<label>
 			{{ metric.name }}:
-			<input class="input-int" v-if="isLine(metric.type)" type="number" :disabled="!isCurrent" :value="getValue(metric.name)" @input="onInputIntEvent(metric.name, $event)" />
-			<input class="input-float" v-else-if="isFloat(metric.type)" type="number" step="0.1" :disabled="!isCurrent" :value="getValue(metric.name) " @input="onInputFloatEvent(metric.name, $event)" />
+			<input :value="metric.value" />
 		</label>,
 	</template>]
 </template>
 
 <script>
 import Record from './Record';
-import {changeCurrent, updateMetrics} from '../store/records';
+import {isMatch} from '../core/isMatch';
 import {cloneDeep} from 'lodash';
 
 export default
 {
-	data()
+	props:
 	{
-		return {
-			metrics: Record.metrics,
-		}
+		name: { type: String },
+		metrics: { type: Object, required: true, validator(value){ return isMatch(Record.metrics, value); } },
 	},
+	emits: ['update:name', 'update:metrics'],
 	computed:
 	{
-		isCurrent()
+		metric()
 		{
-			return this.$store.getters.getCurrent !== null;
-		},
-		current()
-		{
-			return this.$store.getters.getCurrent;
-		},
-		getCurrentName()
-		{
-			if(document.activeElement === this.$refs.name) return this.$refs.name.value;
-			return this.isCurrent === true ? this.current.source.filename : '';
+			return this.metric.filter();
 		}
 	},
 	methods:
@@ -50,11 +40,7 @@ export default
 		},
 		getValue(name)
 		{
-			return this.isCurrent === true ? this.current.metrics[name].value : '' ;
-		},
-		onCurrentNameInput(e)
-		{
-			this.$store.dispatch(changeCurrent, e.target.value);
+			this.metrics[name].value;
 		},
 		onInputIntEvent(name, e)
 		{
@@ -64,11 +50,15 @@ export default
 		{
 			this.onInputEvent(name, parseFloat(e.target.value));
 		},
+		onInputNameEvent(value)
+		{
+			this.$emit('update:name', value);
+		},
 		onInputEvent(name, value)
 		{
-			const metrics = cloneDeep(this.current.metrics);
+			const metrics = cloneDeep(this.metrics);
 					metrics[name].value = value;
-			this.$store.dispatch(updateMetrics, metrics);
+			this.$emit('update:metrics', metrics);
 		}
 	}
 }

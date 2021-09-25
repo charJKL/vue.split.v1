@@ -1,7 +1,7 @@
 <template>
 <div class="footer">
 	<div class="footer-left">
-		<editor-input></editor-input>
+		<editor-input :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-input>
 	</div>
 	<div class="footer-right">
 		<button id="save" @click="onSaveData">Save</button>
@@ -15,8 +15,27 @@ import EditorInput from './EditorInput.vue';
 export default
 {
 	components: { EditorInput },
+	computed:
+	{
+		current()
+		{
+			return this.$store.getters.getCurrent;
+		},
+		isCurrent()
+		{
+			return this.$store.getters.getCurrent !== null;
+		},
+		metrics()
+		{
+			return this.isCurrent ? this.current.metrics : null;
+		},
+	},
 	methods:
 	{
+		onUpdateMetrics(value)
+		{
+			console.log('footer-onUpdateMetrics', value);
+		},
 		onSaveData()
 		{
 			//this.$store.dispath(loadSave, e.target.files[0]);

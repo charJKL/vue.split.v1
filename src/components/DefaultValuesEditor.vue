@@ -1,44 +1,33 @@
 <template>
-<section v-if="show === false" class="default-collapsed">
-	<toggle-button v-model="show" on="Hide defaults" off="Show defaults" ></toggle-button>
-</section>
-<section v-else class="default-list">
-	<div class="default-list-row">
-		<toggle-button v-model="show" on="Hide defaults" off="Show defaults" ></toggle-button>
+<div class="editor-default editor-default-collapsed" v-if="show === false">
+	<toggle-button class="button-toggle" v-model="show" on="Show defaults" off="Show defaults"></toggle-button>
+</div>
+<div class="editor-default editor-default-showed" v-else>
+	<div class="">
+		<toggle-button class="button-toggle" v-model="show" on="Show defaults" off="Show defaults"></toggle-button>
 		<button @click="onAdd">Add</button>
 	</div>
-	<div v-for="(blueprint, index) in blueprints" :key="index" class="default-list-row">
-		[
-			name:<input class="input-text" v-model="blueprint.regexp" />,
-			<template v-for="(metric, name) in blueprint.metrics" :key="name">
-				<label>{{ name }}:
-					<input v-if="metric.type === 'value'" class="input-float" step="0.1" type="number" v-model="metric.value" />
-					<input v-else-if="metric.type === 'manual'" class="input-checkbox" type="checkbox" v-model="metric.value" />
-					<input v-else class="input-int" type="number" v-model="metric.value" />
-				</label>,
-			</template>
-		]
+	<div v-for="(blueprint, index) in list" :key="index">
+		<editor-input :metrics="blueprint" @update:metrics="onBlueprintUpdate"></editor-input>
 		<button @click="onApply(blueprint)" >Apply</button>
 	</div>
-</section>
+</div>
 </template>
 
 <script>
 import ToggleButton from './utils/ToggleButton';
-import _ from 'lodash';
+import EditorInput from './EditorInput';
+import Record from './Record';
+import {cloneDeep} from 'lodash';
 
 export default
 {
-	components: { ToggleButton },
-	props:
-	{
-		metrics: { type: Object, requred: true }
-	},
-	emits: ['apply-blueprint'],
+	components: { ToggleButton, EditorInput },
+	emits: ['apply'],
 	data()
 	{
 		return {
-			blueprints: [],
+			list: [],
 			show: false,
 		}
 	},
@@ -48,40 +37,42 @@ export default
 	},
 	methods:
 	{
+		onBlueprintUpdate(blueprint)
+		{
+			console.log('onBlueprintUpdate', blueprint);
+		},
 		onAdd()
 		{
-			const blueprint = { regexp: '', metrics: _.cloneDeep(this.metrics) };
-			this.blueprints.unshift(blueprint);
+			this.list.unshift(cloneDeep(Record.metrics));
 		},
 		onApply(blueprint)
 		{
-			this.$emit('apply-blueprint', blueprint);
+			this.$emit('apply', blueprint);
 		}
 	}
 }
 </script>
 
 <style scoped>
-.default-collapsed
+.editor-default
 {
-	position: absolute;
+	position:absolute;
+	top: 0px; 
 	left: 0px;
-	top: 0px;
-	padding: 10px;
-}
-.default-list
-{
-	width: calc(100% - 20px);
-	position: absolute;
-	left: 0px;
-	bottom: 50px;
-	padding: 10px;
 	z-index: 5;
+}
+.editor-default-collapsed
+{
+	
+}
+.editor-default-showed
+{
+	width: 100%;
 	background: var(--gray-light);
 }
-.default-list-row:not(:last-child)
+.button-toggle
 {
-	margin: 0 0 10px 0px;
+	margin: 10px;
 }
 </style>
 
