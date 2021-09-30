@@ -6,7 +6,7 @@
 		</div>
 		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
 			<editor-metrics-highlight :size="highlightSize" :spot="highlightSpot"></editor-metrics-highlight>
-			<editor-metrics-line v-for="metric in local.lines" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="metric.isHover"></editor-metrics-line>
+			<editor-metrics-line v-for="metric in local.lines" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="isHover(metric)"></editor-metrics-line>
 		</svg>
 	</div>
 </div>
@@ -124,13 +124,11 @@ export default
 	{
 		current(current)
 		{
-			//console.log('current changed', current);
 			if(current === null) return;
 			this.calcScale(current);
 		},
 		metrics(metrics)
 		{
-			//console.log('metrics changed', metrics);
 			if(metrics === null) return;
 			this.calcShift(this.current.source.size, metrics.rotate.value);
 			this.calcLocal(metrics);
@@ -186,11 +184,6 @@ export default
 			this.local.y1.value = this.removeShiftAndScale(metrics.y1.subtype, metrics.y1.value, this.scale);
 			this.local.y2.value = this.removeShiftAndScale(metrics.y2.subtype, metrics.y2.value, this.scale);
 			this.local.rotate.value = metrics.rotate.value;
-			
-			this.local.x1.isHover = this.isHover(this.local.x1);
-			this.local.x2.isHover = this.isHover(this.local.x2);
-			this.local.y1.isHover = this.isHover(this.local.y1);
-			this.local.y2.isHover = this.isHover(this.local.y2);
 		},
 		addShiftAndUnscale(subtype, value, scale)
 		{
