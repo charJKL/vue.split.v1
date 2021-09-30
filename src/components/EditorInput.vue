@@ -53,6 +53,7 @@ export default
 		updateSource()
 		{
 			const source = cloneDeep(this.source);
+					source.filename = this.internal.filename;
 			this.$emit(updateSource, source);
 		},
 		updateMetrics()
@@ -67,11 +68,11 @@ export default
 		},
 		wrapMetrics(metrics)
 		{
-			metrics.x1.isDisabled = this.isSourceNull;
-			metrics.x2.isDisabled = this.isSourceNull;
-			metrics.y1.isDisabled = this.isSourceNull;
-			metrics.y2.isDisabled = this.isSourceNull;
-			metrics.rotate.isDisabled = this.isSourceNull;
+			metrics.x1.isDisabled = this.isMetricsNull;
+			metrics.x2.isDisabled = this.isMetricsNull;
+			metrics.y1.isDisabled = this.isMetricsNull;
+			metrics.y2.isDisabled = this.isMetricsNull;
+			metrics.rotate.isDisabled = this.isMetricsNull;
 			
 			return metrics;
 		},
@@ -82,11 +83,7 @@ export default
 		isFloat(type)
 		{
 			return type === 'float';
-		},
-		onInputTextEvent(name, e)
-		{
-			this.updateSource(name, e.target.value);
-		},
+		}
 	}
 }
 </script>
