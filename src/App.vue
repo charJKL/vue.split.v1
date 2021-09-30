@@ -2,7 +2,7 @@
 	<ui-header></ui-header>
 	<ui-list></ui-list>
 	<main id="main">
-		<default-values-editor></default-values-editor>	
+		<default-values></default-values>	
 		<editor-metrics></editor-metrics>
 	</main>
 	<ui-footer></ui-footer>
@@ -12,14 +12,14 @@
 <script>
 import UiHeader from './components/UiHeader';
 import UiList from './components/UiList';
-import DefaultValuesEditor from './components/DefaultValuesEditor';
+import DefaultValues from './components/DefaultValues';
 import EditorMetrics from './components/EditorMetrics';
 import UiFooter from './components/UiFooter';
 import _ from 'lodash';
 
 export default 
 {
-	components: { UiHeader, UiList, DefaultValuesEditor, EditorMetrics, UiFooter },
+	components: { UiHeader, UiList, DefaultValues, EditorMetrics, UiFooter },
 	name: 'App',
 	computed:
 	{
@@ -49,23 +49,16 @@ export default
 		{
 			this.current.wasEdited = true;
 		},
-		onApplyBlueprint(blueprint)
-		{
-			for(let [name, value] of Object.entries(this.list))
-			{
-				if(value.wasEdited === true) continue;
-				if(name.match(blueprint.regexp) === null) continue;
-				this.list[name].metrics = _.cloneDeep(blueprint.metrics);
-			}
-		},
 		onSave()
 		{
+			/* TODO this function need to be refactored
 			const content = JSON.stringify(this.list);
 			const blob = new Blob([content], { type: "application/json" });
 			
 			this.$refs.download.href = URL.createObjectURL(blob);
 			this.$refs.download.download = 'metrics.json';
 			this.$refs.download.click();
+			*/
 		}
 	}
 }
