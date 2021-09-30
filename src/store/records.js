@@ -31,6 +31,7 @@ export const loadSave = 'load-save-action';
 export const changeCurrent = 'change-current-action';
 export const selectIndex = 'select-index-action';
 export const updateMetrics = 'update-metrics-action';
+export const applyBlueprint = 'apply-blueprint-action';
 const readImageSize = 'read-image-size';
 const actions = 
 {
@@ -64,9 +65,19 @@ const actions =
 		commit('index', index);
 		if(getters.getCurrent !== null) getters.getCurrent.isSelected = true;
 	},
-	[updateMetrics]({commit}, value)
+	[applyBlueprint]({state, commit}, blueprint)
 	{
-		commit('metrics', value);
+		for (const [index, record] of state.list.entries())
+		{
+			if(record.wasEdited === true) continue;
+			if(record.source.filename.match(blueprint.source.filename) === null) continue;
+			commit('record', {index: index, field: 'metrics', value: blueprint.metrics});
+		}
+	},
+	[updateMetrics]({getters, commit}, metrics)
+	{
+		commit('record', {index: getters.getIndex, field: 'metrics', value: metrics});
+		commit('record', {index: getters.getIndex, field: 'wasEdited', value: true});
 	},
 	[readImageSize](state, record)
 	{
@@ -82,7 +93,7 @@ const mutations =
 {
 	list(state, list){ state.list = list; },
 	index(state, index){ state.index = index; },
-	metrics(state, metrics){ state.list[state.index].metrics = metrics; },
+	record(state, record){ state.list[record.index][record.field] = record.value },
 }
 
 export default { state, getters, actions, mutations };
