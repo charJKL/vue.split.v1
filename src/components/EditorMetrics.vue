@@ -6,7 +6,7 @@
 		</div>
 		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
 			<editor-metrics-highlight :size="highlightSize" :spot="highlightSpot"></editor-metrics-highlight>
-			<editor-metrics-line v-for="metric in metrics.lines" :key="metric.name" :type="metric.subtype" :value="metric.position" :hover="metric.isHover"></editor-metrics-line>
+			<editor-metrics-line v-for="metric in local.lines" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="metric.isHover"></editor-metrics-line>
 		</svg>
 	</div>
 </div>
@@ -15,6 +15,7 @@
 <script>
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
+import Record from './Record';
 import {updateMetrics} from '../store/records';
 import {changeHover} from '../store/ui';
 import Hover from './EditorMetricsHover';
@@ -39,6 +40,7 @@ export default
 	data()
 	{
 		return {
+			local: cloneDeep(Record.metrics),
 			editor: { width: 0, height: 0 },
 			shift: { x: 0, y: 0 },
 			scale: 0,
@@ -55,11 +57,11 @@ export default
 		},
 		isCurrent()
 		{
-			return this.$store.getters.getCurrent !== null;
+			return this.current !== null;
 		},
 		metrics()
 		{
-			return this.isCurrent ? this.decorate(this.$store.getters.getCurrent.metrics) : null;
+			return this.isCurrent ? this.current.metrics : null;
 		},
 		getEditorClasses()
 		{
@@ -73,7 +75,7 @@ export default
 		},
 		getImageStyle()
 		{
-			return { transform: `rotate(${this.metrics.rotate.value}deg)` };
+			return { transform: `rotate(${this.local.rotate.value}deg)` };
 		},
 		getCanvasStyle()
 		{
@@ -93,9 +95,9 @@ export default
 		},
 		highlightSpot()
 		{
-			const width = this.metrics.x2.position - this.metrics.x1.position;
-			const height = this.metrics.y2.position - this.metrics.y1.position;
-			return { x: this.metrics.x1.position, y: this.metrics.y1.position, width: width, height: height };
+			const width = this.local.x2.value - this.local.x1.value;
+			const height = this.local.y2.value - this.local.y1.value;
+			return { x: this.local.x1.value, y: this.local.y1.value, width: width, height: height };
 		},
 		highlightSize()
 		{
@@ -120,16 +122,18 @@ export default
 	},
 	watch:
 	{
-		current(value)
+		current(current)
 		{
-			console.log('current changed', value);
-			if(value === null) return;
-			this.calcScale();
-			this.calcShift(this.current.source.size, this.metrics.rotate.value);
+			//console.log('current changed', current);
+			if(current === null) return;
+			this.calcScale(current);
 		},
-		metrics()
+		metrics(metrics)
 		{
-			//console.log('watch-metrics', value);
+			//console.log('metrics changed', metrics);
+			if(metrics === null) return;
+			this.calcShift(this.current.source.size, metrics.rotate.value);
+			this.calcLocal(metrics);
 		},
 		hover(metric)
 		{
@@ -145,23 +149,21 @@ export default
 	{
 		updateMetrics(name, value)
 		{
-			const update = cloneDeep(this.current.metrics);
 			if(name === 'rotate') this.calcShift(this.current.source.size, value);
-			update[name].position = value;
-			
-			update.x1.value = this.addShiftAndUnscale(update.x1.subtype, update.x1.position, this.scale);
-			update.x2.value = this.addShiftAndUnscale(update.x2.subtype, update.x2.position, this.scale);
-			update.y1.value = this.addShiftAndUnscale(update.y1.subtype, update.y1.position, this.scale);
-			update.y2.value = this.addShiftAndUnscale(update.y2.subtype, update.y2.position, this.scale);
-			update.rotate.value = update.rotate.position;
+			const update = cloneDeep(this.current.metrics);
+					update.x1.value = this.addShiftAndUnscale(update.x1.subtype, this.local.x1.value, this.scale);
+					update.x2.value = this.addShiftAndUnscale(update.x2.subtype, this.local.x2.value, this.scale);
+					update.y1.value = this.addShiftAndUnscale(update.y1.subtype, this.local.y1.value, this.scale);
+					update.y2.value = this.addShiftAndUnscale(update.y2.subtype, this.local.y2.value, this.scale);
+					update.rotate.value = this.local.rotate.value;
 			this.$store.dispatch(updateMetrics, update);
 		},
-		calcScale()
+		calcScale(current)
 		{
 			const width = this.editor.width - this.margin.left - this.margin.right;
 			const height = this.editor.height - this.margin.top - this.margin.bottom;
-			const x = width / this.current.source.size.width;
-			const y= height / this.current.source.size.height;
+			const x = width / current.source.size.width;
+			const y= height / current.source.size.height;
 			this.scale = Math.min(x, y);
 		},
 		calcShift(size, rotate)
@@ -174,13 +176,21 @@ export default
 			this.shift.x = Math.abs(x - nx);
 			this.shift.y = Math.abs(y - ny);
 		},
-		decorate(metrics)
+		calcLocal(metrics)
 		{
-			metrics.lines = [metrics.x1, metrics.x2, metrics.y1, metrics.y2];
-			metrics.lines.forEach(metric => metric.position = this.removeShiftAndScale(metric.subtype, metric.value, this.scale) );
-			metrics.lines.forEach(metric => metric.isHover = this.isHover(metric.name) );
-			metrics.rotate.position = metrics.rotate.value;
-			return metrics;
+			this.local.lines = [this.local.x1, this.local.x2, this.local.y1, this.local.y2];
+			
+			// Transform values into scale:
+			this.local.x1.value = this.removeShiftAndScale(metrics.x1.subtype, metrics.x1.value, this.scale);
+			this.local.x2.value = this.removeShiftAndScale(metrics.x2.subtype, metrics.x2.value, this.scale);
+			this.local.y1.value = this.removeShiftAndScale(metrics.y1.subtype, metrics.y1.value, this.scale);
+			this.local.y2.value = this.removeShiftAndScale(metrics.y2.subtype, metrics.y2.value, this.scale);
+			this.local.rotate.value = metrics.rotate.value;
+			
+			this.local.x1.isHover = this.isHover(this.local.x1);
+			this.local.x2.isHover = this.isHover(this.local.x2);
+			this.local.y1.isHover = this.isHover(this.local.y1);
+			this.local.y2.isHover = this.isHover(this.local.y2);
 		},
 		addShiftAndUnscale(subtype, value, scale)
 		{
@@ -204,9 +214,9 @@ export default
 			if(subtype === 'horizontal') return value - this.shift.y;
 			return value;
 		},
-		isHover(name)
+		isHover(metric)
 		{
-			return this.$store.getters.getHover === name;
+			return this.hover === metric;
 		},
 		resolveMousePosition(x, y)
 		{

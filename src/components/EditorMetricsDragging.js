@@ -12,7 +12,7 @@ const dragging =
 		
 		this.active = this.hover;
 		begin = {x: e.clientX, y: e.clientY};
-		saved = this.active.position;
+		saved = this.active.value;
 	},
 	onMove(e)
 	{
@@ -23,10 +23,12 @@ const dragging =
 		const displacement = this.active.subtype === 'vertical' ? diff.x : diff.y;
 		const update = saved + displacement;
 		
-		if(this.active.name === 'x1' && update > this.metrics.x2.position) this.hover = this.active = this.metrics.x2;
-		if(this.active.name === 'x2' && update < this.metrics.x1.position) this.hover = this.active = this.metrics.x1;
-		if(this.active.name === 'y1' && update > this.metrics.y2.position) this.hover = this.active = this.metrics.y2;
-		if(this.active.name === 'y2' && update < this.metrics.y1.position) this.hover = this.active = this.metrics.y1;
+		if(this.active.name === 'x1' && update > this.local.x2.value) this.hover = this.active = this.local.x2;
+		if(this.active.name === 'x2' && update < this.local.x1.value) this.hover = this.active = this.local.x1;
+		if(this.active.name === 'y1' && update > this.local.y2.value) this.hover = this.active = this.local.y2;
+		if(this.active.name === 'y2' && update < this.local.y1.value) this.hover = this.active = this.local.y1;
+		
+		this.active.value = update;
 		this.updateMetrics(this.active.name, update);
 	},
 	onLeftUp(e)
