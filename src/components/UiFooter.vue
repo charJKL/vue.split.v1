@@ -1,7 +1,7 @@
 <template>
 <div class="footer">
 	<div class="footer-left">
-		<editor-input :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-input>
+		<editor-input :source="internal" :metrics="metrics"  @update:source="onUpdateSource" @update:metrics="onUpdateMetrics"></editor-input>
 	</div>
 	<div class="footer-right">
 		<button id="save" @click="onSaveData">Save</button>
@@ -11,10 +11,17 @@
 
 <script>
 import EditorInput from './EditorInput.vue';
+import {changeCurrent, updateMetrics} from '../store/records';
 
 export default
 {
 	components: { EditorInput },
+	data()
+	{
+		return {
+			internal: null,
+		}
+	},
 	computed:
 	{
 		current()
@@ -25,16 +32,32 @@ export default
 		{
 			return this.$store.getters.getCurrent !== null;
 		},
+		source()
+		{
+			return this.isCurrent ? this.current.source : null;
+		},
 		metrics()
 		{
 			return this.isCurrent ? this.current.metrics : null;
 		},
 	},
+	watch:
+	{
+		source(source)
+		{
+			if(source === null) return;
+			this.internal = source;
+		},
+	},
 	methods:
 	{
-		onUpdateMetrics(value)
+		onUpdateSource(source)
 		{
-			console.log('footer-onUpdateMetrics', value);
+			this.$store.dispatch(changeCurrent, source.filename);
+		},
+		onUpdateMetrics(metrics)
+		{
+			this.$store.dispatch(updateMetrics, metrics);
 		},
 		onSaveData()
 		{
