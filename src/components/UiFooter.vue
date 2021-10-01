@@ -11,7 +11,7 @@
 
 <script>
 import EditorInput from './EditorInput.vue';
-import {changeCurrent, updateMetrics} from '../store/records';
+import {selectCurrent, updateMetrics} from '../store/records';
 
 export default
 {
@@ -53,7 +53,7 @@ export default
 	{
 		onUpdateSource(source)
 		{
-			this.$store.dispatch(changeCurrent, source.filename);
+			this.$store.dispatch(selectCurrent, source.filename);
 		},
 		onUpdateMetrics(metrics)
 		{

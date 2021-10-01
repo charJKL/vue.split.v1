@@ -8,14 +8,14 @@
 </template>
 
 <script>
-import Record from './Record.js';
+import record from '../store/record.js';
 import {isMatch} from '../core/isMatch';
 
 export default
 {
 	props:
 	{
-		record: { type: Object, required: true, validator(value){ return isMatch(value, Record); } },
+		record: { type: Object, required: true, validator(value){ return isMatch(value, record); } },
 	},
 	computed:
 	{

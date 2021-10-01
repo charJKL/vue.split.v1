@@ -1,7 +1,6 @@
 export default
 {
 	wasEdited: false,
-	isSelected: false,
 	errors: [],
 	source:
 	{

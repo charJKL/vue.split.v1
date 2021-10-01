@@ -1,4 +1,4 @@
-import Record from '../components/Record';
+import record from './record';
 import {cloneDeep, findIndex} from 'lodash';
 
 // access this by $this.store.state.<list>
@@ -26,46 +26,37 @@ const getters = {
 
 // access this by $this.store.dispatch(<load-file>, value)
 // in actions i should call commits()
-export const loadFile = 'load-file-action';
+export const loadList = 'load-list-action';
 export const loadSave = 'load-save-action';
-export const changeCurrent = 'change-current-action';
+export const loadDefault = 'load-default-action';
+export const selectCurrent = 'select-current-action';
 export const selectIndex = 'select-index-action';
 export const updateMetrics = 'update-metrics-action';
-export const applyBlueprint = 'apply-blueprint-action';
-const readImageSize = 'read-image-size';
+
 const actions = 
 {
-	[loadFile]({commit, dispatch}, files)
+	[loadList]({commit}, files)
 	{
 		let list = [];
 		for(let file of files)
 		{
-			let record = cloneDeep(Record);
-				record.source.filename = file.name;
-				record.source.url = URL.createObjectURL(file);
-			list.push(record);
-			dispatch(readImageSize, record);
+			let instance = cloneDeep(record);
+				instance.source.filename = file.name;
+				instance.source.url = URL.createObjectURL(file);
+			const image = new Image();
+				image.addEventListener('load', e => instance.source.size = { width: e.target.naturalWidth, height: e.target.naturalHeight });
+				image.addEventListener('error', () => instance.errors.push("Cant read natural image size.") );
+				image.src = instance.source.url;
+			list.push(instance);
 		}
-		commit('index', null);
 		commit('list', list);
+		commit('index', null);
 	},
 	[loadSave]({commit}, filepath)
 	{
 		console.log('loadSave', filepath, commit);
 	},
-	[changeCurrent]({getters, dispatch}, filename)
-	{
-		let find = findIndex(getters.getList, (o) => o.source.filename === filename);
-		if(find === -1) find = null;
-		dispatch(selectIndex, find);
-	},
-	[selectIndex]({getters, commit}, index)
-	{
-		if(getters.getCurrent !== null) getters.getCurrent.isSelected = false;
-		commit('index', index);
-		if(getters.getCurrent !== null) getters.getCurrent.isSelected = true;
-	},
-	[applyBlueprint]({state, commit}, blueprint)
+	[loadDefault]({state, commit}, blueprint)
 	{
 		for (const [index, record] of state.list.entries())
 		{
@@ -74,18 +65,21 @@ const actions =
 			commit('record', {index: index, field: 'metrics', value: blueprint.metrics});
 		}
 	},
+	[selectIndex]({commit}, index)
+	{
+		commit('index', index);
+	},
+	[selectCurrent]({getters, dispatch}, filename)
+	{
+		let find = findIndex(getters.getList, (o) => o.source.filename === filename);
+		if(find === -1) find = null;
+		dispatch(selectIndex, find);
+	},
 	[updateMetrics]({getters, commit}, metrics)
 	{
-		commit('record', {index: getters.getIndex, field: 'metrics', value: metrics});
 		commit('record', {index: getters.getIndex, field: 'wasEdited', value: true});
+		commit('record', {index: getters.getIndex, field: 'metrics', value: metrics});
 	},
-	[readImageSize](state, record)
-	{
-		const image = new Image();
-		image.addEventListener('load', e => record.source.size = { width: e.target.naturalWidth, height: e.target.naturalHeight });
-		image.addEventListener('error', () => record.errors.push("Cant read natural image size.") );
-		image.src = record.source.url;
-	}
 }
 
 // access this by $this.store.commit(<setList>, value)

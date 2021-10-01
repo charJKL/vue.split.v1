@@ -15,8 +15,8 @@
 <script>
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
-import Record from './Record';
 import {updateMetrics} from '../store/records';
+import record from '../store/record';
 import {changeHover} from '../store/ui';
 import Hover from './EditorMetricsHover';
 import {isMatch} from '../core/isMatch';
@@ -40,7 +40,7 @@ export default
 	data()
 	{
 		return {
-			local: cloneDeep(Record.metrics),
+			local: cloneDeep(record.metrics),
 			editor: { width: 0, height: 0 },
 			shift: { x: 0, y: 0 },
 			scale: 0,

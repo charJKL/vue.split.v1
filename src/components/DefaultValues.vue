@@ -22,8 +22,8 @@
 <script>
 import ToggleButton from './utils/ToggleButton';
 import EditorInput from './EditorInput';
-import Record from './Record';
-import {applyBlueprint} from '../store/records';
+import record from '../store/record';
+import {loadDefault} from '../store/records';
 import {cloneDeep} from 'lodash';
 
 
@@ -65,8 +65,8 @@ export default
 		onAdd()
 		{
 			const blueprint = {};
-					blueprint.source = cloneDeep(Record.source);
-					blueprint.metrics = cloneDeep(Record.metrics);
+					blueprint.source = cloneDeep(record.source);
+					blueprint.metrics = cloneDeep(record.metrics);
 			this.blueprints.push(blueprint);
 		},
 		onCopy(blueprint)
@@ -76,8 +76,7 @@ export default
 		},
 		onApply(blueprint)
 		{
-			console.log(blueprint.metrics);
-			this.$store.dispatch(applyBlueprint, blueprint);
+			this.$store.dispatch(loadDefault, blueprint);
 		}
 	}
 }

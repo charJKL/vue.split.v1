@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {loadSave, loadFile} from '../store/records';
+import {loadSave, loadList} from '../store/records';
 
 export default
 {
@@ -34,7 +34,7 @@ export default
 		},
 		onLoadFiles(e)
 		{
-			this.$store.dispatch(loadFile, Array.from(e.target.files));
+			this.$store.dispatch(loadList, Array.from(e.target.files));
 		}
 	}
 }

@@ -3,14 +3,14 @@
 	<template v-for="metric in local" :key="metric.name">
 		<label>
 			{{ metric.name }}:
-			<input class="input-int" v-if="isLine(metric.type)" type="number" :disabled="metric.isDisabled" v-model.number="metric.value" @update:modelValue="updateMetrics" />
-			<input class="input-float" v-if="isFloat(metric.type)" type="number" step="0.1" :disabled="metric.isDisabled" v-model.number="metric.value" @update:modelValue="updateMetrics" />
+			<input class="input-int" v-if="isLine(metric.type)" type="number" :disabled="metric.isDisabled" v-model.number="metric.value" @update:modelValue="updateMetrics(metric.name, metric.value)" />
+			<input class="input-float" v-if="isFloat(metric.type)" type="number" step="0.1" :disabled="metric.isDisabled" v-model.number="metric.value" @update:modelValue="updateMetrics(metric.name, metric.value)" />
 		</label>,
 	</template>]
 </template>
 
 <script>
-import Record from './Record';
+import record from '../store/record';
 import {isMatch} from '../core/isMatch';
 import {cloneDeep} from 'lodash';
 
@@ -21,8 +21,8 @@ export default
 {
 	props:
 	{
-		source: { type: Object, validator(value){ return isMatch(Record.source, value); } },
-		metrics: { type: Object, validator(value){ return isMatch(Record.metrics, value); } },
+		source: { type: Object, validator(value){ return isMatch(record.source, value); } },
+		metrics: { type: Object, validator(value){ return isMatch(record.metrics, value); } },
 	},
 	emits: [updateSource, updateMetrics],
 	computed:
@@ -37,16 +37,12 @@ export default
 		},
 		internal()
 		{
-			return cloneDeep(this.isSourceNull ? Record.source : this.source);
+			return cloneDeep(this.isSourceNull ? record.source : this.source);
 		},
 		local()
 		{
-			return this.wrapMetrics(cloneDeep(this.isMetricsNull ? Record.metrics : this.metrics));
+			return this.wrapMetrics(cloneDeep(this.isMetricsNull ? record.metrics : this.metrics));
 		}
-	},
-	watch:
-	{
-		
 	},
 	methods:
 	{
@@ -56,8 +52,9 @@ export default
 					source.filename = this.internal.filename;
 			this.$emit(updateSource, source);
 		},
-		updateMetrics()
+		updateMetrics(name, value)
 		{
+			console.log('update:', name, value);
 			const metrics = cloneDeep(this.metrics);
 					metrics.x1.value = this.local.x1.value;
 					metrics.x2.value = this.local.x2.value;
