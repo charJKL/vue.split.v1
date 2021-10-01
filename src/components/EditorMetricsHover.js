@@ -21,6 +21,10 @@ const hover =
 		const nearest = minBy(this.local.lines, (metric) => metric.diff);
 		this.hover = (nearest.diff < threshold) ? nearest : null;
 	},
+	onLeave()
+	{
+		this.hover = null;
+	},
 	onWheel(e)
 	{
 		const value = this.local.rotate.value + e.deltaY * sensitivity;

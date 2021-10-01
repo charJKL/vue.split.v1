@@ -1,5 +1,5 @@
 <template>
-<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onMouseLeftDown" @mouseup.left.prevent.stop="onMouseLeftUp" @mousemove.prevent.stop="onMouseMove" @wheel.prevent.stop="onMouseWheel">
+<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onMouseLeftDown" @mouseup.left.prevent.stop="onMouseLeftUp" @mousemove.prevent.stop="onMouseMove" @mouseleave.prevent.stop="onMouseLeave" @wheel.prevent.stop="onMouseWheel">
 	<div class="desktop" :style="getDesktopStyle" v-if="isCurrent">
 		<div class="window" ref="window">
 			<img class="image" ref="image" :style="getImageStyle" :src="this.current.source.url" />
@@ -114,6 +114,10 @@ export default
 		onMouseMove()
 		{
 			return this.mouse.onMove ? this.mouse.onMove.bind(this) : onDullMouseEvent;
+		},
+		onMouseLeave()
+		{
+			return this.mouse.onLeave ? this.mouse.onLeave.bind(this) : onDullMouseEvent;
 		},
 		onMouseWheel()
 		{
