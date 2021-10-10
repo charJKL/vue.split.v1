@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import record from '../store/record.js';
+import {record} from '../store/records';
 import {isMatch} from '../lib/isMatch';
 
 export default

@@ -15,8 +15,7 @@
 <script>
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
-import {updateMetrics} from '../store/records';
-import record from '../store/record';
+import {record, updateMetrics} from '../store/records';
 import {changeHover} from '../store/ui';
 import Hover from './EditorMetricsHover';
 import {isMatch} from '../lib/isMatch';

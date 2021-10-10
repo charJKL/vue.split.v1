@@ -22,10 +22,8 @@
 <script>
 import ToggleButton from './utils/ToggleButton';
 import EditorInput from './EditorInput';
-import record from '../store/record';
-import {loadDefault} from '../store/records';
+import {record, loadDefault} from '../store/records';
 import {cloneDeep} from 'lodash';
-
 
 export default
 {
