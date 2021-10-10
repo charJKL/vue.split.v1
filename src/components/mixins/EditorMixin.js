@@ -11,7 +11,11 @@ const EditorMixin = {
 		source: { type: Object, validator(value){ return isMatch(record.source, value); } },
 		metrics: { type: Object, validator(value){ return isMatch(record.metrics, value); } },
 	},
-	emits: [updateSource, updateMetrics],
+	emits:
+	{
+		[updateSource]: function(payload){ return isMatch(record.source, payload); },
+		[updateMetrics]: function(payload){ return isMatch(record.metrics, payload); }
+	},
 	data()
 	{
 		return {
@@ -44,6 +48,14 @@ const EditorMixin = {
 		initLocal()
 		{
 			// If needed overwrite this method
+		},
+		getSourceInstance()
+		{
+			return cloneDeep(record.source);
+		},
+		getMetricsInstance()
+		{
+			return cloneDeep(record.metrics);
 		}
 	}
 }
