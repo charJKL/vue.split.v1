@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import {isMatch} from '../core/isMatch';
+import {isMatch} from '../lib/isMatch';
 
 const blueprint = 
 {

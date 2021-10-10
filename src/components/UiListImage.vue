@@ -9,7 +9,7 @@
 
 <script>
 import record from '../store/record.js';
-import {isMatch} from '../core/isMatch';
+import {isMatch} from '../lib/isMatch';
 
 export default
 {

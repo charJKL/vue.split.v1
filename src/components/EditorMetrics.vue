@@ -19,7 +19,7 @@ import {updateMetrics} from '../store/records';
 import record from '../store/record';
 import {changeHover} from '../store/ui';
 import Hover from './EditorMetricsHover';
-import {isMatch} from '../core/isMatch';
+import {isMatch} from '../lib/isMatch';
 import {cloneDeep} from 'lodash';
 function onDullMouseEvent(){ }
 
