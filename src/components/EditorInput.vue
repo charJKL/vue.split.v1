@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import {cloneDeep} from 'lodash';
 import EditorMixin from './mixins/EditorMixin';
 import {updateSource, updateMetrics} from './mixins/EditorMixin';
 
@@ -27,10 +26,12 @@ export default
 	{
 		source(source)
 		{
+			if(this.isSourceNull === true) return;
 			this.calcCurrent(source);
 		},
 		metrics(metrics)
 		{
+			if(this.isMetricsNull === true) return;
 			this.calcLocal(metrics);
 		}
 	},
@@ -57,13 +58,13 @@ export default
 		},
 		updateSource()
 		{
-			const source = cloneDeep(this.source);
+			const source = this.getSourceInstance();
 					source.filename = this.current.filename;
 			this.$emit(updateSource, source);
 		},
 		updateMetrics()
 		{
-			const metrics = cloneDeep(this.metrics);
+			const metrics = this.getMetricsInstance();
 					metrics.x1.value = this.local.x1.value;
 					metrics.x2.value = this.local.x2.value;
 					metrics.y1.value = this.local.y1.value;
