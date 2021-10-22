@@ -5,6 +5,7 @@ const focus =
 {
 	focus(e, metric) // eslint-disable-line no-unused-vars
 	{
+		console.log('focus form events');
 		this.focus = metric;
 		
 		//if(metric.name === 'x1') threshold = { metric: this.local.x2, value: this.local.x2.value };
