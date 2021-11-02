@@ -3,43 +3,25 @@
 	<template v-for="metric in local" :key="metric.name">
 		<label>
 			{{ metric.name }}:
-			<input class="input-int" v-if="isLine(metric.type)" type="number" :disabled="metric.isDisabled" :value="metric.value" v-mouse="mouse" @input="updateMetrics()"/>
+			<input class="input-int" v-if="isLine(metric.type)" type="number" :disabled="metric.isDisabled" :value="metric.value" @input="onInput($event, metric), updateMetrics()" @focus="onFocus($event, metric)" @blur="onBlur($event, $metric)"/>
 			<input class="input-float" v-if="isFloat(metric.type)" type="number" step="0.1" :disabled="metric.isDisabled" :value="metric.value" @input="onInput($event, metric), updateMetrics()" @focus="onFocus($event, metric)" @blur="onBlur($event, metric)"/>
 		</label>,
 	</template>]
 </template>
 
 <script>
-import MouseDirective from './directives/MouseDirective';
 import EditorMixin from './mixins/EditorMixin';
+import EditorInputMouse from './EditorInputMouse';
 import {updateSource, updateMetrics} from './mixins/EditorMixin';
-import Focus from './EditorInputFocus';
 import {toRef} from 'vue';
 
 export default
 {
-	directives: { mouse: MouseDirective },
-	mixins: [EditorMixin],
+	mixins: [EditorMixin, EditorInputMouse],
 	data()
 	{
 		return {
 			focus: null,
-			mouse: Focus,
-		}
-	},
-	computed:
-	{
-		onFocus()
-		{
-			return this.mouse.onFocus.bind(this);
-		},
-		onInput()
-		{
-			return this.mouse.onInput.bind(this);
-		},
-		onBlur()
-		{
-			return this.mouse.onBlur.bind(this);
 		}
 	},
 	watch:
