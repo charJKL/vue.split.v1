@@ -56,6 +56,16 @@ const EditorMixin = {
 		getMetricsInstance()
 		{
 			return cloneDeep(record.metrics);
+		},
+		copyMetricsValues(metrics)
+		{
+			const copy = this.getMetricsInstance();
+					copy.x1.value = metrics.x1.value;
+					copy.y1.value = metrics.y1.value;
+					copy.x2.value = metrics.x2.value;
+					copy.y2.value = metrics.y2.value;
+					copy.rotate.value = metrics.rotate.value;
+			return copy;
 		}
 	}
 }
