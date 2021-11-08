@@ -1,5 +1,5 @@
 <template>
-<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onMouseLeftDown" @mouseup.left.prevent.stop="onMouseLeftUp" @mousemove.prevent.stop="onMouseMove" @mouseleave.prevent.stop="onMouseLeave" @wheel.prevent.stop="onMouseWheel">
+<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onLeftDown" @mouseup.left.prevent.stop="onLeftUp" @mousemove.prevent.stop="onMove" @mouseleave.prevent.stop="onLeave" @wheel.prevent.stop="onWheel">
 	<div class="desktop" :style="getDesktopStyle" v-if="isCurrent">
 		<div class="window" ref="window">
 			<img class="image" ref="image" :style="getImageStyle" :src="this.current.source.url" />
@@ -17,10 +17,9 @@ import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
 import {record, updateMetrics} from '../store/records';
 import {changeHover} from '../store/ui';
-import Hover from './EditorMetricsHover';
 import {isMatch} from '../lib/isMatch';
 import {cloneDeep} from 'lodash';
-function onDullMouseEvent(){ }
+import EditorMetricsMouse from './EditorMetricsMouse';
 
 const blueprint = 
 {
@@ -30,6 +29,7 @@ const blueprint =
 
 export default
 {
+	mixins: [/*EditorMixin*/ EditorMetricsMouse],
 	components: { EditorMetricsLine, EditorMetricsHighlight },
 	props:
 	{
@@ -43,7 +43,6 @@ export default
 			editor: { width: 0, height: 0 },
 			shift: { x: 0, y: 0 },
 			scale: 0,
-			mouse: Hover,
 			hover: null,
 			active: null,
 		}
@@ -101,27 +100,7 @@ export default
 		highlightSize()
 		{
 			return { width: this.desktopSize.width, height: this.desktopSize.height, x: this.padding.left, y: this.padding.top };
-		},
-		onMouseLeftDown()
-		{
-			return this.mouse.onLeftDown ? this.mouse.onLeftDown.bind(this) : onDullMouseEvent;
-		},
-		onMouseLeftUp()
-		{
-			return this.mouse.onLeftUp ? this.mouse.onLeftUp.bind(this) : onDullMouseEvent;
-		},
-		onMouseMove()
-		{
-			return this.mouse.onMove ? this.mouse.onMove.bind(this) : onDullMouseEvent;
-		},
-		onMouseLeave()
-		{
-			return this.mouse.onLeave ? this.mouse.onLeave.bind(this) : onDullMouseEvent;
-		},
-		onMouseWheel()
-		{
-			return this.mouse.onWheel ? this.mouse.onWheel.bind(this) : onDullMouseEvent;
-		},
+		}
 	},
 	watch:
 	{
