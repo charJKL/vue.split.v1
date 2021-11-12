@@ -29,12 +29,12 @@ export default
 		source(source)
 		{
 			if(this.isSourceNull === true) return;
-			this.calcCurrent(source);
+			this.transformSourceToCurrent(source);
 		},
 		metrics(metrics)
 		{
 			if(this.isMetricsNull === true) return;
-			this.calcLocal(metrics);
+			this.transformMetricsToLocal(metrics);
 		}
 	},
 	methods:
@@ -47,11 +47,11 @@ export default
 			this.local.y2.isDisabled = toRef(this, 'isMetricsNull');
 			this.local.rotate.isDisabled = toRef(this, 'isMetricsNull');
 		},
-		calcCurrent(source)
+		transformSourceToCurrent(source)
 		{
 			this.current.filename = source.filename;
 		},
-		calcLocal(metrics)
+		transformMetricsToLocal(metrics)
 		{
 			this.local.x1.value = metrics.x1.value;
 			this.local.x2.value = metrics.x2.value;
