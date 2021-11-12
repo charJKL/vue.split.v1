@@ -26,21 +26,29 @@ const state = {
 	index: null,
 }
 
-// access this by $this.store.getters.<getList>
+// access this by $this.store.getters.<list>
 const getters = {
-	getList(state)
+	list(state)
 	{ 
 		return state.list;
 	},
-	getIndex(state)
+	index(state)
 	{
 		return state.index;
 	},
-	getCurrent(state)
+	current(state)
 	{
 		if(state.list[state.index] === undefined) return null;
 		return state.list[state.index];
 	},
+	source(state, getters)
+	{
+		return getters.current && getters.current.source;
+	},
+	metrics(state, getters)
+	{
+		return getters.current && getters.current.metrics;
+	}
 }
 
 // access this by $this.store.dispatch(<load-file>, value)

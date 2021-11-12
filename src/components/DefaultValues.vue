@@ -39,15 +39,15 @@ export default
 	{
 		list()
 		{
-			return this.$store.getters.getList;
+			return this.$store.getters.list;
 		},
 		current()
 		{
-			return this.$store.getters.getCurrent;
+			return this.$store.getters.current;
 		},
 		isCurrent()
 		{
-			return this.$store.getters.getCurrent !== null;
+			return this.$store.getters.current !== null;
 		},
 		disableCopyAction()
 		{

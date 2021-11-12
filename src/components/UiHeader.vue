@@ -23,7 +23,7 @@ export default
 	{
 		getList()
 		{
-			return this.$store.getters.getList.flatMap(file => file.source.filename);
+			return this.$store.getters.list.flatMap(file => file.source.filename);
 		}
 	},
 	methods: 

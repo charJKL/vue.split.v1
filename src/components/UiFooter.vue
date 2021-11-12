@@ -1,7 +1,7 @@
 <template>
 <div class="footer">
 	<div class="footer-left">
-		<editor-input :source="internal" :metrics="metrics"  @update:source="onUpdateSource" @update:metrics="onUpdateMetrics"></editor-input>
+		<editor-input :source="source" :metrics="metrics"  @update:source="onUpdateSource" @update:metrics="onUpdateMetrics"></editor-input>
 	</div>
 	<div class="footer-right">
 		<button id="save" @click="onSaveData">Save</button>
@@ -24,21 +24,13 @@ export default
 	},
 	computed:
 	{
-		current()
-		{
-			return this.$store.getters.getCurrent;
-		},
-		isCurrent()
-		{
-			return this.$store.getters.getCurrent !== null;
-		},
 		source()
 		{
-			return this.isCurrent ? this.current.source : null;
+			return this.$store.getters.source;
 		},
 		metrics()
 		{
-			return this.isCurrent ? this.current.metrics : null;
+			return this.$store.getters.metrics;
 		},
 	},
 	watch:
