@@ -8,7 +8,12 @@ function calcDiff(subtype, position, value)
 {
 	return Math.abs((subtype === 'vertical' ? position.x : position.y) - value);
 }
-	
+
+function calcMousePosition(boundingRect, x, y)
+{
+	return { x: x - boundingRect.left, y: y - boundingRect.y };
+}
+
 const EditorMetricsMouseHover = 
 {
 	leftDown(e)
@@ -20,8 +25,8 @@ const EditorMetricsMouseHover =
 	},
 	move(e)
 	{
-		if(this.isCurrent === false) return;
-		const position = this.resolveMousePosition(e.clientX, e.clientY);
+		if(this.isSource === false) return;
+		const position = calcMousePosition(this.$refs.canvas.getBoundingClientRect(), e.clientX, e.clientY);
 		this.local.lines.forEach(metric => metric.diff = calcDiff(metric.subtype, position, metric.value));
 		const nearest = minBy(this.local.lines, (metric) => metric.diff);
 		this.hover = (nearest.diff < threshold) ? nearest : null;

@@ -49,10 +49,6 @@ export default
 	},
 	computed:
 	{
-		isCurrent()
-		{
-			return this.current !== null;
-		},
 		getEditorClasses()
 		{
 			const isGrab = this.hover ? 'cursor-grab' : '';
@@ -190,12 +186,7 @@ export default
 		isHover(metric)
 		{
 			return this.hover === metric;
-		},
-		resolveMousePosition(x, y)
-		{
-			const canvas = this.$refs.canvas.getBoundingClientRect();
-			return { x: x - canvas.left, y: y - canvas.top };
-		},
+		}
 	}
 }
 </script>

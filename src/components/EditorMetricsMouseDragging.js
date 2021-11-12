@@ -11,7 +11,7 @@ const EditorMetricsMouseDragging =
 {
 	leftDown (e)
 	{
-		if(this.isCurrent === false) return;
+		if(this.isSource === false) return;
 		if(this.hover === null) return;
 		
 		this.active = this.hover;
@@ -20,7 +20,7 @@ const EditorMetricsMouseDragging =
 	},
 	move(e)
 	{
-		if(this.isCurrent === false) return;
+		if(this.isSource === false) return;
 		if(this.active === null) return;
 		const position = {x: e.clientX, y: e.clientY};
 		const diff = {x: position.x - originalPosition.x, y: position.y - originalPosition.y};
