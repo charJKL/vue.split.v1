@@ -3,7 +3,7 @@
 	<ui-list></ui-list>
 	<main id="main">
 		<default-values></default-values>	
-		<editor-metrics></editor-metrics>
+		<editor-metrics :source="source" :metrics="metrics"></editor-metrics>
 	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
@@ -25,7 +25,15 @@ export default
 	{
 		isCurrent()
 		{
-			return this.$store.getters.getCurrent !== null;
+			return this.$store.getters.current !== null;
+		},
+		source()
+		{
+			return this.$store.getters.source;
+		},
+		metrics()
+		{
+			return this.$store.getters.metrics;
 		}
 	},
 	methods:
