@@ -98,14 +98,14 @@ const actions =
 	},
 	[selectCurrent]({getters, dispatch}, filename)
 	{
-		let find = findIndex(getters.getList, (o) => o.source.filename === filename);
+		let find = findIndex(getters.list, (o) => o.source.filename === filename);
 		if(find === -1) find = null;
 		dispatch(selectIndex, find);
 	},
 	[updateMetrics]({getters, commit}, metrics)
 	{
-		commit('record', {index: getters.getIndex, field: 'wasEdited', value: true});
-		commit('record', {index: getters.getIndex, field: 'metrics', value: metrics});
+		commit('record', {index: getters.index, field: 'wasEdited', value: true});
+		commit('record', {index: getters.index, field: 'metrics', value: metrics});
 	},
 }
 
