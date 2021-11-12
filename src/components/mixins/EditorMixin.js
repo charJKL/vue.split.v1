@@ -25,6 +25,14 @@ const EditorMixin = {
 	},
 	computed:
 	{
+		isSource()
+		{
+			return this.source == true;
+		},
+		isMetrics()
+		{
+			this.metrics == true;
+		},
 		isSourceNull()
 		{
 			return this.source === null;
@@ -43,11 +51,21 @@ const EditorMixin = {
 	{
 		initCurrent()
 		{
-			// If needed overwrite this method
+			// Overwrite this method if needed.
+			// Decorate $current with additional properties if needed.
 		},
 		initLocal()
 		{
-			// If needed overwrite this method
+			// Overwrite this method if needed.
+			// Decorate $local with additional properties if needed.
+		},
+		transformSourceToCurrent()
+		{
+			// Transform outside $source to inner $current.
+		},
+		transformMetricsToLocal()
+		{
+			// Transforms outside $metrics to inner $local.
 		},
 		getSourceInstance()
 		{
