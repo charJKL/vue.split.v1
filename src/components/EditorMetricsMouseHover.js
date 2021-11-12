@@ -43,7 +43,7 @@ const EditorMetricsMouseHover =
 	{
 		const value = this.local.rotate.value + e.deltaY * sensitivity;
 		this.local.rotate.value = value;
-		this.updateMetrics('rotate', value);
+		this.updateMetrics();
 	}
 }
 

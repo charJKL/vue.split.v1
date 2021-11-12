@@ -18,7 +18,7 @@ import EditorUtils from './mixins/EditorUtils';
 import EditorMetricsMouse from './EditorMetricsMouse';
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
-import {updateMetrics} from '../store/records';
+import {updateMetrics} from './mixins/EditorMixin';
 import {changeHover} from '../store/ui';
 import {isMatch} from '../lib/isMatch';
 
@@ -30,7 +30,7 @@ const blueprint =
 
 export default
 {
-	mixins: [EditorMixin, EditorUtils, EditorMetricsMouse],
+	mixins: [ EditorMixin, EditorUtils, EditorMetricsMouse ],
 	components: { EditorMetricsLine, EditorMetricsHighlight },
 	props:
 	{
@@ -143,7 +143,6 @@ export default
 					metrics.y2.value = this.removeShiftAndRemoveScale(this.local.y2.subtype, this.local.y2.value, this.scale);
 					metrics.rotate.value = this.local.rotate.value;
 			this.$emit(updateMetrics, metrics);
-			// this.$store.dispatch(updateMetrics, update);
 		},
 		calcScale()
 		{

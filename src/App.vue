@@ -3,7 +3,7 @@
 	<ui-list></ui-list>
 	<main id="main">
 		<default-values></default-values>	
-		<editor-metrics :source="source" :metrics="metrics"></editor-metrics>
+		<editor-metrics :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
 	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
@@ -15,6 +15,7 @@ import UiList from './components/UiList';
 import DefaultValues from './components/DefaultValues';
 import EditorMetrics from './components/EditorMetrics';
 import UiFooter from './components/UiFooter';
+import {updateMetrics} from './store/records';
 import _ from 'lodash';
 
 export default 
@@ -38,6 +39,10 @@ export default
 	},
 	methods:
 	{
+		onUpdateMetrics(metrics)
+		{
+			this.$store.dispatch(updateMetrics, metrics);
+		},
 		onLoadSave(save)
 		{
 			function applySavedList(e)

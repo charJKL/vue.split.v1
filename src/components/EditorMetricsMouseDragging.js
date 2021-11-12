@@ -33,7 +33,7 @@ const EditorMetricsMouseDragging =
 		if(this.active.name === 'y2' && update < this.local.y1.value) this.hover = this.active = this.local.y1;
 		
 		this.active.value = update;
-		this.updateMetrics(this.active.name, update);
+		this.updateMetrics();
 	},
 	leftUp(e)
 	{
