@@ -15,7 +15,7 @@ export default
 	{
 		getList()
 		{
-			return this.$store.getters.getList;
+			return this.$store.getters.list;
 		}
 	},
 	methods:
