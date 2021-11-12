@@ -27,11 +27,11 @@ const EditorMixin = {
 	{
 		isSource()
 		{
-			return this.source == true;
+			return this.source !== null;
 		},
 		isMetrics()
 		{
-			this.metrics == true;
+			return this.metrics !== null;
 		},
 		isSourceNull()
 		{
