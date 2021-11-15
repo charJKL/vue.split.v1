@@ -4,37 +4,25 @@
 		<label>
 			{{ metric.name }}:
 			<input class="input-int" v-if="isLine(metric.type)" type="number" :disabled="metric.isDisabled" :value="metric.value" @input="onInput($event, metric), updateMetrics()" @focus="onFocus($event, metric)" @blur="onBlur($event, $metric)"/>
-			<input class="input-float" v-if="isFloat(metric.type)" type="number" step="0.1" :disabled="metric.isDisabled" :value="metric.value" @input="onInput($event, metric), updateMetrics()" @focus="onFocus($event, metric)" @blur="onBlur($event, metric)"/>
+			<input class="input-float" v-if="isFloat(metric.type)" type="number" step="0.1" :disabled="metric.isDisabled" :value="metric.value" @input="onInput($event, metric), updateRotation(), updateMetrics()" @focus="onFocus($event, metric)" @blur="onBlur($event, metric)"/>
 		</label>,
 	</template>]
 </template>
 
 <script>
-import EditorMixin from './mixins/EditorMixin';
+import EditorBase from './mixins/EditorBase';
+import EditorOffset from './mixins/EditorOffset';
 import EditorInputMouse from './EditorInputMouse';
-import {updateSource, updateMetrics} from './mixins/EditorMixin';
+import {updateSource, updateMetrics} from './mixins/EditorBase';
 import {toRef} from 'vue';
 
 export default
 {
-	mixins: [EditorMixin, EditorInputMouse],
+	mixins: [EditorBase, EditorOffset, EditorInputMouse],
 	data()
 	{
 		return {
 			focus: null,
-		}
-	},
-	watch:
-	{
-		source(source)
-		{
-			if(this.isSourceNull === true) return;
-			this.transformSourceToCurrent(source);
-		},
-		metrics(metrics)
-		{
-			if(this.isMetricsNull === true) return;
-			this.transformMetricsToLocal(metrics);
 		}
 	},
 	methods:
@@ -47,22 +35,20 @@ export default
 			this.local.y2.isDisabled = toRef(this, 'isMetricsNull');
 			this.local.rotate.isDisabled = toRef(this, 'isMetricsNull');
 		},
-		transformSourceToCurrent(source)
-		{
-			this.current.filename = source.filename;
-		},
-		transformMetricsToLocal(metrics)
-		{
-			this.local.x1.value = metrics.x1.value;
-			this.local.x2.value = metrics.x2.value;
-			this.local.y1.value = metrics.y1.value;
-			this.local.y2.value = metrics.y2.value;
-		},
 		updateSource()
 		{
 			const source = this.getSourceInstance();
 					source.filename = this.current.filename;
 			this.$emit(updateSource, source);
+		},
+		updateRotation()
+		{
+			this.calcOffset(this.current.size, this.local.rotate.value);
+			
+			this.local.x1.value = this.offseted.x1.value - this.offset.x;
+			this.local.x2.value = this.offseted.x2.value - this.offset.x;
+			this.local.y1.value = this.offseted.y1.value - this.offset.y;
+			this.local.y2.value = this.offseted.y2.value - this.offset.y;
 		},
 		updateMetrics()
 		{
