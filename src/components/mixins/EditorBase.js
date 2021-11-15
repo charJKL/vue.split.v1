@@ -5,7 +5,7 @@ import {cloneDeep} from 'lodash';
 export const updateSource = 'update:source';
 export const updateMetrics = 'update:metrics';
 
-const EditorMixin = {
+const EditorBase = {
 	props:
 	{
 		source: { type: Object, validator(value){ return isMatch(record.source, value); } },
@@ -21,6 +21,17 @@ const EditorMixin = {
 		return {
 			current: cloneDeep(record.source),
 			local: cloneDeep(record.metrics),
+		}
+	},
+	watch:
+	{
+		source(old, value) // eslint-disable-line no-unused-vars
+		{
+			this.calcCurrent();
+		},
+		metrics(old, value) // eslint-disable-line no-unused-vars
+		{
+			this.calcLocal();
 		}
 	},
 	computed:
@@ -59,13 +70,20 @@ const EditorMixin = {
 			// Overwrite this method if needed.
 			// Decorate $local with additional properties if needed.
 		},
-		transformSourceToCurrent()
+		calcCurrent()
 		{
-			// Transform outside $source to inner $current.
+			this.current.filename = this.source.filename;
+			this.current.url = this.source.url;
+			this.current.size.width = this.source.size.width;
+			this.current.size.height = this.source.size.height;
 		},
-		transformMetricsToLocal()
+		calcLocal()
 		{
-			// Transforms outside $metrics to inner $local.
+			this.local.x1.value = this.metrics.x1.value;
+			this.local.x2.value = this.metrics.x2.value;
+			this.local.y1.value = this.metrics.y1.value;
+			this.local.y2.value = this.metrics.y2.value;
+			this.local.rotate.value = this.metrics.rotate.value;
 		},
 		getSourceInstance()
 		{
@@ -88,4 +106,4 @@ const EditorMixin = {
 	}
 }
 
-export default EditorMixin;
+export default EditorBase;
