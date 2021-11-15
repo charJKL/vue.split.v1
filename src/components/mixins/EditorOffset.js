@@ -13,12 +13,14 @@ const EditorOffset =
 	},
 	watch:
 	{
-		source(old, value) // eslint-disable-line no-unused-vars
+		source(value)
 		{
+			if(value === null) return;
 			this.calcOffset(this.current.size, this.local.rotate.value);
 		},
-		metrics(old, value) // eslint-disable-line no-unused-vars
+		metrics(value)
 		{
+			if(value === null) return;
 			this.calcOffset(this.current.size, this.local.rotate.value);
 			this.calcOffseted();
 		}

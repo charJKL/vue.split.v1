@@ -14,12 +14,14 @@ const EditorScale =
 	},
 	watch:
 	{
-		source(old, value) // eslint-disable-line no-unused-vars
+		source(value)
 		{
+			if(value === null) return;
 			this.calcScale();
 		},
-		metrics(old, value) // eslint-disable-line no-unused-vars
+		metrics(value)
 		{
+			if(value === null) return;
 			this.calcScale();
 			this.calcScaled();
 		}

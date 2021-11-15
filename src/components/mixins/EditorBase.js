@@ -25,12 +25,14 @@ const EditorBase = {
 	},
 	watch:
 	{
-		source(old, value) // eslint-disable-line no-unused-vars
+		source(value)
 		{
+			if(value === null) return;
 			this.calcCurrent();
 		},
-		metrics(old, value) // eslint-disable-line no-unused-vars
+		metrics(value)
 		{
+			if(value === null) return;
 			this.calcLocal();
 		}
 	},
