@@ -27,8 +27,8 @@ const EditorMetricsMouseHover =
 	{
 		if(this.isSource === false) return;
 		const position = calcMousePosition(this.$refs.canvas.getBoundingClientRect(), e.clientX, e.clientY);
-		this.local.lines.forEach(metric => metric.diff = calcDiff(metric.subtype, position, metric.value));
-		const nearest = minBy(this.local.lines, (metric) => metric.diff);
+		this.scaled.lines.forEach(metric => metric.diff = calcDiff(metric.subtype, position, metric.value));
+		const nearest = minBy(this.scaled.lines, (metric) => metric.diff);
 		this.hover = (nearest.diff < threshold) ? nearest : null;
 	},
 	leftUp()

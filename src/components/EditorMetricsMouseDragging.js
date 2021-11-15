@@ -27,10 +27,10 @@ const EditorMetricsMouseDragging =
 		const displacement = this.active.subtype === 'vertical' ? diff.x : diff.y;
 		const update = originalValue + displacement;
 		
-		if(this.active.name === 'x1' && update > this.local.x2.value) this.hover = this.active = this.local.x2;
-		if(this.active.name === 'x2' && update < this.local.x1.value) this.hover = this.active = this.local.x1;
-		if(this.active.name === 'y1' && update > this.local.y2.value) this.hover = this.active = this.local.y2;
-		if(this.active.name === 'y2' && update < this.local.y1.value) this.hover = this.active = this.local.y1;
+		if(this.active.name === 'x1' && update > this.scaled.x2.value) this.hover = this.active = this.scaled.x2;
+		if(this.active.name === 'x2' && update < this.scaled.x1.value) this.hover = this.active = this.scaled.x1;
+		if(this.active.name === 'y1' && update > this.scaled.y2.value) this.hover = this.active = this.scaled.y2;
+		if(this.active.name === 'y2' && update < this.scaled.y1.value) this.hover = this.active = this.scaled.y1;
 		
 		this.active.value = update;
 		this.updateMetrics();

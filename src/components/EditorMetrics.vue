@@ -6,43 +6,39 @@
 		</div>
 		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
 			<editor-metrics-highlight :size="highlightSize" :spot="highlightSpot"></editor-metrics-highlight>
-			<editor-metrics-line v-for="metric in local.lines" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="isHover(metric)"></editor-metrics-line>
+			<editor-metrics-line v-for="metric in scaled.lines" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="isHover(metric)"></editor-metrics-line>
 		</svg>
 	</div>
 </div>
 </template>
 
 <script>
-import EditorMixin from './mixins/EditorMixin';
-import EditorUtils from './mixins/EditorUtils';
+import EditorBase from './mixins/EditorBase';
+import EditorOffset from './mixins/EditorOffset';
+import EditorScale from './mixins/EditorScale';
 import EditorMetricsMouse from './EditorMetricsMouse';
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
-import {updateMetrics} from './mixins/EditorMixin';
+import {updateMetrics} from './mixins/EditorBase';
 import {changeHover} from '../store/ui';
 import {isMatch} from '../lib/isMatch';
 
 const blueprint = 
 {
-	margin: { top: 15, right: 15, bottom: 15, left: 15 },
 	padding: { top: 12, right: 12, bottom: 12, left: 12 },
 }
 
 export default
 {
-	mixins: [ EditorMixin, EditorUtils, EditorMetricsMouse ],
+	mixins: [ EditorBase, EditorOffset, EditorScale, EditorMetricsMouse ],
 	components: { EditorMetricsLine, EditorMetricsHighlight },
 	props:
 	{
-		margin: { type: Object, default: blueprint.margin, validator(value){ return isMatch(blueprint.margin, value); } },
 		padding: { type: Object, default: blueprint.padding, validator(value){ return isMatch(blueprint.padding, value); } },
 	},
 	data()
 	{
 		return {
-			editor: { width: 0, height: 0 },
-			shift: { x: 0, y: 0 },
-			scale: 0,
 			hover: null,
 			active: null,
 		}
@@ -61,7 +57,7 @@ export default
 		},
 		getImageStyle()
 		{
-			return { transform: `rotate(${this.local.rotate.value}deg)` };
+			return { transform: `rotate(${this.scaled.rotate.value}deg)` };
 		},
 		getCanvasStyle()
 		{
@@ -81,9 +77,9 @@ export default
 		},
 		highlightSpot()
 		{
-			const width = this.local.x2.value - this.local.x1.value;
-			const height = this.local.y2.value - this.local.y1.value;
-			return { x: this.local.x1.value, y: this.local.y1.value, width: width, height: height };
+			const width = this.scaled.x2.value - this.scaled.x1.value;
+			const height = this.scaled.y2.value - this.scaled.y1.value;
+			return { x: this.scaled.x1.value, y: this.scaled.y1.value, width: width, height: height };
 		},
 		highlightSize()
 		{
@@ -92,20 +88,6 @@ export default
 	},
 	watch:
 	{
-		source(source)
-		{
-			if(this.isSourceNull === true) return;
-			this.transformSourceToCurrent(source);
-			this.calcScale();
-			this.calcShift();
-		},
-		metrics(metrics)
-		{
-			if(this.isMetricsNull === true) return;
-			this.transformMetricsToLocal(metrics);
-			this.calcShift();
-			this.calcLines();
-		},
 		hover(metric)
 		{
 			const name = (metric === null) ? null : metric.name;
@@ -114,73 +96,25 @@ export default
 	},
 	mounted()
 	{
-		this.editor = this.$refs.editor.getBoundingClientRect();
+		this.viewport = this.$refs.editor.getBoundingClientRect();
+		this.margin = { top: 15, right: 15, bottom: 15, left: 15 };
 	},
 	methods:
 	{
-		transformSourceToCurrent(source)
+		initLocal()
 		{
-			this.current.filename = source.filename;
-			this.current.url = source.url;
-			this.current.size.width = source.size.width;
-			this.current.size.height = source.size.height;
-		},
-		transformMetricsToLocal(metrics)
-		{
-			this.local.x1.value = this.applyShiftAndApplyScale(metrics.x1.subtype, metrics.x1.value, this.scale);
-			this.local.x2.value = this.applyShiftAndApplyScale(metrics.x2.subtype, metrics.x2.value, this.scale);
-			this.local.y1.value = this.applyShiftAndApplyScale(metrics.y1.subtype, metrics.y1.value, this.scale);
-			this.local.y2.value = this.applyShiftAndApplyScale(metrics.y2.subtype, metrics.y2.value, this.scale);
-			this.local.rotate.value = metrics.rotate.value;
+			this.scaled.lines = [this.scaled.x1, this.scaled.x2, this.scaled.y1, this.scaled.y2];
 		},
 		updateMetrics()
 		{
-			this.calcShift(this.current.size, this.local.rotate.value);
+			console.log('update-metrics');
 			const metrics = this.getMetricsInstance();
-					metrics.x1.value = this.removeShiftAndRemoveScale(this.local.x1.subtype, this.local.x1.value, this.scale);
-					metrics.x2.value = this.removeShiftAndRemoveScale(this.local.x2.subtype, this.local.x2.value, this.scale);
-					metrics.y1.value = this.removeShiftAndRemoveScale(this.local.y1.subtype, this.local.y1.value, this.scale);
-					metrics.y2.value = this.removeShiftAndRemoveScale(this.local.y2.subtype, this.local.y2.value, this.scale);
-					metrics.rotate.value = this.local.rotate.value;
+					metrics.x1.value = this.scaled.x1.value / this.scale - this.offset.x;
+					metrics.x2.value = this.scaled.x2.value / this.scale - this.offset.x;
+					metrics.y1.value = this.scaled.y1.value / this.scale - this.offset.y;
+					metrics.y2.value = this.scaled.y2.value / this.scale - this.offset.y;
+					metrics.rotate.value = this.scaled.rotate.value;
 			this.$emit(updateMetrics, metrics);
-		},
-		calcScale()
-		{
-			this.scale = this.calcScaleValue(this.editor, this.margin, this.current.size);
-		},
-		calcShift()
-		{
-			this.shift = this.calcShiftValue(this.current.size, this.local.rotate.value);
-		},
-		calcLines()
-		{
-			this.local.lines = [this.local.x1, this.local.x2, this.local.y1, this.local.y2];
-		},
-		applyShiftAndApplyScale(subtype, value, scale)
-		{
-			// order in which operation are execute is important:
-			value = this.applyShift(subtype, value); // first applay shift
-			value = value * scale; // then scale
-			return value;
-		},
-		removeShiftAndRemoveScale(subtype, value, scale)
-		{
-			// order in which operation are executed is important:
-			value = value / scale; // first remove scale, upscale value to it's original values
-			value = this.removeShift(subtype, value) // then remove shift
-			return value;
-		},
-		applyShift(subtype, value)
-		{
-			if(subtype === 'vertical') return value - this.shift.x;
-			if(subtype === 'horizontal') return value - this.shift.y;
-			throw new Error(`Can't apply shift for '${subtype}' subtype.`);
-		},
-		removeShift(subtype, value)
-		{
-			if(subtype === 'vertical') return value + this.shift.x;
-			if(subtype === 'horizontal') return value + this.shift.y;
-			throw new Error(`Can't remove shift for '${subtype}' subtype.`);
 		},
 		isHover(metric)
 		{
