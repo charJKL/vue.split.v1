@@ -105,9 +105,12 @@ export default
 		{
 			this.scaled.lines = [this.scaled.x1, this.scaled.x2, this.scaled.y1, this.scaled.y2];
 		},
+		updateRotation()
+		{
+			this.calcOffset(this.current.size, this.scaled.rotate.value);
+		},
 		updateMetrics()
 		{
-			console.log('update-metrics');
 			const metrics = this.getMetricsInstance();
 					metrics.x1.value = this.scaled.x1.value / this.scale - this.offset.x;
 					metrics.x2.value = this.scaled.x2.value / this.scale - this.offset.x;

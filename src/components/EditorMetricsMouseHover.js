@@ -41,8 +41,8 @@ const EditorMetricsMouseHover =
 	},
 	wheel(e)
 	{
-		const value = this.local.rotate.value + e.deltaY * sensitivity;
-		this.local.rotate.value = value;
+		this.scaled.rotate.value = this.scaled.rotate.value + e.deltaY * sensitivity;
+		this.updateRotation();
 		this.updateMetrics();
 	}
 }

@@ -15,11 +15,11 @@ const EditorOffset =
 	{
 		source(old, value) // eslint-disable-line no-unused-vars
 		{
-			this.calcOffset();
+			this.calcOffset(this.current.size, this.local.rotate.value);
 		},
 		metrics(old, value) // eslint-disable-line no-unused-vars
 		{
-			this.calcOffset();
+			this.calcOffset(this.current.size, this.local.rotate.value);
 			this.calcOffseted();
 		}
 	},
@@ -29,9 +29,9 @@ const EditorOffset =
 	},
 	methods:
 	{
-		calcOffset()
+		calcOffset(size, rotation)
 		{
-			this.offset = this.calcOffsetValue(this.current.size, this.local.rotate.value);
+			this.offset = this.calcOffsetValue(size, rotation);
 		},
 		calcOffseted()
 		{
