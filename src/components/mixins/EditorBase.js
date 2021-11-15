@@ -25,15 +25,22 @@ const EditorBase = {
 	},
 	watch:
 	{
-		source(value)
-		{
-			if(value === null) return;
-			this.calcCurrent();
+		source: {
+			immediate: true,
+			handler(value)
+			{
+				if(value === null) return;
+				this.calcCurrent();
+			}
 		},
-		metrics(value)
+		metrics:
 		{
-			if(value === null) return;
-			this.calcLocal();
+			immediate: true,
+			handler(value)
+			{
+				if(value === null) return;
+				this.calcLocal();
+			}
 		}
 	},
 	computed:
@@ -78,6 +85,7 @@ const EditorBase = {
 			this.current.url = this.source.url;
 			this.current.size.width = this.source.size.width;
 			this.current.size.height = this.source.size.height;
+
 		},
 		calcLocal()
 		{
