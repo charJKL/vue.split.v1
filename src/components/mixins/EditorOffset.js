@@ -19,6 +19,7 @@ const EditorOffset =
 			{
 				if(value === null) return;
 				this.calcOffset(this.current.size, this.local.rotate.value);
+				this.calcOffseted();
 			}
 		},
 		metrics: {

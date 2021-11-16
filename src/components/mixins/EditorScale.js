@@ -20,6 +20,7 @@ const EditorScale =
 			{
 				if(value === null) return;
 				this.calcScale();
+				this.calcScaled();
 			}
 		},
 		metrics: {
