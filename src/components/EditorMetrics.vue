@@ -131,6 +131,7 @@ export default
 .editor
 {
 	height: 100%;
+	flex: 1 0 0;
 	user-select: none;
 	display:flex;
 	justify-content: center;

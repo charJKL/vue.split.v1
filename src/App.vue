@@ -4,6 +4,7 @@
 	<main id="main">
 		<default-values></default-values>	
 		<editor-metrics :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
+		<preview></preview>
 	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
@@ -14,13 +15,14 @@ import UiHeader from './components/UiHeader';
 import UiList from './components/UiList';
 import DefaultValues from './components/DefaultValues';
 import EditorMetrics from './components/EditorMetrics';
+import Preview from './components/Preview';
 import UiFooter from './components/UiFooter';
 import {updateMetrics} from './store/records';
 import _ from 'lodash';
 
 export default 
 {
-	components: { UiHeader, UiList, DefaultValues, EditorMetrics, UiFooter },
+	components: { UiHeader, UiList, DefaultValues, EditorMetrics, Preview, UiFooter },
 	name: 'App',
 	computed:
 	{
@@ -108,6 +110,8 @@ body
 {
 	position: relative;
 	flex: 1 0 0;
+	display: flex;
+	flex-flow: row nowrap;
 }
 
 
