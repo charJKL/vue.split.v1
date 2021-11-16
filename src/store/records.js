@@ -43,15 +43,17 @@ const getters = {
 	},
 	source(state, getters)
 	{
-		return getters.current && getters.current.source;
+		if(getters.current === null) return null;
+		return getters.current.source;
 	},
 	metrics(state, getters)
 	{
-		return getters.current && getters.current.metrics;
+		if(getters.current === null) return null;
+		return getters.current.metrics;
 	}
 }
 
-// access this by $this.store.dispatch(<load-file>, value)
+// access this by $this.store.dispatch('load-file', value)
 // in actions i should call commits()
 export const loadList = 'load-list-action';
 export const loadSave = 'load-save-action';
@@ -65,13 +67,24 @@ const actions =
 	[loadList]({commit}, files)
 	{
 		let list = [];
-		for(let file of files)
+		for(let i=0; i < files.length; i++)
 		{
+			let file = files[i];
 			let instance = cloneDeep(record);
 				instance.source.filename = file.name;
 				instance.source.url = URL.createObjectURL(file);
 			const image = new Image();
-				image.addEventListener('load', e => instance.source.size = { width: e.target.naturalWidth, height: e.target.naturalHeight });
+				image.addEventListener('load', e => { 
+					let source = cloneDeep(record.source);
+						source.filename = file.name;
+						source.url = instance.source.url;
+						source.size.width = e.target.naturalWidth;
+						source.size.height = e.target.naturalHeight;
+			
+						//instance.source.size = { width: e.target.naturalWidth, height: e.target.naturalHeight};
+						//console.log('image loaded:', i, 'size:', instance.source.size.width, instance.source.size.height);
+						commit('source', {index: i, value: source});
+					});
 				image.addEventListener('error', () => instance.errors.push("Cant read natural image size.") );
 				image.src = instance.source.url;
 			list.push(instance);
@@ -109,11 +122,12 @@ const actions =
 	},
 }
 
-// access this by $this.store.commit(<setList>, value)
+// access this by $this.store.commit('record', value)
 const mutations = 
 {
 	list(state, list){ state.list = list; },
 	index(state, index){ state.index = index; },
+	source(state, source){ state.list[source.index]['source'] = source.value },
 	record(state, record){ state.list[record.index][record.field] = record.value },
 }
 
