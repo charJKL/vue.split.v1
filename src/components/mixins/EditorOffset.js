@@ -13,16 +13,22 @@ const EditorOffset =
 	},
 	watch:
 	{
-		source(value)
-		{
-			if(value === null) return;
-			this.calcOffset(this.current.size, this.local.rotate.value);
+		source: {
+			immediate: true,
+			handler(value)
+			{
+				if(value === null) return;
+				this.calcOffset(this.current.size, this.local.rotate.value);
+			}
 		},
-		metrics(value)
-		{
-			if(value === null) return;
-			this.calcOffset(this.current.size, this.local.rotate.value);
-			this.calcOffseted();
+		metrics: {
+			immediate: true,
+			handler(value)
+			{
+				if(value === null) return;
+				this.calcOffset(this.current.size, this.local.rotate.value);
+				this.calcOffseted();
+			}
 		}
 	},
 	created()

@@ -14,16 +14,22 @@ const EditorScale =
 	},
 	watch:
 	{
-		source(value)
-		{
-			if(value === null) return;
-			this.calcScale();
+		source: {
+			immediate: true,
+			handler(value)
+			{
+				if(value === null) return;
+				this.calcScale();
+			}
 		},
-		metrics(value)
-		{
-			if(value === null) return;
-			this.calcScale();
-			this.calcScaled();
+		metrics: {
+			immediate: true,
+			handler(value)
+			{
+				if(value === null) return;
+				this.calcScale();
+				this.calcScaled();
+			}
 		}
 	},
 	created()

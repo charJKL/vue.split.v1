@@ -33,8 +33,7 @@ const EditorBase = {
 				this.calcCurrent();
 			}
 		},
-		metrics:
-		{
+		metrics: {
 			immediate: true,
 			handler(value)
 			{
@@ -85,7 +84,6 @@ const EditorBase = {
 			this.current.url = this.source.url;
 			this.current.size.width = this.source.size.width;
 			this.current.size.height = this.source.size.height;
-
 		},
 		calcLocal()
 		{
