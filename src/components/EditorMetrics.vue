@@ -20,7 +20,7 @@ import EditorMetricsMouse from './EditorMetricsMouse';
 import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
 import {updateMetrics} from './mixins/EditorBase';
-import {changeHover} from '../store/ui';
+import {setHover} from '../store/ui';
 import {isMatch} from '../lib/isMatch';
 
 const blueprint = 
@@ -91,7 +91,7 @@ export default
 		hover(metric)
 		{
 			const name = (metric === null) ? null : metric.name;
-			this.$store.dispatch(changeHover, name);
+			this.$store.dispatch(setHover, name);
 		}
 	},
 	mounted()

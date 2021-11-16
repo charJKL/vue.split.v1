@@ -1,3 +1,5 @@
+import {setFocus} from '../store/ui'
+
 var originalFocus = null; // eslint-disable-line no-unused-vars
 var originalValues = null; // eslint-disable-line no-unused-vars
 const casting = 
@@ -13,6 +15,7 @@ const EditorInputMouseFocus =
 	{
 		originalFocus = this.focus = metric;
 		originalValues = this.copyMetricsValues(this.local);
+		this.$store.dispatch(setFocus, metric.name);
 	},
 	input(e, metric) // eslint-disable-line no-unused-vars
 	{
@@ -34,6 +37,7 @@ const EditorInputMouseFocus =
 	{
 		originalFocus = this.focus = null;
 		originalValues = null;
+		this.$store.dispatch(setFocus, '');
 	}
 }
 

@@ -1,5 +1,5 @@
 <template>[
-	name: <input class="input-text" v-model="current.filename" @update:modelValue="updateSource" />,
+	name: <input class="input-text" v-model="current.filename" @update:modelValue="updateSource" @focus="onSourceFocus" @blur="onSourceBlur"/>,
 	<template v-for="metric in local" :key="metric.name">
 		<label>
 			{{ metric.name }}:
@@ -44,7 +44,7 @@ export default
 		updateRotation()
 		{
 			this.calcOffset(this.current.size, this.local.rotate.value);
-			
+			console.log('updateRotation', this.local.rotate.value, this.offset);
 			this.local.x1.value = this.offseted.x1.value - this.offset.x;
 			this.local.x2.value = this.offseted.x2.value - this.offset.x;
 			this.local.y1.value = this.offseted.y1.value - this.offset.y;
@@ -52,6 +52,7 @@ export default
 		},
 		updateMetrics()
 		{
+			console.log('updateMetrics');
 			const metrics = this.getMetricsInstance();
 					metrics.x1.value = this.local.x1.value;
 					metrics.x2.value = this.local.x2.value;

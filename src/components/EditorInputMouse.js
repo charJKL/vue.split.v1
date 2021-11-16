@@ -1,5 +1,6 @@
 import {isMatch} from '../lib/isMatch';
 import EditorInputMouseFocus from './EditorInputMouseFocus';
+import {setFocus} from '../store/ui';
 
 const EditorInputMouse = 
 {
@@ -22,6 +23,14 @@ const EditorInputMouse =
 		onBlur()
 		{
 			return this.mouse.blur.bind(this);
+		},
+		onSourceFocus()
+		{
+			this.$store.dispatch(setFocus, 'source');
+		},
+		onSourceBlur()
+		{
+			this.$store.dispatch(setFocus, '');
 		}
 	},
 	watch:
