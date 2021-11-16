@@ -1,16 +1,20 @@
 <template>
 <section ref="list" class="list" @wheel.prevent="onMouseWheel">
-	<ui-list-image v-for="(record, index) in getList" :key="index" :record="record" @click="selectIndex(index)"/>
+	<editor-thumbnail v-for="(record, index) in getList" :key="index" :source="record.source" :metrics="record.metrics" @click="selectIndex(index)"/>
 </section>
 </template>
 
 <script>
-import UiListImage from './UiListImage';
+import EditorThumbnail from './EditorThumbnail';
 import {selectIndex} from '../store/records';
 
 export default
 {
-	components: { UiListImage },
+	components: { EditorThumbnail },
+	data()
+	{
+		return {};
+	},
 	computed:
 	{
 		getList()

@@ -1,25 +1,37 @@
 <template>
-	<div :class="['image', getImageClass]">
-		<img class="img" :src="getUrl" />
-		<div :class="['layer', getLayerClass]" ></div>
-		<div class="edited" v-show="wasEdited"></div>
+	<div class="image">
 		<div class="name">{{ getName }}</div>
+		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
+			<svg-mask :size="highlightSize" :spot="highlightSpot"></svg-mask>
+		</svg>
+		<img class="img" :src="getImageUrl" />
 	</div>
 </template>
 
 <script>
+import SvgMask from './utils/SvgMask';
 import {record} from '../store/records';
 import {isMatch} from '../lib/isMatch';
 
+
 export default
 {
+	components: { SvgMask },
 	props:
 	{
 		record: { type: Object, required: true, validator(value){ return isMatch(value, record); } },
 	},
 	computed:
 	{
-		getUrl()
+		highlightSize()
+		{
+			return {x: 0, y: 0, width: 100, height: 100};
+		},
+		highlightSpot()
+		{
+			return {x: 0, y: 0, width: 100, height: 100};
+		},
+		getImageUrl()
 		{
 			return this.record.source.url;
 		},
@@ -29,7 +41,7 @@ export default
 		},
 		getLayerClass()
 		{
-			return this.record.isSelected === true ? 'selected' : '';
+			return this.$store.getters.current === this.record ? 'selected' : '';
 		},
 		wasEdited()
 		{
