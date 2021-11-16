@@ -1,5 +1,5 @@
 <template>
-	<canvas ref="canvas"></canvas>
+	<canvas ref="canvas" :width="size.width" :height="size.height"></canvas>
 </template>
 
 <script>
@@ -27,24 +27,29 @@ export default
 	mounted()
 	{
 		this.context = this.$refs.canvas.getContext('2d');
+		this.paint();
 	},
 	watch:
 	{
-		size(value)
+		spot: {
+			immediate: true,
+			handler: 'paint'
+		}
+	},
+	methods:
+	{
+		paint()
 		{
-			console.log('mask-watch-size', value);
-			this.$refs.canvas.width = value.width;
-			this.$refs.canvas.height = value.height;
-		},
-		spot(value)
-		{
-			console.log('mask-watch-spot', value);
-			//this.context.fillStyle = 'rgba(255, 0, 0, .3)';
-			//this.context.fillRect(0, 0, this.size.width, this.size.height);
+			if(this.context == null) return;
+			this.context.clearRect(0, 0, this.size.width, this.size.height);
 			
-			//this.context.globalCompositeOperation = 'destination-out';
-			//this.context.fillStyle = 'rgba(0, 0, 0, 1)';
-			//this.context.fillRect(0, 0, 25, 25);
+			this.context.globalCompositeOperation = 'source-over';
+			this.context.fillStyle = 'rgba(0, 0, 0, .3)';
+			this.context.fillRect(0, 0, this.size.width, this.size.height);
+			
+			this.context.globalCompositeOperation = 'destination-out';
+			this.context.fillStyle = 'rgba(0, 0, 0, 1)';
+			this.context.fillRect(this.spot.x, this.spot.y, this.spot.width, this.spot.height);
 		}
 	}
 }
