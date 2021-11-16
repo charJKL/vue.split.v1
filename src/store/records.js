@@ -6,6 +6,7 @@ export const record =
 	errors: [],
 	source:
 	{
+		loaded: false,
 		filename: '',
 		url: '',
 		size: {width: 0, height: 0},
@@ -71,11 +72,13 @@ const actions =
 		{
 			let file = files[i];
 			let instance = cloneDeep(record);
+				instance.source.loaded = false;
 				instance.source.filename = file.name;
 				instance.source.url = URL.createObjectURL(file);
 			const image = new Image();
 				image.addEventListener('load', e => { 
 					let source = cloneDeep(record.source);
+						source.loaded = true;
 						source.filename = file.name;
 						source.url = instance.source.url;
 						source.size.width = e.target.naturalWidth;

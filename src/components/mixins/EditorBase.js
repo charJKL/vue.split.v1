@@ -80,6 +80,7 @@ const EditorBase = {
 		},
 		calcCurrent()
 		{
+			this.current.loaded = this.source.loaded;
 			this.current.filename = this.source.filename;
 			this.current.url = this.source.url;
 			this.current.size.width = this.source.size.width;
