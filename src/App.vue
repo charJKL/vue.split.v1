@@ -3,8 +3,8 @@
 	<ui-list></ui-list>
 	<main id="main">
 		<default-values></default-values>	
-		<editor-metrics :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
-		<preview></preview>
+		<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
+		<preview class="preview" :source="source" :metrics="metrics"></preview>
 	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
@@ -113,7 +113,14 @@ body
 	display: flex;
 	flex-flow: row nowrap;
 }
-
+.editor
+{
+	flex: 0 0 70%;
+}
+.preview
+{
+	flex: 0 0 30%;
+}
 
 button
 {
