@@ -38,6 +38,14 @@ const actions =
 	},
 	[setSearching]({commit}, pattern)
 	{
+		try
+		{
+			new RegExp(pattern);
+		}catch(e){
+			console.error(e);
+			return;
+		}
+		
 		commit('searching', pattern);
 	}
 }

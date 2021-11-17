@@ -4,14 +4,14 @@
 		<toggle-button class="button-toggle" v-model="show" on="Show defaults" off="Show defaults"></toggle-button>
 	</div>
 </div>
-<div class="editor-default editor-default-showed" v-else>
+<div class="editor-default editor-default-showed" v-if="show === true">
 	<div class="line-first">
 		<toggle-button class="button-toggle" v-model="show" on="Show defaults" off="Show defaults"></toggle-button>
 		<button @click="onAdd">Add</button>
 	</div>
 	<template v-for="(blueprint, index) in blueprints" :key="index">
 		<div class="line">
-			<editor-input v-model:source="blueprint.source" v-model:metrics="blueprint.metrics" ></editor-input>
+			<editor-input v-model:source="blueprint.source" v-model:metrics="blueprint.metrics" @update:source="onUpdateSource"></editor-input>
 			<button @click="onCopy(blueprint)" :disabled="disableCopyAction">Copy from metrics</button>
 			<button @click="onApply(blueprint)" >Apply</button>
 		</div>
@@ -23,6 +23,7 @@
 import ToggleButton from './utils/ToggleButton';
 import EditorInput from './EditorInput';
 import {record, loadDefault} from '../store/records';
+import {setSearching} from '../store/ui';
 import {cloneDeep} from 'lodash';
 
 export default
@@ -60,6 +61,10 @@ export default
 	},
 	methods:
 	{
+		onUpdateSource(source)
+		{
+			this.$store.dispatch(setSearching, source.filename);
+		},
 		onAdd()
 		{
 			const blueprint = {};
@@ -74,6 +79,7 @@ export default
 		},
 		onApply(blueprint)
 		{
+			console.log('blueprint-apply', blueprint.source, blueprint.metrics);
 			this.$store.dispatch(loadDefault, blueprint);
 		}
 	}

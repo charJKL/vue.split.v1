@@ -1,28 +1,27 @@
 <template>
 	<template v-if="current.loaded == true">
 		<div :class="['editor', getEditorClasses]" v-bind="$attrs" ref="thumbnail">
-			<div class="name">{{ getName }}</div>
+			<div class="name" v-html="getName"></div>
 			<canvas-mask class="mask" :size="imageSize" :spot="spotPosition"></canvas-mask>
 			<img class="img" :style="getImageStyle" :src="getImageUrl" />
 		</div>
 	</template>
 	<template v-if="current.loaded == false">
 		<div :class="['editor', getEditorClasses]" v-bind="$attrs">
+			<div class="name" v-html="getName"></div>
 			<img class="waiting" src="../assets/waiting.svg" />
-			<div class="name">{{ getName }}</div>
 		</div>
 	</template>
 </template>
 
 <script>
 import EditorBase from './mixins/EditorBase';
-import EditorOffset from './mixins/EditorOffset';
 import EditorScale from './mixins/EditorScale';
 import CanvasMask from './utils/CanvasMask';
 
 export default
 {
-	mixins: [ EditorBase, EditorOffset, EditorScale ],
+	mixins: [ EditorBase, EditorScale ],
 	components: { CanvasMask },
 	data()
 	{
@@ -45,7 +44,11 @@ export default
 		},
 		getName()
 		{
-			return this.current.filename;
+			if(this.$store.getters.focus !== 'source') return this.current.filename;
+			let regexp = new RegExp(this.$store.getters.searching);
+			let result = regexp.exec(this.current.filename);
+			if(result === null) return this.current.filename;
+			return this.current.filename.replace(result[0], `<span>${result[0]}</span>`);
 		},
 		imageSize()
 		{
@@ -111,4 +114,5 @@ export default
 	color: #fff;
 	z-index: 3;
 }
+.name >>> span{ background: red; }
 </style>
