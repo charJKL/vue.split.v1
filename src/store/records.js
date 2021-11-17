@@ -10,6 +10,7 @@ export const record =
 		filename: '',
 		url: '',
 		size: {width: 0, height: 0},
+		img: null,
 	},
 	metrics:
 	{
@@ -75,21 +76,23 @@ const actions =
 				instance.source.loaded = false;
 				instance.source.filename = file.name;
 				instance.source.url = URL.createObjectURL(file);
-			const image = new Image();
-				image.addEventListener('load', e => { 
+				instance.source.img = new Image();
+				instance.source.img.addEventListener('load', e => { 
 					let source = cloneDeep(record.source);
 						source.loaded = true;
 						source.filename = file.name;
 						source.url = instance.source.url;
 						source.size.width = e.target.naturalWidth;
 						source.size.height = e.target.naturalHeight;
+						source.img = instance.source.img;
 			
 						//instance.source.size = { width: e.target.naturalWidth, height: e.target.naturalHeight};
 						//console.log('image loaded:', i, 'size:', instance.source.size.width, instance.source.size.height);
 						commit('source', {index: i, value: source});
 					});
-				image.addEventListener('error', () => instance.errors.push("Cant read natural image size.") );
-				image.src = instance.source.url;
+				instance.source.img.addEventListener('error', () => instance.errors.push("Cant read natural image size.") );
+				instance.source.img.src = instance.source.url;
+				
 			list.push(instance);
 		}
 		commit('list', list);
