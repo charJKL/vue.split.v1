@@ -7,7 +7,8 @@ const EditorInputMouse =
 	data()
 	{
 		return {
-			mouse: EditorInputMouseFocus
+			mouse: EditorInputMouseFocus,
+			focus: null,
 		}
 	},
 	computed:
@@ -23,14 +24,6 @@ const EditorInputMouse =
 		onBlur()
 		{
 			return this.mouse.blur.bind(this);
-		},
-		onSourceFocus()
-		{
-			this.$store.dispatch(setFocus, 'source');
-		},
-		onSourceBlur()
-		{
-			this.$store.dispatch(setFocus, '');
 		}
 	},
 	watch:
@@ -38,6 +31,17 @@ const EditorInputMouse =
 		mouse(old, value)
 		{
 			if(isMatch(old, value) === false) throw new Error("Mouse events object doesn't match");
+		}
+	},
+	methods:
+	{
+		onSourceFocus()
+		{
+			this.$store.dispatch(setFocus, 'source');
+		},
+		onSourceBlur()
+		{
+			this.$store.dispatch(setFocus, '');
 		}
 	}
 }

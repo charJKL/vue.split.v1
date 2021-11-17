@@ -18,12 +18,6 @@ import {toRef} from 'vue';
 export default
 {
 	mixins: [EditorBase, EditorInputMouse],
-	data()
-	{
-		return {
-			focus: null,
-		}
-	},
 	methods:
 	{
 		initLocal()
