@@ -14,7 +14,6 @@
 
 <script>
 import EditorBase from './mixins/EditorBase';
-import EditorOffset from './mixins/EditorOffset';
 import EditorScale from './mixins/EditorScale';
 import EditorMetricsMouse from './EditorMetricsMouse';
 import EditorMetricsLine from './EditorMetricsLine';
@@ -30,7 +29,7 @@ const blueprint =
 
 export default
 {
-	mixins: [ EditorBase, EditorOffset, EditorScale, EditorMetricsMouse ],
+	mixins: [ EditorBase, EditorScale, EditorMetricsMouse ],
 	components: { EditorMetricsLine, EditorMetricsHighlight },
 	props:
 	{
@@ -105,17 +104,13 @@ export default
 		{
 			this.scaled.lines = [this.scaled.x1, this.scaled.x2, this.scaled.y1, this.scaled.y2];
 		},
-		updateRotation()
-		{
-			this.calcOffset(this.current.size, this.scaled.rotate.value);
-		},
 		updateMetrics()
 		{
 			const metrics = this.getMetricsInstance();
-					metrics.x1.value = this.scaled.x1.value / this.scale - this.offset.x;
-					metrics.x2.value = this.scaled.x2.value / this.scale - this.offset.x;
-					metrics.y1.value = this.scaled.y1.value / this.scale - this.offset.y;
-					metrics.y2.value = this.scaled.y2.value / this.scale - this.offset.y;
+					metrics.x1.value = this.scaled.x1.value / this.scale;
+					metrics.x2.value = this.scaled.x2.value / this.scale;
+					metrics.y1.value = this.scaled.y1.value / this.scale;
+					metrics.y2.value = this.scaled.y2.value / this.scale;
 					metrics.rotate.value = this.scaled.rotate.value;
 			this.$emit(updateMetrics, metrics);
 		},
@@ -131,7 +126,6 @@ export default
 .editor
 {
 	height: 100%;
-	flex: 1 0 0;
 	user-select: none;
 	display:flex;
 	justify-content: center;

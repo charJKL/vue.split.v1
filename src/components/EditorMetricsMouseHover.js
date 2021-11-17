@@ -42,7 +42,6 @@ const EditorMetricsMouseHover =
 	wheel(e)
 	{
 		this.scaled.rotate.value = this.scaled.rotate.value + e.deltaY * sensitivity;
-		this.updateRotation();
 		this.updateMetrics();
 	}
 }
