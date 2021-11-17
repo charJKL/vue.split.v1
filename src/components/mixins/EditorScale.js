@@ -33,10 +33,6 @@ const EditorScale =
 			}
 		}
 	},
-	created()
-	{
-		if(this.offseted === undefined) throw new Error('`EditorScale` mixing must be used with `EditorOffset` mixin.');
-	},
 	methods:
 	{
 		calcScale()
@@ -45,11 +41,11 @@ const EditorScale =
 		},
 		calcScaled()
 		{
-			this.scaled.x1.value = this.offseted.x1.value * this.scale;
-			this.scaled.x2.value = this.offseted.x2.value * this.scale;
-			this.scaled.y1.value = this.offseted.y1.value * this.scale;
-			this.scaled.y2.value = this.offseted.y2.value * this.scale;
-			this.scaled.rotate.value = this.offseted.rotate.value;
+			this.scaled.x1.value = this.local.x1.value * this.scale;
+			this.scaled.x2.value = this.local.x2.value * this.scale;
+			this.scaled.y1.value = this.local.y1.value * this.scale;
+			this.scaled.y2.value = this.local.y2.value * this.scale;
+			this.scaled.rotate.value = this.local.rotate.value;
 		},
 		calcScaleValue(viewport, margin, image)
 		{
