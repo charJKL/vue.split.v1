@@ -2,10 +2,14 @@
 <div :class="['editor', getEditorClasses]" :style="getEditorStyle" ref="editor" @mousedown.left.prevent.stop="onLeftDown" @mouseup.left.prevent.stop="onLeftUp" @mousemove.prevent.stop="onMove" @mouseleave.prevent.stop="onLeave" @wheel.prevent.stop="onWheel">
 	<template v-if="isSource">
 		<svg class="svg" :style="getSvgStyle">
-			<editor-metrics-highlight :offset="offset" :size="editorSize" :metrics="this.scaled"></editor-metrics-highlight>
+			<editor-metrics-highlight :offset="offset" :size="editorSize" :metrics="scaled"></editor-metrics-highlight>
+			<editor-metrics-line :offset="offset" :type="scaled.x1.subtype" :value="scaled.x1.value"></editor-metrics-line>
+			<editor-metrics-line :offset="offset" :type="scaled.x2.subtype" :value="scaled.x2.value"></editor-metrics-line>
+			<editor-metrics-line :offset="offset" :type="scaled.y1.subtype" :value="scaled.y1.value"></editor-metrics-line>
+			<editor-metrics-line :offset="offset" :type="scaled.y2.subtype" :value="scaled.y2.value"></editor-metrics-line>
 		</svg>
 		<div class="image-window">
-			<img class="image-source" :style="getImageStyle" :src="this.current.url">
+			<img class="image-source" :style="getImageStyle" :src="current.url">
 		</div>
 	</template>
 </div>
@@ -15,6 +19,7 @@
 import EditorBase from './mixins/EditorBase';
 import EditorScale from './mixins/EditorScale';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
+import EditorMetricsLine from './EditorMetricsLine';
 import {updateMetrics} from './mixins/EditorBase';
 import {setHover} from '../store/ui';
 import {isMatch} from '../lib/isMatch';
@@ -27,7 +32,7 @@ const blueprint =
 export default
 {
 	mixins: [ EditorBase, EditorScale],
-	components: { EditorMetricsHighlight },
+	components: { EditorMetricsHighlight, EditorMetricsLine },
 	props:
 	{
 		offset: { type: Object, default: blueprint.offset, validator(value){ return isMatch(blueprint.offset, value); } },

@@ -4,12 +4,20 @@
 </template>
 
 <script>
+import {isMatch} from '../lib/isMatch';
+
+const blueprint = 
+{
+	offset: {top: 0, right: 0, bottom: 0, left: 0},
+}
+
 export default
 {
 	props: 
 	{
+		offset: { type: Object, required: true, validator(value){ return isMatch(blueprint.offset, value); } },
 		value: { type: Number, requred: true },
-		type: { type: String, requred: true },
+		type: { type: String, requred: true, validator(value){ return value == 'horizontal' || value == 'vertical' } },
 		hover: { type: Boolean, requred: false },
 		name: { type: String, requred: false },
 	},
@@ -22,32 +30,28 @@ export default
 		x1()
 		{
 			if(this.type === 'horizontal') return 0;
-			if(this.type === 'vertical') return this.value;
+			if(this.type === 'vertical') return this.value + this.offset.left;
 			throw new Error(`Line type ${this.type} is wrong`);
 		},
 		x2()
 		{
 			if(this.type === 'horizontal') return '100%';
-			if(this.type === 'vertical') return this.value;
+			if(this.type === 'vertical') return this.value + this.offset.left;
 			throw new Error(`Line type ${this.type} is wrong`);
 		},
 		y1()
 		{
-			if(this.type === 'horizontal') return this.value;
+			if(this.type === 'horizontal') return this.value + this.offset.top;
 			if(this.type === 'vertical') return 0;
 			throw new Error(`Line type ${this.type} is wrong`);
 		},
 		y2()
 		{
-			if(this.type === 'horizontal') return this.value;
+			if(this.type === 'horizontal') return this.value + this.offset.top;
 			if(this.type === 'vertical') return '100%';
-			throw new Error('Line type is wrong');
+			throw new Error('Line type $`this.type`is wrong');
 		}
 	},
-	methods:
-	{
-		
-	}
 }
 </script>
 
