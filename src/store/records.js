@@ -19,6 +19,10 @@ export const record =
 		y1: { name: 'y1', type: 'line', subtype: 'horizontal', value: 50 },
 		y2: { name: 'y2', type: 'line', subtype: 'horizontal', value: 250 },
 		rotate: { name: 'rotate', type: 'float', subtype: 'float', value: 0 },
+	},
+	cropped:
+	{
+		img: null
 	}
 }
 
@@ -52,6 +56,11 @@ const getters = {
 	{
 		if(getters.current === null) return null;
 		return getters.current.metrics;
+	},
+	cropped(state, getters)
+	{
+		if(getters.current === null) return null;
+		return getters.current.cropped;
 	}
 }
 
@@ -63,6 +72,7 @@ export const loadDefault = 'load-default-action';
 export const selectCurrent = 'select-current-action';
 export const selectIndex = 'select-index-action';
 export const updateMetrics = 'update-metrics-action';
+export const updateCropped = 'update-cropped-action';
 
 const actions = 
 {
@@ -126,6 +136,10 @@ const actions =
 		commit('record', {index: getters.index, field: 'wasEdited', value: true});
 		commit('record', {index: getters.index, field: 'metrics', value: metrics});
 	},
+	[updateCropped]({getters, commit}, cropped)
+	{
+		commit('cropped', {index: getters.index, value: cropped});
+	}
 }
 
 // access this by $this.store.commit('record', value)
@@ -134,6 +148,7 @@ const mutations =
 	list(state, list){ state.list = list; },
 	index(state, index){ state.index = index; },
 	source(state, source){ state.list[source.index]['source'] = source.value },
+	cropped(state, cropped){ state.list[cropped.index]['cropped'] = cropped.value },
 	record(state, record){ state.list[record.index][record.field] = record.value },
 }
 
