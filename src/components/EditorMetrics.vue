@@ -1,22 +1,19 @@
 <template>
-<div :class="['editor', getEditorClasses]" ref="editor" @mousedown.left.prevent.stop="onLeftDown" @mouseup.left.prevent.stop="onLeftUp" @mousemove.prevent.stop="onMove" @mouseleave.prevent.stop="onLeave" @wheel.prevent.stop="onWheel">
-	<div class="desktop" :style="getDesktopStyle" v-if="isSource">
-		<div class="window" ref="window">
-			<img class="image" ref="image" :style="getImageStyle" :src="this.current.url" />
-		</div>
-		<svg class="canvas" ref="canvas" :style="getCanvasStyle">
+<div :class="['editor', getEditorClasses]" :style="getEditorStyle" ref="editor" @mousedown.left.prevent.stop="onLeftDown" @mouseup.left.prevent.stop="onLeftUp" @mousemove.prevent.stop="onMove" @mouseleave.prevent.stop="onLeave" @wheel.prevent.stop="onWheel">
+	<template v-if="isSource">
+		<svg class="svg" :style="getSvgStyle">
 			<editor-metrics-highlight :size="highlightSize" :spot="highlightSpot"></editor-metrics-highlight>
-			<editor-metrics-line v-for="metric in scaled.lines" :key="metric.name" :type="metric.subtype" :value="metric.value" :hover="isHover(metric)"></editor-metrics-line>
 		</svg>
-	</div>
+		<div class="image-window">
+			<img class="image-source" :style="getImageStyle" :src="this.current.url">
+		</div>
+	</template>
 </div>
 </template>
 
 <script>
 import EditorBase from './mixins/EditorBase';
 import EditorScale from './mixins/EditorScale';
-import EditorMetricsMouse from './EditorMetricsMouse';
-import EditorMetricsLine from './EditorMetricsLine';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
 import {updateMetrics} from './mixins/EditorBase';
 import {setHover} from '../store/ui';
@@ -24,20 +21,21 @@ import {isMatch} from '../lib/isMatch';
 
 const blueprint = 
 {
-	padding: { top: 12, right: 12, bottom: 12, left: 12 },
+	offset: { top: 12, right: 12, bottom: 12, left: 12 },
 }
 
 export default
 {
-	mixins: [ EditorBase, EditorScale, EditorMetricsMouse ],
-	components: { EditorMetricsLine, EditorMetricsHighlight },
+	mixins: [ EditorBase, EditorScale],
+	components: { EditorMetricsHighlight},
 	props:
 	{
-		padding: { type: Object, default: blueprint.padding, validator(value){ return isMatch(blueprint.padding, value); } },
+		offset: { type: Object, default: blueprint.offset, validator(value){ return isMatch(blueprint.offset, value); } },
 	},
 	data()
 	{
 		return {
+			mounted: false,
 			hover: null,
 			active: null,
 		}
@@ -50,39 +48,28 @@ export default
 			const isGrabbing = this.active ? 'cursor-grabbing' : '';
 			return [isGrab, isGrabbing];
 		},
-		getDesktopStyle()
+		getEditorStyle()
 		{
-			return { width: `${this.desktopSize.width}px`, height: `${this.desktopSize.height}px` };
+			if(this.mounted == false) return {};
+			return { width: `${this.editorSize.width}px`, height: `${this.editorSize.height}px` };
+		},
+		getSvgStyle()
+		{
+			const top = this.offset.top * -1;
+			const left = this.offset.left * -1;
+			const width = this.editorSize.width + this.offset.left + this.offset.right;
+			const height = this.editorSize.height + this.offset.top + this.offset.bottom;
+			return { top: `${top}px`, left: `${left}px`, width: `${width}px`, height: `${height}px` };
 		},
 		getImageStyle()
 		{
 			return { transform: `rotate(${this.scaled.rotate.value}deg)` };
 		},
-		getCanvasStyle()
+		editorSize()
 		{
-			return { width: `${this.canvasSize.width}px`, height: `${this.canvasSize.height}px`, left: `-${this.padding.left}px`, top: `-${this.padding.top}px` };
-		},
-		desktopSize()
-		{
-			const width = Math.floor(this.current.size.width * this.scale);
-			const height = Math.floor(this.current.size.height * this.scale);
+			const width = this.current.size.width * this.scale.x;
+			const height = this.current.size.height * this.scale.y;
 			return { width: width, height: height };
-		},
-		canvasSize()
-		{
-			const width = this.desktopSize.width + this.padding.left + this.padding.right;
-			const height = this.desktopSize.height + this.padding.top + this.padding.bottom;
-			return { width: width, height: height };
-		},
-		highlightSpot()
-		{
-			const width = this.scaled.x2.value - this.scaled.x1.value;
-			const height = this.scaled.y2.value - this.scaled.y1.value;
-			return { x: this.scaled.x1.value, y: this.scaled.y1.value, width: width, height: height };
-		},
-		highlightSize()
-		{
-			return { width: this.desktopSize.width, height: this.desktopSize.height, x: this.padding.left, y: this.padding.top };
 		}
 	},
 	watch:
@@ -95,8 +82,8 @@ export default
 	},
 	mounted()
 	{
-		this.viewport = this.$refs.editor.getBoundingClientRect();
-		this.margin = { top: 15, right: 15, bottom: 15, left: 15 };
+		this.viewport = {width: this.$refs.editor.clientWidth, height: this.$refs.editor.clientHeight };
+		this.mounted = true;
 	},
 	methods:
 	{
@@ -125,36 +112,27 @@ export default
 <style scoped>
 .editor
 {
-	height: 100%;
-	user-select: none;
-	display:flex;
-	justify-content: center;
-	align-items: center;
+	position:relative;
 }
-.editor.cursor-grab{ cursor: grab; }
-.editor.cursor-grabbing{ cursor: grabbing; }
-.desktop
-{
-	position: relative;
-	border: solid 1px #000;
-}
-.window
+.svg
 {
 	position: absolute;
 	width: 100%;
 	height: 100%;
+	background: rgba(0, 0, 255, .3);
+	z-index: 1;
+}
+.image-window
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
 	overflow: hidden;
 }
-.image
+.image-source
 {
-	position: absolute;
-	z-index: 1;
 	width: 100%;
 	height: 100%;
-}
-.canvas
-{
-	position: absolute;
-	z-index: 2;
 }
 </style>
