@@ -26,13 +26,13 @@ export const record =
 	}
 }
 
-// access this by $this.store.state.<list>
+// access this by this.$store.state.<list>
 const state = {
 	list: [],
 	index: null,
 }
 
-// access this by $this.store.getters.<list>
+// access this by this.$store.getters.<list>
 const getters = {
 	list(state)
 	{ 
@@ -64,7 +64,7 @@ const getters = {
 	}
 }
 
-// access this by $this.store.dispatch('load-file', value)
+// access this by this.$store.dispatch('load-file', value)
 // in actions i should call commits()
 export const loadList = 'load-list-action';
 export const loadSave = 'load-save-action';
@@ -138,11 +138,12 @@ const actions =
 	},
 	[updateCropped]({getters, commit}, cropped)
 	{
+		console.log(cropped);
 		commit('cropped', {index: getters.index, value: cropped});
 	}
 }
 
-// access this by $this.store.commit('record', value)
+// access this by this.$store.commit('record', value)
 const mutations = 
 {
 	list(state, list){ state.list = list; },
