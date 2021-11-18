@@ -15,6 +15,9 @@
 			<div class="preview-box">
 				<preview class="preview" :source="source" :metrics="metrics"></preview>
 			</div>
+			<div class="text-box">
+				<editor-text></editor-text>
+			</div>
 		</template>
 	</main>
 	<ui-footer></ui-footer>
@@ -27,6 +30,7 @@ import UiList from './components/UiList';
 import DefaultValues from './components/DefaultValues';
 import EditorMetrics from './components/EditorMetrics';
 import Preview from './components/Preview';
+import EditorText from './components/EditorText';
 import UiFooter from './components/UiFooter';
 import {updateMetrics} from './store/records';
 import {tabMetricsPreview, tabPreviewText} from './store/ui';
@@ -34,7 +38,7 @@ import _ from 'lodash';
 
 export default 
 {
-	components: { UiHeader, UiList, DefaultValues, EditorMetrics, Preview, UiFooter },
+	components: { UiHeader, UiList, DefaultValues, EditorMetrics, Preview, EditorText, UiFooter },
 	name: 'App',
 	data()
 	{
