@@ -2,14 +2,20 @@
 	<ui-header></ui-header>
 	<ui-list></ui-list>
 	<main id="main">
-		<default-values></default-values>
-		<div class="editor-box">
-			<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
-		</div>
-		<div class="preview-box">
-			<preview class="preview" :source="source" :metrics="metrics"></preview>
-		</div>
-		
+		<template v-if="isTabMetricsPreview">
+			<default-values></default-values>
+			<div class="editor-box">
+				<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
+			</div>
+			<div class="preview-box">
+				<preview class="preview" :source="source" :metrics="metrics"></preview>
+			</div>
+		</template>
+		<template v-if="isTabPreviewText">
+			<div class="preview-box">
+				<preview class="preview" :source="source" :metrics="metrics"></preview>
+			</div>
+		</template>
 	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
@@ -23,14 +29,29 @@ import EditorMetrics from './components/EditorMetrics';
 import Preview from './components/Preview';
 import UiFooter from './components/UiFooter';
 import {updateMetrics} from './store/records';
+import {tabMetricsPreview, tabPreviewText} from './store/ui';
 import _ from 'lodash';
 
 export default 
 {
 	components: { UiHeader, UiList, DefaultValues, EditorMetrics, Preview, UiFooter },
 	name: 'App',
+	data()
+	{
+		return {
+			main: 'metrics-preview'
+		}
+	},
 	computed:
 	{
+		isTabMetricsPreview()
+		{
+			return this.$store.getters.tab === tabMetricsPreview;
+		},
+		isTabPreviewText()
+		{
+			return this.$store.getters.tab === tabPreviewText;
+		},
 		isCurrent()
 		{
 			return this.$store.getters.current !== null;
@@ -89,6 +110,7 @@ export default
 {
 	--font: 'Arial';
 	--gray: rgba(200,200,200,1);
+	--gray-dark: rgba(100,100,100,1);
 	--gray-light: rgba(220,220,220,1);
 }
 html
@@ -110,6 +132,10 @@ body
 	height: 100%;
 	max-height: 100%;
 	overflow-y: none;
+}
+.header
+{
+	flex: 0 0 auto;
 }
 #main
 {
