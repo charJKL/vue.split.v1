@@ -3,10 +3,10 @@
 	<template v-if="isSource">
 		<svg class="svg" :style="getSvgStyle">
 			<editor-metrics-highlight :offset="offset" :size="editorSize" :metrics="scaled"></editor-metrics-highlight>
-			<editor-metrics-line :offset="offset" :type="scaled.x1.subtype" :value="scaled.x1.value"></editor-metrics-line>
-			<editor-metrics-line :offset="offset" :type="scaled.x2.subtype" :value="scaled.x2.value"></editor-metrics-line>
-			<editor-metrics-line :offset="offset" :type="scaled.y1.subtype" :value="scaled.y1.value"></editor-metrics-line>
-			<editor-metrics-line :offset="offset" :type="scaled.y2.subtype" :value="scaled.y2.value"></editor-metrics-line>
+			<editor-metrics-line :offset="offset" :type="scaled.x1.subtype" :value="scaled.x1.value" :hover="ui.x1.hover"></editor-metrics-line>
+			<editor-metrics-line :offset="offset" :type="scaled.x2.subtype" :value="scaled.x2.value" :hover="ui.x2.hover"></editor-metrics-line>
+			<editor-metrics-line :offset="offset" :type="scaled.y1.subtype" :value="scaled.y1.value" :hover="ui.y1.hover"></editor-metrics-line>
+			<editor-metrics-line :offset="offset" :type="scaled.y2.subtype" :value="scaled.y2.value" :hover="ui.y2.hover"></editor-metrics-line>
 		</svg>
 		<div class="image-window">
 			<img class="image-source" :style="getImageStyle" :src="current.url">
@@ -18,6 +18,7 @@
 <script>
 import EditorBase from './mixins/EditorBase';
 import EditorScale from './mixins/EditorScale';
+import EditorMetricsMouse from './EditorMetricsMouse';
 import EditorMetricsHighlight from './EditorMetricsHighlight';
 import EditorMetricsLine from './EditorMetricsLine';
 import {updateMetrics} from './mixins/EditorBase';
@@ -31,7 +32,7 @@ const blueprint =
 
 export default
 {
-	mixins: [ EditorBase, EditorScale],
+	mixins: [ EditorBase, EditorScale, EditorMetricsMouse],
 	components: { EditorMetricsHighlight, EditorMetricsLine },
 	props:
 	{
@@ -40,9 +41,7 @@ export default
 	data()
 	{
 		return {
-			mounted: false,
-			hover: null,
-			active: null,
+			mounted: false
 		}
 	},
 	computed:
@@ -92,23 +91,15 @@ export default
 	},
 	methods:
 	{
-		initLocal()
-		{
-			//this.scaled.lines = [this.scaled.x1, this.scaled.x2, this.scaled.y1, this.scaled.y2];
-		},
 		updateMetrics()
 		{
 			const metrics = this.getMetricsInstance();
-					metrics.x1.value = this.scaled.x1.value / this.scale;
-					metrics.x2.value = this.scaled.x2.value / this.scale;
-					metrics.y1.value = this.scaled.y1.value / this.scale;
-					metrics.y2.value = this.scaled.y2.value / this.scale;
+					metrics.x1.value = this.scaled.x1.value / this.scale.x;
+					metrics.x2.value = this.scaled.x2.value / this.scale.x;
+					metrics.y1.value = this.scaled.y1.value / this.scale.y;
+					metrics.y2.value = this.scaled.y2.value / this.scale.y;
 					metrics.rotate.value = this.scaled.rotate.value;
 			this.$emit(updateMetrics, metrics);
-		},
-		isHover(metric)
-		{
-			return this.hover === metric;
 		}
 	}
 }
@@ -119,6 +110,8 @@ export default
 {
 	position:relative;
 }
+.editor.cursor-grab{ cursor: grab; }
+.editor.cursor-grabbing{ cursor: grabbing; }
 .svg
 {
 	position: absolute;

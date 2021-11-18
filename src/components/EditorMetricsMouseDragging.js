@@ -1,9 +1,5 @@
 import Hover from './EditorMetricsMouseHover';
 
-
-//var originalFocus = null; // eslint-disable-line no-unused-vars
-//var originalValues = null; // eslint-disable-line no-unused-vars
-
 var originalPosition = {x: 0, y:0};
 var originalValue = 0;
 

@@ -1,12 +1,18 @@
-import {isMatch} from '../lib/isMatch';
 import EditorMetricsMouseHover from './EditorMetricsMouseHover';
+import {record} from '../store/records';
+import {isMatch} from '../lib/isMatch';
+import {cloneDeep} from 'lodash';
+
 
 const EditorMetricsMouse = 
 {
 	data()
 	{
 		return {
-			mouse: EditorMetricsMouseHover
+			mouse: EditorMetricsMouseHover,
+			ui: cloneDeep(record.metrics),
+			hover: null,
+			active: null,
 		}
 	},
 	computed:
@@ -32,11 +38,23 @@ const EditorMetricsMouse =
 			return this.mouse.wheel.bind(this);
 		}
 	},
+	created()
+	{
+		this.ui.x1.hover = false;
+		this.ui.x2.hover = false;
+		this.ui.y1.hover = false;
+		this.ui.y2.hover = false;
+	},
 	watch:
 	{
-		mouse(old, value)
+		mouse(value, old)
 		{
 			if(isMatch(old, value) === false) throw new Error("Mouse events object doesn't match");
+		},
+		hover(value, old)
+		{
+			if(old !== null) this.ui[old.name].hover = false;
+			if(value !== null) this.ui[value.name].hover = true;
 		}
 	}
 }

@@ -26,10 +26,15 @@ const EditorMetricsMouseHover =
 	move(e)
 	{
 		if(this.isSource === false) return;
-		const position = calcMousePosition(this.$refs.canvas.getBoundingClientRect(), e.clientX, e.clientY);
-		this.scaled.lines.forEach(metric => metric.diff = calcDiff(metric.subtype, position, metric.value));
-		const nearest = minBy(this.scaled.lines, (metric) => metric.diff);
-		this.hover = (nearest.diff < threshold) ? nearest : null;
+		const position = calcMousePosition(this.$refs.editor.getBoundingClientRect(), e.clientX, e.clientY);
+		const lines = [];
+				lines.push({line: this.scaled.x1, diff: calcDiff(this.scaled.x1.subtype, position, this.scaled.x1.value)});
+				lines.push({line: this.scaled.x2, diff: calcDiff(this.scaled.x2.subtype, position, this.scaled.x2.value)});
+				lines.push({line: this.scaled.y1, diff: calcDiff(this.scaled.y1.subtype, position, this.scaled.y1.value)});
+				lines.push({line: this.scaled.y2, diff: calcDiff(this.scaled.y2.subtype, position, this.scaled.y2.value)});
+
+		const nearest = minBy(lines, (line) => line.diff);
+		this.hover = (nearest.diff < threshold) ? nearest.line : null;
 	},
 	leftUp()
 	{
