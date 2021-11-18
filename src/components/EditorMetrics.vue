@@ -2,7 +2,7 @@
 <div :class="['editor', getEditorClasses]" :style="getEditorStyle" ref="editor" @mousedown.left.prevent.stop="onLeftDown" @mouseup.left.prevent.stop="onLeftUp" @mousemove.prevent.stop="onMove" @mouseleave.prevent.stop="onLeave" @wheel.prevent.stop="onWheel">
 	<template v-if="isSource">
 		<svg class="svg" :style="getSvgStyle">
-			<editor-metrics-highlight :size="highlightSize" :spot="highlightSpot"></editor-metrics-highlight>
+			<editor-metrics-highlight :offset="offset" :size="editorSize" :metrics="this.scaled"></editor-metrics-highlight>
 		</svg>
 		<div class="image-window">
 			<img class="image-source" :style="getImageStyle" :src="this.current.url">
@@ -27,7 +27,7 @@ const blueprint =
 export default
 {
 	mixins: [ EditorBase, EditorScale],
-	components: { EditorMetricsHighlight},
+	components: { EditorMetricsHighlight },
 	props:
 	{
 		offset: { type: Object, default: blueprint.offset, validator(value){ return isMatch(blueprint.offset, value); } },
@@ -89,7 +89,7 @@ export default
 	{
 		initLocal()
 		{
-			this.scaled.lines = [this.scaled.x1, this.scaled.x2, this.scaled.y1, this.scaled.y2];
+			//this.scaled.lines = [this.scaled.x1, this.scaled.x2, this.scaled.y1, this.scaled.y2];
 		},
 		updateMetrics()
 		{
@@ -117,9 +117,6 @@ export default
 .svg
 {
 	position: absolute;
-	width: 100%;
-	height: 100%;
-	background: rgba(0, 0, 255, .3);
 	z-index: 1;
 }
 .image-window
