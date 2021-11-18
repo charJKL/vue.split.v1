@@ -27,7 +27,7 @@ import {isMatch} from '../lib/isMatch';
 
 const blueprint = 
 {
-	offset: { top: 12, right: 12, bottom: 12, left: 12 },
+	offset: { top: 8, right: 8, bottom: 8, left: 8 },
 }
 
 export default

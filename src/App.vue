@@ -2,9 +2,14 @@
 	<ui-header></ui-header>
 	<ui-list></ui-list>
 	<main id="main">
-		<default-values></default-values>	
-		<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
-		<preview class="preview" :source="source" :metrics="metrics"></preview>
+		<default-values></default-values>
+		<div class="editor-box">
+			<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
+		</div>
+		<div class="preview-box">
+			<preview class="preview" :source="source" :metrics="metrics"></preview>
+		</div>
+		
 	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
@@ -112,16 +117,34 @@ body
 	flex: 1 0 0;
 	display: flex;
 	flex-flow: row nowrap;
+	width: 100%;
+}
+.editor-box
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex: 0 0 70%;
 }
 .editor
 {
-	flex: 0 0 70%;
+	border: solid 1px #000;
+	width: calc(100% - 20px);
+	height: calc(100% - 20px);
+}
+.preview-box
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex: 0 0 calc(30% - 1px);
+	border-left: dashed 1px #000;
 }
 .preview
 {
-	flex: 0 0 30%;
+	width: 100%;
+	height: 100%;
 }
-
 button
 {
 	padding: 3px 5px;
