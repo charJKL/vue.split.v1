@@ -7,7 +7,7 @@ const EditorScale =
 	{
 		return {
 			scaled: cloneDeep(record.metrics),
-			mode: {x: 'auto', y:'auto'},
+			mode: {width: 'auto', height:'auto'},
 			viewport: {width: 0, height: 0},
 			scale: {x: 1.0, y: 1.0}
 		}
