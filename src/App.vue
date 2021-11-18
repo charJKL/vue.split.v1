@@ -16,7 +16,7 @@
 				<preview class="preview" :source="source" :metrics="metrics"></preview>
 			</div>
 			<div class="text-box">
-				<editor-text :source="source"></editor-text>
+				<editor-text :source="source" :cropped="cropped"></editor-text>
 			</div>
 		</template>
 	</main>
@@ -67,6 +67,10 @@ export default
 		metrics()
 		{
 			return this.$store.getters.metrics;
+		},
+		cropped()
+		{
+			return this.$store.getters.cropped;
 		}
 	},
 	methods:

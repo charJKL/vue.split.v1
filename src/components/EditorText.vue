@@ -14,7 +14,7 @@ export default
 	props:
 	{
 		source: { type: Object, validator(value){ return isMatch(record.source, value); } },
-		//cropp: { type: Object, validator(value){ return isMatch(record.metrics, value); } },
+		cropped: { type: Object, validator(value){ return isMatch(record.cropped, value); } },
 	},
 	data()
 	{
@@ -24,7 +24,7 @@ export default
 	},
 	watch:
 	{
-		source()
+		cropped()
 		{
 			this.readText();
 		}
@@ -41,12 +41,16 @@ export default
 				corePath: '/tesseract-core.wasm.js',
 				logger: m => console.log(m)
 			});
-
+			
+			const data = this.cropped;
+			console.log(data.blob);
+			data.blob.name = 'ssss';
+			console.log(data.data);
 				(async () => {
 				await worker.load();
 				await worker.loadLanguage('eng');
 				await worker.initialize('eng');
-				const { data: { text } } = await worker.recognize('/eng_bw.png');
+				const { data: { text } } = await worker.recognize(data.blob);
 				console.log(text);
 				await worker.terminate();
 				})();

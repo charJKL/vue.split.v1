@@ -7,6 +7,7 @@
 <script>
 import {isMatch} from '../lib/isMatch';
 import {record} from '../store/records';
+import {updateCropped} from '../store/records';
 
 export default
 {
@@ -50,6 +51,18 @@ export default
 		{
 			this.drawRotate(this.temp);
 			this.drawClip(this.temp, this.canvas);
+			
+			const width = this.metrics.x2.value - this.metrics.x1.value;
+			const height = this.metrics.y2.value - this.metrics.y1.value;
+			const data = 
+			{
+				data: this.canvas.getContext("2d").getImageData(0, 0, width, height),
+			};
+			this.canvas.toBlob((blob) => {
+				data.blob = blob;
+				this.$store.dispatch(updateCropped, data);
+				
+			}, 'image/png', 1);
 		},
 		drawRotate(canvas)
 		{
