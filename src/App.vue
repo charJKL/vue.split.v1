@@ -16,7 +16,7 @@
 				<preview class="preview" :source="source" :metrics="metrics"></preview>
 			</div>
 			<div class="text-box">
-				<editor-text></editor-text>
+				<editor-text :source="source"></editor-text>
 			</div>
 		</template>
 	</main>
