@@ -52,8 +52,8 @@ export default
 		},
 		imageSize()
 		{
-			const width = Math.ceil(this.current.size.width * this.scale);
-			const height = Math.ceil(this.current.size.height * this.scale);
+			const width = Math.ceil(this.current.size.width * this.scale.x);
+			const height = Math.ceil(this.current.size.height * this.scale.y);
 			return { width: width, height: height };
 		},
 		spotPosition()
@@ -66,7 +66,6 @@ export default
 	mounted()
 	{
 		this.viewport = { width: Infinity, height: 96 };
-		this.margin = { top: 0, right: 0, bottom: 0, left: 0 };
 	}
 }
 </script>

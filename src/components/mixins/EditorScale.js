@@ -7,9 +7,9 @@ const EditorScale =
 	{
 		return {
 			scaled: cloneDeep(record.metrics),
+			mode: {x: 'auto', y:'auto'},
 			viewport: {width: 0, height: 0},
-			margin: { top: 0, right: 0, bottom: 0, left: 0 },
-			scale: 1.0,
+			scale: {x: 1.0, y: 1.0}
 		}
 	},
 	watch:
@@ -37,23 +37,28 @@ const EditorScale =
 	{
 		calcScale()
 		{
-			this.scale = this.calcScaleValue(this.viewport, this.margin, this.current.size);
+			this.scale = this.calcScaleValue(this.viewport, this.mode, this.current.size);
 		},
 		calcScaled()
 		{
-			this.scaled.x1.value = this.local.x1.value * this.scale;
-			this.scaled.x2.value = this.local.x2.value * this.scale;
-			this.scaled.y1.value = this.local.y1.value * this.scale;
-			this.scaled.y2.value = this.local.y2.value * this.scale;
+			this.scaled.x1.value = this.local.x1.value * this.scale.x;
+			this.scaled.x2.value = this.local.x2.value * this.scale.x;
+			this.scaled.y1.value = this.local.y1.value * this.scale.y;
+			this.scaled.y2.value = this.local.y2.value * this.scale.y;
 			this.scaled.rotate.value = this.local.rotate.value;
 		},
-		calcScaleValue(viewport, margin, image)
+		calcScaleValue(viewport, mode, image)
 		{
-			const width = viewport.width - margin.left - margin.right;
-			const height = viewport.height - margin.top - margin.bottom;
+			const width = viewport.width;
+			const height = viewport.height;
 			const x = width / image.width;
 			const y = height / image.height;
-			return Math.min(x, y);
+			if(mode.width == 'auto' && mode.height == 'auto')
+			{
+				const scale = Math.min(x, y);
+				return {x: scale, y: scale};
+			}
+			return {x: x, y: y};
 		}
 	}
 }
