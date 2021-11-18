@@ -1,6 +1,6 @@
 <template>
-<div :class="['preview']">
-	<canvas ref="canvas"></canvas>
+<div :class="['preview']" ref="preview" :style="getEditorStyle">
+	<canvas class="canvas" ref="canvas"></canvas>
 </div>
 </template>
 
@@ -15,32 +15,57 @@ export default
 		source: { type: Object, validator(value){ return isMatch(record.source, value); } },
 		metrics: { type: Object, validator(value){ return isMatch(record.metrics, value); } },
 	},
+	data()
+	{
+		return {
+			mounted: false,
+			viewport: {width: 0, height: 0},
+			canvas: null,
+			temp: null,
+		}
+	},
+	computed:
+	{
+		getEditorStyle()
+		{
+			if(this.mounted == false) return {};
+			return { width: `${this.viewport.width}px`, height: `${this.viewport.height}px` };
+		}
+	},
 	watch:
 	{
 		source: 'paint',
 		metrics: 'paint'
 	},
+	mounted()
+	{
+		this.viewport = {width: this.$refs.preview.offsetWidth, height: this.$refs.preview.offsetHeight };
+		this.canvas = this.$refs.canvas;
+		this.temp = document.createElement("canvas");
+		this.mounted = true;
+	},
 	methods:
 	{
 		paint()
 		{
-			//var source = this.$store.getters.source;
-			var metrics = this.$store.getters.metrics;
-			//console.log('process file', value.url);
+			this.temp.width = this.source.size.width;
+			this.temp.height = this.source.size.height;
+			const tempContext = this.temp.getContext("2d");
 			
-			let width = metrics.x2.value - metrics.x1.value;
-			let height = metrics.y2.value - metrics.y1.value;
+			const halfX = this.source.size.width / 2;
+			const halfY = this.source.size.height / 2;
 			
-			this.$refs.canvas.width = width;
-			this.$refs.canvas.height = height;
+			tempContext.translate(halfX * -1, halfY * -1);
+			tempContext.rotate(this.metrics.rotate.value * Math.PI / 180);
+			tempContext.drawImage(this.source.img, halfX, halfY);
 			
-			let context = this.$refs.canvas.getContext('2d');
-			context.fillStyle = 'rgba(0, 0, 0, .3)';
-			context.fillRect(0, 0, width, height);
+			const width = this.metrics.x2.value - this.metrics.x1.value;
+			const height = this.metrics.y2.value - this.metrics.y1.value;
 			
-			//console.log(this.source);
-			
-			context.drawImage(this.source.img, metrics.x1.value, metrics.y1.value, width, height, 0, 0, width, height);
+			this.canvas.width = width;
+			this.canvas.height = height;
+			const canvasContext = this.canvas.getContext("2d");
+			canvasContext.drawImage(this.temp, this.metrics.x1.value, this.metrics.y1.value, width, height, 0, 0, width, height);
 		}
 	}
 }
@@ -49,11 +74,10 @@ export default
 <style scoped>
 .preview
 {
-	height: 100%;
-	user-select: none;
-	display:flex;
-	justify-content: center;
-	align-items: center;
-	background: red;
+	overflow: scroll;
+}
+.canvas
+{
+	
 }
 </style>
