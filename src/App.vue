@@ -179,35 +179,4 @@ body
 	width: 100%;
 	height: 100%;
 }
-button
-{
-	padding: 3px 5px;
-	margin: 0px 5px;
-	font: 16px / 20px var(--font);
-}
-button:last-child{ margin: 0px 0px 0px 5px; }
-button:first-child{ margin: 0px 5px 0px 0px; }
-.input-text
-{
-	padding: 3px 5px;
-	margin: 0px 5px;
-	font: 16px / 20px var(--font);
-}
-.input-float,
-.input-int
-{
-	padding: 3px 5px;
-	margin: 0px 5px;
-	font: 16px / 20px var(--font);
-	width: 100px;
-}
-.input-checkbox
-{
-	position: relative;
-	top: 3px;
-	height: 20px;
-	width: 25px;
-	margin: 0px;
-	padding: 0px;
-}
 </style>

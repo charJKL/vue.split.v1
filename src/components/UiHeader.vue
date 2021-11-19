@@ -1,22 +1,14 @@
 <template>
 <header class="header">
-	<div>
-		<span>
-			<button @click="this.$refs.loadSave.click()">Load save</button>
-			<input class="hide-input" ref="loadSave" @change="onLoadSave" type="file" accept=".json" />
-		</span>
-		<span>
-			<button @click="this.$refs.loadFiles.click()">Load files</button>
-			<input class="hide-input" ref="loadFiles" @change="onLoadFiles" type="file" accept="image/*" multiple />
-			<input class="input-text" type="text" :value="getList" readonly />
-		</span>
-	</div>
-	<div :class="['header-tab', getMetricsPreviewTabClasses]" @click="onMetricsPreviewTab">
-		Metrics - Preview
-	</div>
-	<div :class="['header-tab', getPreviewTextTabClasses]" @click="onPreviewTextTab">
-		Preview - Text - Result
-	</div>
+	<button class="load-save" @click="this.$refs.loadSave.click()">Load save</button>
+	<input class="input-hide" ref="loadSave" @change="onLoadSave" type="file" accept=".json" />
+	
+	<button class="load-files" @click="this.$refs.loadFiles.click()">Load files</button>
+	<input class="input-hide" ref="loadFiles" @change="onLoadFiles" type="file" accept="image/*" multiple />
+	<input class="file-list" type="text" :value="getList" @click="this.$refs.loadFiles.click()" readonly />
+	
+	<button :class="['metrics-preview', getMetricsPreviewClasses]" @click="onMetricsPreviewTab">Metrics - Preview</button>
+	<button :class="['preview-text', getPreviewTextClasses]" @click="onPreviewTextTab">Preview - Text - Result</button>
 </header>
 </template>
 
@@ -28,14 +20,14 @@ export default
 {
 	computed:
 	{
-		getMetricsPreviewTabClasses()
+		getMetricsPreviewClasses()
 		{
-			const isActive = this.$store.getters.tab === tabMetricsPreview ? 'tab-active' : '';
+			const isActive = this.$store.getters.tab === tabMetricsPreview ? 'is-active' : '';
 			return [isActive];
 		},
-		getPreviewTextTabClasses()
+		getPreviewTextClasses()
 		{
-			const isActive = this.$store.getters.tab === tabPreviewText ? 'tab-active' : '';
+			const isActive = this.$store.getters.tab === tabPreviewText ? 'is-active' : '';
 			return [isActive];
 		},
 		getList()
@@ -69,31 +61,47 @@ export default
 .header
 {
 	display: flex;
-	box-sizing: border-box;
 	flex-flow: row nowrap;
 	background: var(--gray);
-	height: 40px;
-	border-bottom: solid 1px var(--gray-dark);
 }
-.header-tab
+input
 {
-	background: var(--gray);
+	box-sizing: border-box;
+	height: 30px;
+	margin: 10px 0px 10px 0px;
 }
-.header-tab.tab-active
+button
 {
-	position: relative;
-	top: 1px;
-	border: solid 1px var(--gray-dark);
-	border-bottom: none;
-	background: var(--gray-light);
+	box-sizing: border-box;
+	height: 30px;
+	margin: 10px 0px 10px 0px;
 }
-
-.hide-input
+.load-save
+{
+	margin-left: 10px;
+}
+.load-files
+{
+	margin-left: 5px;
+}
+.metrics-preview
+{
+	margin-left: 50px;
+}
+.preview-text
+{
+	margin-left: 5px;
+}
+.is-active
+{
+	outline: solid 1px red;
+}
+.input-hide
 {
 	display: none;
 }
-.input-text
+.file-list
 {
-	width: 450px;
+	width: 350px;
 }
 </style>
