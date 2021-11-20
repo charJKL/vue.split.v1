@@ -5,9 +5,9 @@ export const Stage = { Metrics: 'Metrics', Text: 'Text' };
 
 const state = {
 	stage: Stage.Metrics,
+	focus: null,
+	search: null,
 	hover: '',
-	focus: '',
-	searching: '',
 }
 
 // access this by $this.store.getters.<stage>
@@ -16,17 +16,17 @@ const getters = {
 	{
 		return state.stage;
 	},
-	hover(state)
-	{
-		return state.hover;
-	},
 	focus(state)
 	{
 		return state.focus;
 	},
-	searching(state)
+	search(state)
 	{
-		return state.searching;
+		return state.search;
+	},
+	hover(state)
+	{
+		return state.hover;
 	}
 }
 
@@ -54,13 +54,11 @@ const actions =
 	{
 		try
 		{
-			new RegExp(pattern);
+			commit('searching', new RegExp(pattern));
+			return true;
 		}catch(e){
-			console.error(e);
-			return;
+			return e;
 		}
-		
-		commit('searching', pattern);
 	}
 }
 
