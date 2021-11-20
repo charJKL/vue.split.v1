@@ -2,23 +2,19 @@
 	<ui-header></ui-header>
 	<ui-list></ui-list>
 	<main id="main">
-		<template v-if="isTabMetricsPreview">
-			<default-values></default-values>
-			<div class="editor-box">
-				<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
-			</div>
-			<div class="preview-box">
-				<preview class="preview" :source="source" :metrics="metrics"></preview>
-			</div>
-		</template>
-		<template v-if="isTabPreviewText">
-			<div class="preview-box">
-				<preview class="preview" :source="source" :metrics="metrics"></preview>
-			</div>
-			<div class="text-box">
-				<editor-text :source="source" :cropped="cropped"></editor-text>
-			</div>
-		</template>
+		<default-values></default-values>
+		<div class="editor-box" v-show="isMetricsStage">
+			<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
+		</div>
+		<div class="preview-box" v-show="isMetricsStage">
+			<preview class="preview" :source="source" :metrics="metrics"></preview>
+		</div>
+		<div class="preview-box" v-show="isTextStage">
+			<preview class="preview" :source="source" :metrics="metrics"></preview>
+		</div>
+		<div class="text-box" v-show="isTextStage">
+			<editor-text :source="source" :cropped="cropped"></editor-text>
+		</div>
 	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
@@ -33,7 +29,8 @@ import Preview from './components/Preview';
 import EditorText from './components/EditorText';
 import UiFooter from './components/UiFooter';
 import {updateMetrics} from './store/records';
-import {tabMetricsPreview, tabPreviewText} from './store/ui';
+import {Stage} from './store/ui';
+import {mapGetters} from 'vuex';
 import _ from 'lodash';
 
 export default 
@@ -48,29 +45,19 @@ export default
 	},
 	computed:
 	{
-		isTabMetricsPreview()
+		...mapGetters(['current', 'source', 'metrics', 'cropped']),
+		...mapGetters(['stage']),
+		isMetricsStage()
 		{
-			return this.$store.getters.tab === tabMetricsPreview;
+			return this.stage === Stage.Metrics;
 		},
-		isTabPreviewText()
+		isTextStage()
 		{
-			return this.$store.getters.tab === tabPreviewText;
+			return this.stage === Stage.Text;
 		},
 		isCurrent()
 		{
-			return this.$store.getters.current !== null;
-		},
-		source()
-		{
-			return this.$store.getters.source;
-		},
-		metrics()
-		{
-			return this.$store.getters.metrics;
-		},
-		cropped()
-		{
-			return this.$store.getters.cropped;
+			return this.current !== null;
 		}
 	},
 	methods:
