@@ -1,7 +1,7 @@
 <template>
 	<button @click="onClick">
-		{{ state ? on : off }}
 		<input type="checkbox" :checked="state" />
+		{{ state ? on : off }}
 	</button>
 </template>
 
