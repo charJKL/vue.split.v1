@@ -7,32 +7,35 @@
 	<input class="input-hide" ref="loadFiles" @change="onLoadFiles" type="file" accept="image/*" multiple />
 	<input class="file-list" type="text" :value="getList" @click="this.$refs.loadFiles.click()" readonly />
 	
-	<button :class="['metrics-preview', getMetricsPreviewClasses]" @click="onMetricsPreviewTab">Metrics - Preview</button>
-	<button :class="['preview-text', getPreviewTextClasses]" @click="onPreviewTextTab">Preview - Text - Result</button>
+	<button :class="['stage-metrics', getStageMetricsClasses]" @click="onStageMetrics">Metrics - Preview</button>
+	<button :class="['stage-text', getStageTextClasses]" @click="onStageText">Preview - Text - Result</button>
 </header>
 </template>
 
 <script>
 import {loadSave, loadList} from '../store/records';
-import {setTab, tabMetricsPreview, tabPreviewText} from '../store/ui';
+import {Stage, setStage} from '../store/ui';
+import {mapGetters} from 'vuex';
 
 export default
 {
 	computed:
 	{
-		getMetricsPreviewClasses()
+		...mapGetters(['list']),
+		...mapGetters(['stage']),
+		getStageMetricsClasses()
 		{
-			const isActive = this.$store.getters.tab === tabMetricsPreview ? 'is-active' : '';
+			const isActive = this.stage === Stage.Metrics ? 'is-active' : '';
 			return [isActive];
 		},
-		getPreviewTextClasses()
+		getStageTextClasses()
 		{
-			const isActive = this.$store.getters.tab === tabPreviewText ? 'is-active' : '';
+			const isActive = this.stage === Stage.Text ? 'is-active' : '';
 			return [isActive];
 		},
 		getList()
 		{
-			return this.$store.getters.list.flatMap(file => file.source.filename);
+			return this.list.flatMap(file => file.source.filename);
 		}
 	},
 	methods: 
@@ -45,13 +48,13 @@ export default
 		{
 			this.$store.dispatch(loadList, Array.from(e.target.files));
 		},
-		onMetricsPreviewTab()
+		onStageMetrics()
 		{
-			this.$store.dispatch(setTab, tabMetricsPreview);
+			this.$store.dispatch(setStage, Stage.Metrics);
 		},
-		onPreviewTextTab()
+		onStageText()
 		{
-			this.$store.dispatch(setTab, tabPreviewText);
+			this.$store.dispatch(setStage, Stage.Text);
 		}
 	}
 }
@@ -84,11 +87,11 @@ button
 {
 	margin-left: 5px;
 }
-.metrics-preview
+.stage-metrics
 {
 	margin-left: 50px;
 }
-.preview-text
+.stage-text
 {
 	margin-left: 5px;
 }

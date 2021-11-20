@@ -1,20 +1,20 @@
 // access this by $this.store.state.<list>
 
-export const tabMetricsPreview = 'tab-metrics-preview';
-export const tabPreviewText = 'tab-preview-text';
+
+export const Stage = { Metrics: 'Metrics', Text: 'Text' };
 
 const state = {
-	tab: tabMetricsPreview,
+	stage: Stage.Metrics,
 	hover: '',
 	focus: '',
 	searching: '',
 }
 
-// access this by $this.store.getters.<getList>
+// access this by $this.store.getters.<stage>
 const getters = {
-	tab(state)
+	stage(state)
 	{
-		return state.tab;
+		return state.stage;
 	},
 	hover(state)
 	{
@@ -32,15 +32,15 @@ const getters = {
 
 // access this by $this.store.dispatch(<load-file>, value)
 // in actions i should call commits()
-export const setTab = 'set-tab-action';
+export const setStage = 'set-stage-action';
 export const setHover = 'set-hover-action';
 export const setFocus = 'set-focus-action';
 export const setSearching = 'set-searching-action';
 const actions = 
 {
-	[setTab]({commit}, name)
+	[setStage]({commit}, name)
 	{
-		commit('tab', name);
+		commit('stage', name);
 	},
 	[setHover]({commit}, name)
 	{
@@ -67,7 +67,7 @@ const actions =
 // access this by $this.store.commit('hover', value)
 const mutations = 
 {
-	tab(state, name){ state.tab = name; },
+	stage(state, name){ state.stage = name; },
 	hover(state, name){ state.hover = name; },
 	focus(state, name){ state.focus = name; },
 	searching(state, pattern){ state.searching = pattern; }
