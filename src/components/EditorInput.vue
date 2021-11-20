@@ -1,23 +1,58 @@
-<template>[
-	name: <input class="input-text" v-model="current.filename" @update:modelValue="updateSource" @focus="onSourceFocus" @blur="onSourceBlur"/>,
-	<template v-for="metric in local" :key="metric.name">
-		<label>
-			{{ metric.name }}:
-			<input class="input-int" v-if="isLine(metric.type)" type="number" :disabled="metric.isDisabled" :value="metric.value" @input="onInput($event, metric), updateMetrics()" @focus="onFocus($event, metric)" @blur="onBlur($event, $metric)"/>
-			<input class="input-float" v-if="isFloat(metric.type)" type="number" step="0.1" :disabled="metric.isDisabled" :value="metric.value" @input="onInput($event, metric), updateMetrics()" @focus="onFocus($event, metric)" @blur="onBlur($event, metric)"/>
-		</label>,
-	</template>]
+<template>
+	<div>
+	[
+	<label>name: <input class="input-text" ref="source" v-model="current.filename" @update:modelValue="updateSource" @focus="onSourceFocus" @blur="onSourceBlur"/></label>,
+	<label>{{ local.x1.name }}:<input type="number" :disabled="local.x1.isDisabled" :value="local.x1.value" @input="onInput($event, local.x1), updateMetrics()" @focus="onFocus($event, local.x1)" @blur="onBlur($event, local.x1)"/></label>,
+	<label>{{ local.x2.name }}:<input type="number" :disabled="local.x2.isDisabled" :value="local.x2.value" @input="onInput($event, local.x2), updateMetrics()" @focus="onFocus($event, local.x2)" @blur="onBlur($event, local.x2)"/></label>,
+	<label>{{ local.y1.name }}:<input type="number" :disabled="local.y1.isDisabled" :value="local.y1.value" @input="onInput($event, local.y1), updateMetrics()" @focus="onFocus($event, local.y1)" @blur="onBlur($event, local.y1)"/></label>,
+	<label>{{ local.y2.name }}:<input type="number" :disabled="local.y2.isDisabled" :value="local.y2.value" @input="onInput($event, local.y2), updateMetrics()" @focus="onFocus($event, local.y2)" @blur="onBlur($event, local.y2)"/></label>,
+	<label>{{ local.rotate.name }}:<input type="number" step="0.1" :disabled="local.rotate.isDisabled" :value="local.rotate.value" @input="onInput($event, local.rotate), updateMetrics()" @focus="onFocus($event, local.rotate)" @blur="onBlur($event, local.rotate)"/></label>
+	]
+	</div>
 </template>
 
 <script>
 import EditorBase from './mixins/EditorBase';
 import EditorInputMouse from './EditorInputMouse';
 import {updateSource, updateMetrics} from './mixins/EditorBase';
+import {isMatch} from '../lib/isMatch';
 import {toRef} from 'vue';
+
+export const inputs = 
+{
+	source: { invalid: '' },
+	x1: { invalid: '' },
+	x2: { invalid: '' },
+	y1: { invalid: '' },
+	y2: { invalid: '' },
+	rotate: { invalid: '' }
+}
 
 export default
 {
 	mixins: [EditorBase, EditorInputMouse],
+	props:
+	{
+		inputs: { type: Object, default: inputs, validator(value){ return isMatch(inputs, value); } },
+	},
+	watch:
+	{
+		inputs: {
+			deep: true,
+			handler(value)
+			{
+				for(let [name, input] of Object.entries(value))
+				{
+					if(this.$refs[name] === undefined) continue;
+					if(input.invalid !== undefined)
+					{
+						this.$refs[name].setCustomValidity(input.invalid);
+						this.$refs[name].reportValidity();
+					}
+				}
+			}
+		}
+	},
 	methods:
 	{
 		initLocal()
@@ -43,22 +78,38 @@ export default
 					metrics.y2.value = this.local.y2.value;
 					metrics.rotate.value = this.local.rotate.value;
 			this.$emit(updateMetrics, metrics);
-		},
-		isLine(type)
-		{
-			return type === 'line';
-		},
-		isFloat(type)
-		{
-			return type === 'float';
 		}
 	}
 }
 </script>
 
 <style scoped>
+label
+{
+	margin: 0px 0px 0px 5px;
+	font: 16px / 24px var(--font);
+}
+label:first-child{ margin-left: 0px; }
 input
 {
-	margin: 0px 5px 0px 0px;
+	box-sizing: border-box;
+	height: 30px;
+	font: 16px / 24px var(--font);
+	width: 100px;
+}
+input:invalid
+{
+	border: solid 1px red;
+}
+button
+{
+	box-sizing: border-box;
+	height: 30px;
+	font: 16px / 24px var(--font);
+	width: 100px;
+}
+.input-text
+{
+	width: 220px;
 }
 </style>
