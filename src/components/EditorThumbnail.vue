@@ -18,6 +18,7 @@
 import EditorBase from './mixins/EditorBase';
 import EditorScale from './mixins/EditorScale';
 import CanvasMask from './utils/CanvasMask';
+import {mapGetters} from 'vuex';
 
 export default
 {
@@ -29,10 +30,13 @@ export default
 	},
 	computed:
 	{
+		...mapGetters({storageSource: 'source'}),
+		...mapGetters(['focus', 'search', 'blueprint']),
 		getEditorClasses()
 		{
-			const isSelected = this.$store.getters.source == this.source ? 'selected' : '';
-			return [isSelected];
+			const isSelected = this.storageSource == this.source ? 'selected' : '';
+			const isFounded = this.isMatchForBlueprint ? 'found' : '';
+			return [isSelected, isFounded];
 		},
 		getImageUrl()
 		{
@@ -44,11 +48,24 @@ export default
 		},
 		getName()
 		{
-			if(this.$store.getters.focus !== 'source') return this.current.filename;
-			let regexp = new RegExp(this.$store.getters.searching);
-			let result = regexp.exec(this.current.filename);
+			if(this.focus !== 'source') return this.current.filename;
+			let result = this.current.filename.match(this.search);
 			if(result === null) return this.current.filename;
 			return this.current.filename.replace(result[0], `<span>${result[0]}</span>`);
+		},
+		isMatchForBlueprint()
+		{
+			try
+			{
+				if(this.blueprint === null) return false;
+				const result = this.current.filename.match(new RegExp(this.blueprint.source.filename, 'g'));
+				if(result === null) return false;
+				return this.current.filename.length === result[0].length;
+			}
+			catch(e)
+			{
+				return false;
+			}
 		},
 		imageSize()
 		{
@@ -82,6 +99,8 @@ export default
 	overflow: hidden;
 }
 .editor.selected { border: solid 2px rgba(255, 0, 0, 1); }
+.editor.found { outline: dashed 2px rgba(255, 0, 0, 1); }
+.editor.selected.found { outline: dashed 2px rgba(255, 0, 0, 1); }
 .editor:not(.selected):hover { border: solid 2px rgba(210, 0, 0, 1); }
 .img
 {
@@ -113,5 +132,5 @@ export default
 	color: #fff;
 	z-index: 3;
 }
-.name >>> span{ background: red; }
+.name >>> span{ background: rgb(0, 110, 200); }
 </style>
