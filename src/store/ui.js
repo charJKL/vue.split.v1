@@ -60,7 +60,7 @@ const actions =
 	{
 		try
 		{
-			commit('searching', new RegExp(pattern));
+			commit('search', new RegExp(pattern));
 			return true;
 		}catch(e){
 			return e;
@@ -78,7 +78,7 @@ const mutations =
 	stage(state, name){ state.stage = name; },
 	hover(state, name){ state.hover = name; },
 	focus(state, name){ state.focus = name; },
-	searching(state, pattern){ state.searching = pattern; },
+	search(state, pattern){ state.search = pattern; },
 	blueprint(state, blueprint){ state.blueprint = blueprint; }
 }
 
