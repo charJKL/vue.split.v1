@@ -60,9 +60,10 @@ const actions =
 	{
 		try
 		{
-			commit('search', new RegExp(pattern));
+			commit('search', new RegExp(pattern, 'g'));
 			return true;
 		}catch(e){
+			commit('search', null);
 			return e;
 		}
 	},
