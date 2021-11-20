@@ -101,6 +101,10 @@ input:invalid
 {
 	border: solid 1px red;
 }
+input:focus:invalid
+{
+	outline: solid 2px red;
+}
 button
 {
 	box-sizing: border-box;
