@@ -133,7 +133,7 @@ const actions =
 		{
 			if(record.wasEdited === true) continue;
 			if(record.source.filename.match(blueprint.source.filename) === null) continue;
-			commit('record', {index: index, field: 'metrics', value: blueprint.metrics});
+			commit('metrics', {index: index, value: blueprint.metrics});
 		}
 	},
 	[selectIndex]({commit}, index)
@@ -148,8 +148,7 @@ const actions =
 	},
 	[updateMetrics]({getters, commit}, metrics)
 	{
-		commit('record', {index: getters.index, field: 'wasEdited', value: true});
-		commit('record', {index: getters.index, field: 'metrics', value: metrics});
+		commit('metrics', {index: getters.index, value: metrics});
 	},
 	[updateCropped]({getters, commit}, cropped)
 	{
@@ -165,8 +164,8 @@ const mutations =
 	list(state, list){ state.list = list; },
 	index(state, index){ state.index = index; },
 	source(state, source){ state.list[source.index]['source'] = source.value },
+	metrics(state, metrics){ state.list[metrics.index]['metrics'] = metrics.value },
 	cropped(state, cropped){ state.list[cropped.index]['cropped'] = cropped.value },
-	record(state, record){ state.list[record.index][record.field] = record.value },
 }
 
 export default { state, getters, actions, mutations };
