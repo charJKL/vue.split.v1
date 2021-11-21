@@ -21,16 +21,18 @@
 </template>
 
 <script>
+import DefaultValuesMouseFocus from './DefaultValuesMouseFocus';
 import ToggleButton from './utils/ToggleButton';
 import EditorInput, {inputs} from './EditorInput';
 import {record, loadDefault} from '../store/records';
-import {setSearching, setBlueprint} from '../store/ui';
+import {setSearching} from '../store/ui';
 import {cloneDeep} from 'lodash';
 import {mapGetters} from 'vuex';
 
 export default
 {
 	components: { ToggleButton, EditorInput },
+	mixins: [ DefaultValuesMouseFocus ],
 	data()
 	{
 		return {
@@ -65,22 +67,6 @@ export default
 			this.$store.dispatch(setSearching, source.filename).then(function(result){
 				blueprint.inputs.source.invalid = (result instanceof Error) ? result.message : '';
 			});
-		},
-		onFocusinBlueprint(blueprint)
-		{
-			this.$store.dispatch(setBlueprint, blueprint);
-		},
-		onFocusoutBlueprint(blueprint)
-		{
-			this.$store.dispatch(setBlueprint, blueprint);
-		},
-		onMousemoveBlueprint(blueprint)
-		{
-			this.$store.dispatch(setBlueprint, blueprint);
-		},
-		onMouseleaveBlueprint(blueprint)
-		{
-			this.$store.dispatch(setBlueprint, blueprint);
 		},
 		onAdd()
 		{
