@@ -2,7 +2,7 @@
 	<ui-header></ui-header>
 	<ui-list></ui-list>
 	<main id="main">
-		<default-values></default-values>
+		<ui-blueprint></ui-blueprint>
 		<div class="editor-box" v-show="isMetricsStage">
 			<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
 		</div>
@@ -23,7 +23,7 @@
 <script>
 import UiHeader from './components/UiHeader';
 import UiList from './components/UiList';
-import DefaultValues from './components/DefaultValues';
+import UiBlueprint from './components/UiBlueprint';
 import EditorMetrics from './components/EditorMetrics';
 import Preview from './components/Preview';
 import EditorText from './components/EditorText';
@@ -35,7 +35,7 @@ import _ from 'lodash';
 
 export default 
 {
-	components: { UiHeader, UiList, DefaultValues, EditorMetrics, Preview, EditorText, UiFooter },
+	components: { UiHeader, UiList, UiBlueprint, EditorMetrics, Preview, EditorText, UiFooter },
 	name: 'App',
 	data()
 	{
