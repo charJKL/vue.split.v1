@@ -30,7 +30,7 @@ export default
 	},
 	computed:
 	{
-		...mapGetters({storageSource: 'source'}),
+		...mapGetters({storageSource: 'source', blueprints: 'blueprints'}),
 		...mapGetters(['focus', 'search', 'blueprint']),
 		getEditorClasses()
 		{
@@ -55,17 +55,8 @@ export default
 		},
 		isMatchForBlueprint()
 		{
-			try
-			{
-				if(this.blueprint === null) return false;
-				const result = this.current.filename.match(new RegExp(this.blueprint.source.filename, 'g'));
-				if(result === null) return false;
-				return this.current.filename.length === result[0].length;
-			}
-			catch(e)
-			{
-				return false;
-			}
+			if(this.blueprint === null) return false;
+			return this.blueprint.regexp.fullMatch(this.current.filename);
 		},
 		imageSize()
 		{

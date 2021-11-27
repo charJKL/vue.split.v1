@@ -4,6 +4,7 @@ import App from './App.vue'
 import records from './store/records'
 import ui from './store/ui';
 import './lib/Map.prototype';
+import './lib/RegExp.prototype';
 
 const store = createStore({ modules: {records, ui}});
 const app = createApp(App);
