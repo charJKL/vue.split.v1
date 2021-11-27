@@ -2,8 +2,6 @@ import {cloneDeep, findIndex} from 'lodash';
 
 export const record = 
 {
-	wasEdited: false,
-	errors: [],
 	source:
 	{
 		loaded: false,
@@ -11,9 +9,11 @@ export const record =
 		url: '',
 		size: {width: 0, height: 0},
 		img: null,
+		errors: {},
 	},
 	metrics:
 	{
+		wasEdited: false,
 		x1: { name: 'x1', type: 'line', subtype: 'vertical', value: 50 },
 		x2: { name: 'x2', type: 'line', subtype: 'vertical', value: 250 },
 		y1: { name: 'y1', type: 'line', subtype: 'horizontal', value: 50 },
@@ -27,14 +27,15 @@ export const record =
 }
 export const blueprint =
 {
-	regexp: null,
-	metrics: cloneDeep(record.metrics)
+	regexp: new RegExp('','g'),
+	source: cloneDeep(record.source),
+	metrics: cloneDeep(record.metrics),
 }
 
 // access this by this.$store.state.<list>
 const state = {
-	blueprints: [],
 	list: [],
+	blueprints: new Map(),
 	index: null,
 }
 
@@ -76,7 +77,8 @@ const getters = {
 
 // access this by this.$store.dispatch('load-file', value)
 // in actions i should call commits()
-export const saveBlueprints = 'save-blueprint-action';
+export const storeBlueprint = 'store-blueprint-action';
+export const applyBlueprint = 'apply-blueprint-action';
 export const loadList = 'load-list-action';
 export const loadSave = 'load-save-action';
 export const loadDefault = 'load-default-action';
@@ -87,9 +89,18 @@ export const updateCropped = 'update-cropped-action';
 
 const actions = 
 {
-	[saveBlueprints]({commit}, blueprints)
+	[storeBlueprint]({commit}, blueprints)
 	{
 		commit('blueprints', blueprints);
+	},
+	[applyBlueprint]({state, commit}, blueprint)
+	{
+		for (const [index, record] of state.list.entries())
+		{
+			if(record.metrics.wasEdited === true) continue;
+			if(record.source.filename.match(blueprint.source.filename) === null) continue;
+			commit('metrics', {index: index, value: blueprint.metrics});
+		}
 	},
 	[loadList]({commit}, files)
 	{
@@ -126,15 +137,6 @@ const actions =
 	[loadSave]({commit}, filepath)
 	{
 		console.log('loadSave', filepath, commit);
-	},
-	[loadDefault]({state, commit}, blueprint)
-	{
-		for (const [index, record] of state.list.entries())
-		{
-			if(record.wasEdited === true) continue;
-			if(record.source.filename.match(blueprint.source.filename) === null) continue;
-			commit('metrics', {index: index, value: blueprint.metrics});
-		}
 	},
 	[selectIndex]({commit}, index)
 	{
