@@ -30,6 +30,7 @@ const getters = {
 
 // access this by this.$store.dispatch('load-file', value)
 export const addBlueprint = 'add-blueprint-action';
+export const updateBlueprint = 'update-blueprint-action';
 export const removeBlueprint = 'remove-blueprint-action';
 export const setBlueprint = 'set-blueprint-action';
 const actions = 
@@ -39,6 +40,11 @@ const actions =
 		const instance = getDeepCopy(blueprint);
 		while(instance.id === '' || state.blueprints.has(instance.id)) instance.id = getRandomHash(16);
 		state.blueprints.set(instance.id, instance);
+		commit('blueprints', new Map(state.blueprints));
+	},
+	[updateBlueprint]({state, commit}, blueprint)
+	{
+		state.blueprints.set(blueprint.id, getDeepCopy(blueprint));
 		commit('blueprints', new Map(state.blueprints));
 	},
 	[removeBlueprint]({state, commit}, blueprint)

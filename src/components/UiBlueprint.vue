@@ -24,7 +24,7 @@
 import ToggleButton from './commons/ToggleButton';
 import EditorInput from './EditorInput';
 import UiBlueprintMouse from './UiBlueprintMouse';
-import {addBlueprint, removeBlueprint} from '../store/blueprints';
+import {addBlueprint, updateBlueprint, removeBlueprint} from '../store/blueprints';
 import {applyBlueprint} from '../store/records';
 import {setSearching} from '../store/ui';
 import {getDeepCopy} from '../lib/getDeepCopy';
@@ -82,15 +82,16 @@ export default
 				draft.regexp = new RegExp(source.filename, 'g');
 				draft.source.errors.invalidRegexp = '';
 				this.$store.dispatch(setSearching, draft.regexp);
+				this.$store.dispatch(updateBlueprint, draft);
 			}catch(e)
 			{
 				draft.source.errors.invalidRegexp = e.message;
 				this.$store.dispatch(setSearching, null);
 			}
 		},
-		onUpdateMetrics()
+		onUpdateMetrics(draft)
 		{
-			// TODO
+			this.$store.dispatch(updateBlueprint, draft);
 		},
 		onAdd()
 		{
