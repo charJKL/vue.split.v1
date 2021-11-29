@@ -8,7 +8,6 @@ const state = {
 	hover: '',
 	focus: null,
 	search: null,
-	blueprint: null,
 }
 
 // access this by $this.store.getters.<stage>
@@ -28,10 +27,6 @@ const getters = {
 	search(state)
 	{
 		return state.search;
-	},
-	blueprint(state)
-	{
-		return state.blueprint;
 	}
 }
 
@@ -41,7 +36,6 @@ export const setStage = 'set-stage-action';
 export const setHover = 'set-hover-action';
 export const setFocus = 'set-focus-action';
 export const setSearching = 'set-searching-action';
-export const setBlueprint = 'set-blueprint-action';
 const actions = 
 {
 	[setStage]({commit}, name)
@@ -66,10 +60,6 @@ const actions =
 			commit('search', null);
 			return e;
 		}
-	},
-	[setBlueprint]({commit}, blueprint)
-	{
-		commit('blueprint', blueprint);
 	}
 }
 
@@ -79,8 +69,7 @@ const mutations =
 	stage(state, name){ state.stage = name; },
 	hover(state, name){ state.hover = name; },
 	focus(state, name){ state.focus = name; },
-	search(state, pattern){ state.search = pattern; },
-	blueprint(state, blueprint){ state.blueprint = blueprint; }
+	search(state, pattern){ state.search = pattern; }
 }
 
 export default { state, getters, actions, mutations };

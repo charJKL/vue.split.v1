@@ -25,26 +25,16 @@ export const record =
 		img: null
 	}
 }
-export const blueprint =
-{
-	regexp: new RegExp('','g'),
-	source: cloneDeep(record.source),
-	metrics: cloneDeep(record.metrics),
-}
+
 
 // access this by this.$store.state.<list>
 const state = {
 	list: [],
-	blueprints: new Map(),
 	index: null,
 }
 
 // access this by this.$store.getters.<list>
 const getters = {
-	blueprints(state)
-	{
-		return state.blueprints;
-	},
 	list(state)
 	{ 
 		return state.list;
@@ -77,7 +67,6 @@ const getters = {
 
 // access this by this.$store.dispatch('load-file', value)
 // in actions i should call commits()
-export const storeBlueprint = 'store-blueprint-action';
 export const applyBlueprint = 'apply-blueprint-action';
 export const loadList = 'load-list-action';
 export const loadSave = 'load-save-action';
@@ -89,10 +78,6 @@ export const updateCropped = 'update-cropped-action';
 
 const actions = 
 {
-	[storeBlueprint]({commit}, blueprints)
-	{
-		commit('blueprints', blueprints);
-	},
 	[applyBlueprint]({state, commit}, blueprint)
 	{
 		for (const [index, record] of state.list.entries())
@@ -162,7 +147,6 @@ const actions =
 // access this by this.$store.commit('record', value)
 const mutations = 
 {
-	blueprints(state, blueprints){ state.blueprints = blueprints },
 	list(state, list){ state.list = list; },
 	index(state, index){ state.index = index; },
 	source(state, source){ state.list[source.index]['source'] = source.value },
