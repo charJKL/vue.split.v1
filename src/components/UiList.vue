@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import EditorThumbnail from './EditorThumbnail';
+import EditorThumbnail from './editor/EditorThumbnail';
 import {selectRecord} from '../store/records';
 import {mapGetters} from 'vuex';
 
