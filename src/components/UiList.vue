@@ -1,12 +1,13 @@
 <template>
 <section ref="list" class="list" @wheel.prevent="onMouseWheel">
-	<editor-thumbnail v-for="(record, index) in getList" :key="index" :source="record.source" :metrics="record.metrics" @click="selectIndex(index)"/>
+	<editor-thumbnail v-for="(record, index) in records" :key="index" :source="record.source" :metrics="record.metrics" @click="onClickRecord(record)"/>
 </section>
 </template>
 
 <script>
 import EditorThumbnail from './EditorThumbnail';
-import {selectIndex} from '../store/records';
+import {selectRecord} from '../store/records';
+import {mapGetters} from 'vuex';
 
 export default
 {
@@ -17,16 +18,13 @@ export default
 	},
 	computed:
 	{
-		getList()
-		{
-			return this.$store.getters.list;
-		}
+		...mapGetters(['records']),
 	},
 	methods:
 	{
-		selectIndex(index)
+		onClickRecord(record)
 		{
-			this.$store.dispatch(selectIndex, index);
+			this.$store.dispatch(selectRecord, record);
 		},
 		onMouseWheel(e)
 		{

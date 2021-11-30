@@ -1,7 +1,9 @@
-import {cloneDeep, findIndex} from 'lodash';
+import {getDeepCopy} from '../lib/getDeepCopy';
+import {getRandomHash} from '../lib/getRandomHash';
 
 export const record = 
 {
+	id: '',
 	source:
 	{
 		loaded: false,
@@ -26,132 +28,108 @@ export const record =
 	}
 }
 
-
 // access this by this.$store.state.<list>
 const state = {
-	list: [],
-	index: null,
+	records: new Map(),
+	record: null,
 }
 
 // access this by this.$store.getters.<list>
 const getters = {
-	list(state)
-	{ 
-		return state.list;
-	},
-	index(state)
+	records(state)
 	{
-		return state.index;
+		return Array.from(state.records, element => element[1]);
 	},
-	current(state)
+	source(state)
 	{
-		if(state.list[state.index] === undefined) return null;
-		return state.list[state.index];
+		return state.records.get(state.record)?.source ?? null;
 	},
-	source(state, getters)
+	metrics(state)
 	{
-		if(getters.current === null) return null;
-		return getters.current.source;
+		return state.records.get(state.record)?.metrics ?? null;
 	},
-	metrics(state, getters)
+	cropped(state)
 	{
-		if(getters.current === null) return null;
-		return getters.current.metrics;
-	},
-	cropped(state, getters)
-	{
-		if(getters.current === null) return null;
-		return getters.current.cropped;
+		return state.records.get(state.record)?.cropped ?? null;
 	}
 }
 
 // access this by this.$store.dispatch('load-file', value)
 // in actions i should call commits()
-export const applyBlueprint = 'apply-blueprint-action';
-export const loadList = 'load-list-action';
-export const loadSave = 'load-save-action';
-export const loadDefault = 'load-default-action';
-export const selectCurrent = 'select-current-action';
-export const selectIndex = 'select-index-action';
+export const loadPdfFile = 'load-pdf-file-action';
+export const loadImagesFiles = 'load-images-files-action';
+export const updateSource = 'update-source-action';
 export const updateMetrics = 'update-metrics-action';
 export const updateCropped = 'update-cropped-action';
-
+export const selectRecord = 'select-record-action';
+export const applyBlueprint = 'apply-blueprint-action';
 const actions = 
 {
-	[applyBlueprint]({state, commit}, blueprint)
+	[loadImagesFiles]({state, commit, dispatch}, files)
 	{
-		for (const [index, record] of state.list.entries())
+		for(const file of files)
 		{
-			if(record.metrics.wasEdited === true) continue;
-			if(record.source.filename.match(blueprint.source.filename) === null) continue;
-			commit('metrics', {index: index, value: blueprint.metrics});
-		}
-	},
-	[loadList]({commit}, files)
-	{
-		let list = [];
-		for(let i=0; i < files.length; i++)
-		{
-			let file = files[i];
-			let instance = cloneDeep(record);
-				instance.source.loaded = false;
-				instance.source.filename = file.name;
-				instance.source.url = URL.createObjectURL(file);
-				instance.source.img = new Image();
-				instance.source.img.addEventListener('load', e => { 
-					let source = cloneDeep(record.source);
-						source.loaded = true;
-						source.filename = file.name;
-						source.url = instance.source.url;
-						source.size.width = e.target.naturalWidth;
-						source.size.height = e.target.naturalHeight;
-						source.img = instance.source.img;
+			const instance = getDeepCopy(record);
+			while(instance.id === '' || state.records.has(instance.id)) instance.id = getRandomHash(16);
+			state.records.set(instance.id, instance);
 			
-						//instance.source.size = { width: e.target.naturalWidth, height: e.target.naturalHeight};
-						//console.log('image loaded:', i, 'size:', instance.source.size.width, instance.source.size.height);
-						commit('source', {index: i, value: source});
-					});
-				instance.source.img.addEventListener('error', () => instance.errors.push("Cant read natural image size.") );
-				instance.source.img.src = instance.source.url;
-				
-			list.push(instance);
+			const source = getDeepCopy(record.source);
+					source.filename = file.name;
+					source.url = URL.createObjectURL(file);
+			commit('source', {id: instance.id, value: source});
+			dispatch('loadImage', instance);
 		}
-		commit('list', list);
-		commit('index', null);
+		commit('records', new Map(state.records));
 	},
-	[loadSave]({commit}, filepath)
+	[updateSource]({state, commit, dispatch}, source)
 	{
-		console.log('loadSave', filepath, commit);
+		if(state.record === null) return;
+		const record = state.records.get(state.record);
+		const value = state.records.get(state.record).source;
+		commit('source', {id: record.id, value: getDeepCopy(source)});
+
+		if(value.url.href !== source.url.href) dispatch('loadImage', record);
 	},
-	[selectIndex]({commit}, index)
+	[updateMetrics]({commit}, metrics)
 	{
-		commit('index', index);
+		commit('metrics', metrics);
 	},
-	[selectCurrent]({getters, dispatch}, filename)
+	[selectRecord]({commit}, record)
 	{
-		let find = findIndex(getters.list, (o) => o.source.filename === filename);
-		if(find === -1) find = null;
-		dispatch(selectIndex, find);
+		commit('record', record?.id ?? null);
 	},
-	[updateMetrics]({getters, commit}, metrics)
+	loadImage({commit}, record)
 	{
-		commit('metrics', {index: getters.index, value: metrics});
-	},
-	[updateCropped]({getters, commit}, cropped)
-	{
-		console.log(cropped);
-		commit('cropped', {index: getters.index, value: cropped});
+		record.source.loaded = false;
+		record.source.img = new Image();
+		record.source.img.addEventListener('load', onImageLoad);
+		record.source.img.addEventListener('error', onImageError);
+		record.source.img.src = record.source.url;
+		
+		function onImageLoad(e)
+		{
+			const source = getDeepCopy(record.source);
+					source.loaded = true;
+					source.size.width = e.target.naturalWidth;
+					source.size.height = e.target.naturalHeight;
+			commit('source', {id: record.id, value: source});
+		}
+		function onImageError()
+		{
+			const source = getDeepCopy(record.source);
+					source.errors.loading = 'Cant load image';
+			commit('source', {id: record.id, value: source});
+		}
 	}
 }
 
 // access this by this.$store.commit('record', value)
 const mutations = 
 {
-	list(state, list){ state.list = list; },
-	index(state, index){ state.index = index; },
-	source(state, source){ state.list[source.index]['source'] = source.value },
-	metrics(state, metrics){ state.list[metrics.index]['metrics'] = metrics.value },
-	cropped(state, cropped){ state.list[cropped.index]['cropped'] = cropped.value },
+	records(state, records){ state.records = records; },
+	source(state, {id, value}){ state.records.get(id).source = value; },
+	metrics(state, {id, value}){ state.records.get(id).metrics = value; },
+	record(state, id){ state.record = id; }
 }
 
 export default { state, getters, actions, mutations };

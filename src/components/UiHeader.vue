@@ -1,11 +1,8 @@
 <template>
 <header class="header">
-	<button class="load-save" @click="this.$refs.loadSave.click()">Load save</button>
-	<input class="input-hide" ref="loadSave" @change="onLoadSave" type="file" accept=".json" />
-	
-	<button class="load-files" @click="this.$refs.loadFiles.click()">Load files</button>
-	<input class="input-hide" ref="loadFiles" @change="onLoadFiles" type="file" accept="image/*" multiple />
-	<input class="file-list" type="text" :value="getList" @click="this.$refs.loadFiles.click()" readonly />
+	<button class="load-files" @click="this.$refs.loadImagesFiles.click()">Load files</button>
+	<input class="file-list" type="text" :value="getList" @click="this.$refs.loadImagesFiles.click()" readonly />
+	<input class="input-hide" ref="loadImagesFiles" @change="onLoadImagesFiles" type="file" accept="image/*" multiple />
 	
 	<button :class="['stage-metrics', getStageMetricsClasses]" @click="onStageMetrics">Metrics - Preview</button>
 	<button :class="['stage-text', getStageTextClasses]" @click="onStageText">Preview - Text - Result</button>
@@ -13,7 +10,7 @@
 </template>
 
 <script>
-import {loadSave, loadList} from '../store/records';
+import {loadImagesFiles} from '../store/records';
 import {Stage, setStage} from '../store/ui';
 import {mapGetters} from 'vuex';
 
@@ -21,7 +18,7 @@ export default
 {
 	computed:
 	{
-		...mapGetters(['list']),
+		...mapGetters(['records']),
 		...mapGetters(['stage']),
 		getStageMetricsClasses()
 		{
@@ -35,18 +32,14 @@ export default
 		},
 		getList()
 		{
-			return this.list.flatMap(file => file.source.filename);
+			return this.records.flatMap(file => file.source.filename);
 		}
 	},
 	methods: 
 	{
-		onLoadSave(e)
+		onLoadImagesFiles(e)
 		{
-			this.$store.dispath(loadSave, e.target.files[0]);
-		},
-		onLoadFiles(e)
-		{
-			this.$store.dispatch(loadList, Array.from(e.target.files));
+			this.$store.dispatch(loadImagesFiles, Array.from(e.target.files));
 		},
 		onStageMetrics()
 		{
@@ -79,13 +72,9 @@ button
 	height: 30px;
 	margin: 10px 0px 10px 0px;
 }
-.load-save
-{
-	margin-left: 10px;
-}
 .load-files
 {
-	margin-left: 5px;
+	margin-left: 10px;
 }
 .stage-metrics
 {

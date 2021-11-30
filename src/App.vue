@@ -3,6 +3,7 @@
 	<ui-list></ui-list>
 	<main id="main">
 		<ui-blueprint></ui-blueprint>
+		<!--
 		<div class="editor-box" v-show="isMetricsStage">
 			<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
 		</div>
@@ -15,12 +16,14 @@
 		<div class="text-box" v-show="isTextStage">
 			<editor-text :source="source" :cropped="cropped"></editor-text>
 		</div>
+		-->
 	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
 </template>
 
 <script>
+/* eslint-disable */
 import UiHeader from './components/UiHeader';
 import UiList from './components/UiList';
 import UiBlueprint from './components/UiBlueprint';
