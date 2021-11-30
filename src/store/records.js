@@ -8,7 +8,7 @@ export const record =
 	id: '',
 	source:
 	{
-		loaded: Loading.Idle,
+		loading: Loading.Idle,
 		filename: '',
 		url: '',
 		width: 0,
@@ -103,7 +103,7 @@ const actions =
 	},
 	loadImage({commit}, record)
 	{
-		record.source.loaded = Loading.Waiting;
+		record.source.loading = Loading.Idle;
 		record.source.img = new Image();
 		record.source.img.addEventListener('load', onImageLoad);
 		record.source.img.addEventListener('error', onImageError);
@@ -112,7 +112,7 @@ const actions =
 		function onImageLoad(e)
 		{
 			const source = getDeepCopy(record.source);
-					source.loaded = Loading.Done;
+					//source.loading = Loading.Done;
 					source.width = e.target.naturalWidth;
 					source.height = e.target.naturalHeight;
 			commit('source', {id: record.id, value: source});
@@ -120,7 +120,7 @@ const actions =
 		function onImageError()
 		{
 			const source = getDeepCopy(record.source);
-					source.loaded = Loading.Idle;
+					source.loading = Loading.Idle;
 					source.errors.loading = 'Cant load image';
 			commit('source', {id: record.id, value: source});
 		}
