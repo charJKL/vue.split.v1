@@ -1,30 +1,33 @@
 import {getDeepCopy} from '../lib/getDeepCopy';
 import {getRandomHash} from '../lib/getRandomHash';
 
+export const Loading = { Idle: 'Idle', Waiting: 'Waiting', Done: 'Done' };
+
 export const record = 
 {
 	id: '',
 	source:
 	{
-		loaded: false,
+		loaded: Loading.Idle,
 		filename: '',
 		url: '',
-		size: {width: 0, height: 0},
+		width: 0,
+		height: 0,
 		img: null,
 		errors: {},
 	},
 	metrics:
 	{
 		wasEdited: false,
-		x1: { name: 'x1', type: 'line', subtype: 'vertical', value: 50 },
-		x2: { name: 'x2', type: 'line', subtype: 'vertical', value: 250 },
-		y1: { name: 'y1', type: 'line', subtype: 'horizontal', value: 50 },
-		y2: { name: 'y2', type: 'line', subtype: 'horizontal', value: 250 },
-		rotate: { name: 'rotate', type: 'float', subtype: 'float', value: 0 },
+		x1: 50,
+		x2: 250,
+		y1: 50,
+		y2: 250,
+		rotate: 0,
 	},
 	cropped:
 	{
-		img: null
+		img: null,
 	}
 }
 
@@ -100,7 +103,7 @@ const actions =
 	},
 	loadImage({commit}, record)
 	{
-		record.source.loaded = false;
+		record.source.loaded = Loading.Waiting;
 		record.source.img = new Image();
 		record.source.img.addEventListener('load', onImageLoad);
 		record.source.img.addEventListener('error', onImageError);
@@ -109,14 +112,15 @@ const actions =
 		function onImageLoad(e)
 		{
 			const source = getDeepCopy(record.source);
-					source.loaded = true;
-					source.size.width = e.target.naturalWidth;
-					source.size.height = e.target.naturalHeight;
+					source.loaded = Loading.Done;
+					source.width = e.target.naturalWidth;
+					source.height = e.target.naturalHeight;
 			commit('source', {id: record.id, value: source});
 		}
 		function onImageError()
 		{
 			const source = getDeepCopy(record.source);
+					source.loaded = Loading.Idle;
 					source.errors.loading = 'Cant load image';
 			commit('source', {id: record.id, value: source});
 		}
