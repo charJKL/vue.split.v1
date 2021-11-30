@@ -13,7 +13,7 @@ export const blueprint =
 // access this by this.$store.state.<list>
 const state = {
 	blueprints: new Map(),
-	blueprint: ''
+	blueprint: null,
 }
 
 // access this by this.$store.getters.<list>
@@ -32,7 +32,7 @@ const getters = {
 export const addBlueprint = 'add-blueprint-action';
 export const updateBlueprint = 'update-blueprint-action';
 export const removeBlueprint = 'remove-blueprint-action';
-export const setBlueprint = 'set-blueprint-action';
+export const selectBlueprint = 'select-blueprint-action';
 const actions = 
 {
 	[addBlueprint]({state, commit})
@@ -52,7 +52,7 @@ const actions =
 		state.blueprints.delete(blueprint.id)
 		commit('blueprints', new Map(state.blueprints));
 	},
-	[setBlueprint]({commit}, blueprint)
+	[selectBlueprint]({commit}, blueprint)
 	{
 		commit('blueprint', blueprint?.id ?? null);
 	}

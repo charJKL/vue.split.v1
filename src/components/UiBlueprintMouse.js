@@ -1,4 +1,4 @@
-import {setBlueprint} from '../store/blueprints';
+import {selectBlueprint} from '../store/blueprints';
 
 const UiBlueprintMouse = 
 {
@@ -13,22 +13,22 @@ const UiBlueprintMouse =
 		onFocusinLine(draft)
 		{
 			this.lock = true;
-			this.$store.dispatch(setBlueprint, draft);
+			this.$store.dispatch(selectBlueprint, draft);
 		},
 		onFocusoutLine(draft)
 		{
 			this.lock = false;
-			this.$store.dispatch(setBlueprint, draft);
+			this.$store.dispatch(selectBlueprint, draft);
 		},
 		onMouseenterLine(draft)
 		{
 			if(this.lock === true) return;
-			this.$store.dispatch(setBlueprint, draft);
+			this.$store.dispatch(selectBlueprint, draft);
 		},
 		onMouseleaveLine(draft)
 		{
 			if(this.lock === true) return;
-			this.$store.dispatch(setBlueprint, draft);
+			this.$store.dispatch(selectBlueprint, draft);
 		},
 	}
 }
