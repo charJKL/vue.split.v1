@@ -24,7 +24,7 @@ const getters = {
 	},
 	blueprint(state)
 	{
-		return state.blueprints.get(state.blueprint.id) ?? null;
+		return state.blueprints.get(state.blueprint) ?? null;
 	}
 }
 
