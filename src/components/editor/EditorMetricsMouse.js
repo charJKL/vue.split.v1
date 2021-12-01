@@ -7,6 +7,7 @@ const EditorMetricsMouse =
 	{
 		return {
 			mouse: EditorMetricsMouseHover,
+			hover: null,
 		}
 	},
 	computed:
@@ -49,7 +50,7 @@ const EditorMetricsMouse =
 		mouse(value, old)
 		{
 			if(isMatch(old, value) === false) throw new Error("Mouse events object doesn't match");
-		}
+		},
 	}
 }
 
