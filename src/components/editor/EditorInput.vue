@@ -1,12 +1,12 @@
 <template>
 	<div>
 	[
-		<label>name: <input :value="getNameValue"/></label>,
-		<label>x1: <input type="number" :value="getX1Value" @input="updateMetrics('x1', $event)"/></label>,
-		<label>x2: <input type="number" :value="getX2Value" @input="updateMetrics('x2', $event)"/></label>,
-		<label>y1: <input type="number" :value="getY1Value" @input="updateMetrics('y1', $event)"/></label>,
-		<label>y2: <input type="number" :value="getY2Value" @input="updateMetrics('y2', $event)"/></label>,
-		<label>rotate: <input type="number" step="0.1" :value="getRotateValue"/></label>
+		<label>name: <input class="input-text" :value="getNameValue"/></label>,
+		<label>x1: <input class="input-number" type="number" :value="getX1Value" @input="updateMetrics('x1', $event)"/></label>,
+		<label>x2: <input class="input-number" type="number" :value="getX2Value" @input="updateMetrics('x2', $event)"/></label>,
+		<label>y1: <input class="input-number" type="number" :value="getY1Value" @input="updateMetrics('y1', $event)"/></label>,
+		<label>y2: <input class="input-number" type="number" :value="getY2Value" @input="updateMetrics('y2', $event)"/></label>,
+		<label>rotate: <input class="input-number" type="number" step="0.1" :value="getRotateValue"/></label>
 	]
 	</div>
 </template>
@@ -58,5 +58,25 @@ export default
 </script>
 
 <style scoped>
+label
+{
+	margin: 10px 0px 10px 5px;
+	font: 16px / 24px var(--font);
+}
+label:first-child{ margin-left: 0px; }
+.input-text
+{
+	box-sizing: border-box;
+	height: 30px;
+	font: 16px / 24px var(--font);
+	width: 220px;
+}
+.input-number
+{
+	box-sizing: border-box;
+	height: 30px;
+	font: 16px / 24px var(--font);
+	width: 100px;
+}
 
 </style>

@@ -1,7 +1,7 @@
 <template>
 <div class="footer">
 	<div class="footer-left">
-		<editor-input :source="source" :metrics="metrics"  @update:source="onUpdateSource" @update:metrics="onUpdateMetrics"></editor-input>
+		<editor-input class="editor" :source="source" :metrics="metrics"  @update:source="onUpdateSource" @update:metrics="onUpdateMetrics"></editor-input>
 	</div>
 	<div class="footer-right">
 		<button id="save" @click="onSaveData">Save</button>
@@ -83,5 +83,8 @@ button
 {
 	margin-left: auto;
 }
-
+.editor
+{
+	margin: 10px 0px 10px 10px;
+}
 </style>
