@@ -49,9 +49,15 @@ export default
 	{
 		updateMetrics(metric, e)
 		{
+			const value = parseValue(metric, e.target.value);
 			const metrics = {...this.metrics};
-					metrics[metric] = e.target.value;
+					metrics[metric] = value;
 			this.$emit(updateMetrics, metrics);
+			
+			function parseValue(type, value)
+			{
+				return type === 'rotate' ? parseFloat(value) : parseInt(value);
+			}
 		}
 	}
 }
