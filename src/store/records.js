@@ -1,7 +1,7 @@
 import {getRandomHash} from '../lib/getRandomHash';
 
 export const Loading = { Idle: 'Idle', Waiting: 'Waiting', Done: 'Done' };
-
+export const Status = { Dirty: 'Dirty', Waiting: 'Waiting', Queued: `Queued`, Working: 'Working', Done: 'Done'};
 export const record = 
 {
 	id: '',
@@ -26,7 +26,10 @@ export const record =
 	},
 	cropped:
 	{
+		status: Status.Dirty,
 		img: null,
+		width: 0,
+		height: 0,
 	}
 }
 
