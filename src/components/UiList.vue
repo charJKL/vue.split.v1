@@ -41,8 +41,7 @@ export default
 	display: flex;
 	flex-flow: row nowrap;
 	overflow-x: scroll;
-	padding: 10px;
-	height: 117px;
+	height: 127px;
 	background: var(--gray-light);
 }
 </style>
