@@ -43,6 +43,10 @@ const getters = {
 	{
 		return Array.from(state.records, element => element[1]);
 	},
+	record(state)
+	{
+		return state.records.get(state.record) ?? null;
+	},
 	source(state)
 	{
 		return state.records.get(state.record)?.source ?? null;
@@ -103,7 +107,7 @@ const actions =
 	},
 	loadImage({commit}, record)
 	{
-		record.source.loading = Loading.Idle;
+		record.source.loading = Loading.Waiting;
 		record.source.img = new Image();
 		record.source.img.addEventListener('load', onImageLoad);
 		record.source.img.addEventListener('error', onImageError);
@@ -112,7 +116,7 @@ const actions =
 		function onImageLoad(e)
 		{
 			const source = getDeepCopy(record.source);
-					//source.loading = Loading.Done;
+					source.loading = Loading.Done;
 					source.width = e.target.naturalWidth;
 					source.height = e.target.naturalHeight;
 			commit('source', {id: record.id, value: source});
