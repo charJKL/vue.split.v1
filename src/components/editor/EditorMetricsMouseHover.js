@@ -1,4 +1,4 @@
-import EditorMetricsMouseOffseting from './EditorMetricsMouseOffseting';
+import EditorMetricsMousePositioning from './EditorMetricsMousePositioning';
 import {updateMetrics} from './mixins/RequireMetrics';
 const sensitivity = 0.001;
 
@@ -11,7 +11,7 @@ const EditorMetricsMouseHover =
 	rightDown(e)
 	{
 		if(this.isSource === false) return;
-		this.mouse = EditorMetricsMouseOffseting;
+		this.mouse = EditorMetricsMousePositioning;
 		this.onRightDown.call(this, e);
 	},
 	move()

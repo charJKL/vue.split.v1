@@ -1,13 +1,13 @@
-const ProvideOffset = {
+const ProvidePosition = {
 	data()
 	{
 		return {
-			offset: {x: 0, y: 0}
+			position: {x: 0, y: 0}
 		}
 	},
 	methods:
 	{
-		calcOffsetCenterValue(viewport, size)
+		calcCenterPositionValue(viewport, size)
 		{
 			const x = (viewport.width - size.width) / 2;
 			const y = (viewport.height - size.height) / 2;
@@ -16,4 +16,4 @@ const ProvideOffset = {
 	}
 }
 
-export default ProvideOffset;
+export default ProvidePosition;

@@ -1,7 +1,15 @@
 <template>
 	<div class="editor" ref="editor" @mousedown.left="onLeftDown" @mousedown.right="onRightDown" @mouseup.left="onLeftUp" @mouseup.right= "onRightUp" @mousemove="onMove" @mouseleave="onLeave" @wheel="onWheel" @contextmenu="onContextmenu">
 		<template v-if="isSource">
-			<img class="image" ref="image" :style="getImageStyle" :src="source.url" />
+			<div class="desktop" :style="getDesktopStyle">
+				<svg class="svg" :style="getSvgStyle">
+					<editor-metrics-line :offset="offset" type="vertical" :value="scaled.x1" />
+					<editor-metrics-line :offset="offset" type="vertical" :value="scaled.x2" />
+					<editor-metrics-line :offset="offset" type="horizontal" :value="scaled.y1" />
+					<editor-metrics-line :offset="offset" type="horizontal" :value="scaled.y2" />
+				</svg>
+				<img class="image" :style="getImageStyle" :src="source.url" />
+			</div>
 		</template>
 	</div>
 </template>
@@ -10,12 +18,21 @@
 import RequireMetrics from './mixins/RequireMetrics';
 import RequireSource from './mixins/RequireSource';
 import ProvideScale from './mixins/ProvideScale';
-import ProvideOffset from './mixins/ProvideOffset';
+import ProvidePosition from './mixins/ProvidePosition';
 import EditorMetricsMouse from './EditorMetricsMouse';
+import EditorMetricsLine from './EditorMetricsLine';
+import {isMatch} from '../../lib/isMatch';
+
+export const offset = { top: 8, right: 8, bottom: 8, left: 8 };
 
 export default
 {
-	mixins: [RequireMetrics, RequireSource, ProvideScale, ProvideOffset, EditorMetricsMouse],
+	mixins: [RequireMetrics, RequireSource, ProvideScale, ProvidePosition, EditorMetricsMouse],
+	components: { EditorMetricsLine },
+	props:
+	{
+		offset: { type: Object, default: offset, validator(value){ return isMatch(offset, value); } },
+	},
 	data()
 	{
 		return {
@@ -29,9 +46,23 @@ export default
 			const width = this.scaled.width;
 			const height = this.scaled.height;
 			const rotate = this.metrics.rotate;
-			const left = this.offset.x;
-			const top = this.offset.y;
-			return { width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px`, transform: `rotate(${rotate}deg)` };
+			return { width: `${width}px`, height: `${height}px`, transform: `rotate(${rotate}deg)` };
+		},
+		getDesktopStyle()
+		{
+			const width = this.scaled.width;
+			const height = this.scaled.height;
+			const left = this.position.x;
+			const top = this.position.y;
+			return { width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px` };
+		},
+		getSvgStyle()
+		{
+			const top = this.offset.top * -1;
+			const left = this.offset.left * -1;
+			const width = this.scaled.width + this.offset.left + this.offset.right;
+			const height = this.scaled.height + this.offset.top + this.offset.bottom;
+			return { width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px` };
 		}
 	},
 	watch:
@@ -41,7 +72,7 @@ export default
 			if(this.isLoadingDone === false) return;
 			const size = { width: source.width, height: source.height };
 			this.scale = this.calcRatioScaleValue(this.viewport, size);
-			this.offset = this.calcOffsetCenterValue(this.viewport, this.scaled);
+			this.position = this.calcCenterPositionValue(this.viewport, this.scaled);
 		}
 	},
 	mounted()
@@ -60,8 +91,18 @@ export default
 	background: red;
 	overflow: hidden;
 }
+.desktop
+{
+	position: absolute;
+}
+.svg
+{
+	position: absolute;
+	z-index: 1;
+}
 .image
 {
 	position: absolute;
+	z-index: 0;
 }
 </style>

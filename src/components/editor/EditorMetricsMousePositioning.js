@@ -4,7 +4,7 @@ var initalMouse = {x: 0, y:0};
 var initalPosition = {x: 0, y:0};
 const sensitivity = 0.0001;
 
-const EditorMetricsMouseOffseting = 
+const EditorMetricsMousePositioning = 
 {
 	leftDown()
 	{
@@ -15,7 +15,7 @@ const EditorMetricsMouseOffseting =
 		if(this.isSource === false) return;
 		const position = {x: e.clientX, y: e.clientY};
 
-		initalPosition = {...this.offset};
+		initalPosition = {...this.position};
 		initalMouse = position;
 	},
 	move(e)
@@ -24,8 +24,8 @@ const EditorMetricsMouseOffseting =
 		const position = {x: e.clientX, y: e.clientY};
 		const diff = {x: position.x - initalMouse.x, y: position.y - initalMouse.y};
 		
-		this.offset.x = initalPosition.x + diff.x;
-		this.offset.y = initalPosition.y + diff.y;
+		this.position.x = initalPosition.x + diff.x;
+		this.position.y = initalPosition.y + diff.y;
 	},
 	leftUp()
 	{
@@ -47,4 +47,4 @@ const EditorMetricsMouseOffseting =
 		this.scale.y = this.scale.y - e.deltaY * sensitivity;
 	}
 }
-export default EditorMetricsMouseOffseting;
+export default EditorMetricsMousePositioning;
