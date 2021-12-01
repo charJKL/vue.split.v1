@@ -43,8 +43,8 @@ export default
 	{
 		getImageStyle()
 		{
-			const width = this.scaled.width;
-			const height = this.scaled.height;
+			const width = this.scaled.width - 2;
+			const height = this.scaled.height - 2;
 			const rotate = this.metrics.rotate;
 			return { width: `${width}px`, height: `${height}px`, transform: `rotate(${rotate}deg)` };
 		},
@@ -88,7 +88,6 @@ export default
 	position:relative;
 	width: 100%;
 	height: 100%;
-	background: red;
 	overflow: hidden;
 }
 .desktop
@@ -104,5 +103,6 @@ export default
 {
 	position: absolute;
 	z-index: 0;
+	border: solid 1px #000;
 }
 </style>
