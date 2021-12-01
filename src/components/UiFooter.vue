@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import EditorInput from './EditorInput.vue';
-import {selectCurrent, updateMetrics} from '../store/records';
+import EditorInput from './editor/EditorInput.vue';
+import {updateMetrics} from '../store/records';
 
 export default
 {
@@ -43,9 +43,9 @@ export default
 	},
 	methods:
 	{
-		onUpdateSource(source)
+		onUpdateSource()
 		{
-			this.$store.dispatch(selectCurrent, source.filename);
+			//this.$store.dispatch(selectCurrent, source.filename);
 		},
 		onUpdateMetrics(metrics)
 		{
@@ -67,8 +67,13 @@ export default
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: space-between;
-	padding: 10px;
 	background: var(--gray);
+}
+button
+{
+	box-sizing: border-box;
+	height: 30px;
+	margin: 10px 10px 10px 0px;
 }
 .footer-left
 {
@@ -78,4 +83,5 @@ export default
 {
 	margin-left: auto;
 }
+
 </style>
