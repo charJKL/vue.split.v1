@@ -1,4 +1,3 @@
-import {getDeepCopy} from '../lib/getDeepCopy';
 import {getRandomHash} from '../lib/getRandomHash';
 
 export const Loading = { Idle: 'Idle', Waiting: 'Waiting', Done: 'Done' };
@@ -34,7 +33,7 @@ export const record =
 // access this by this.$store.state.<list>
 const state = {
 	records: new Map(),
-	record: null,
+	selected: null
 }
 
 // access this by this.$store.getters.<list>
@@ -45,19 +44,19 @@ const getters = {
 	},
 	record(state)
 	{
-		return state.records.get(state.record) ?? null;
+		return state.records.get(state.selected) ?? null;
 	},
 	source(state)
 	{
-		return state.records.get(state.record)?.source ?? null;
+		return state.records.get(state.selected)?.source ?? null;
 	},
 	metrics(state)
 	{
-		return state.records.get(state.record)?.metrics ?? null;
+		return state.records.get(state.selected)?.metrics ?? null;
 	},
 	cropped(state)
 	{
-		return state.records.get(state.record)?.cropped ?? null;
+		return state.records.get(state.selected)?.cropped ?? null;
 	}
 }
 
@@ -76,57 +75,57 @@ const actions =
 	{
 		for(const file of files)
 		{
-			const instance = getDeepCopy(record);
+			const instance = {...record};
 			while(instance.id === '' || state.records.has(instance.id)) instance.id = getRandomHash(16);
 			state.records.set(instance.id, instance);
 			
-			const source = getDeepCopy(record.source);
+			const source = {...record.source};
 					source.filename = file.name;
 					source.url = URL.createObjectURL(file);
 			commit('source', {id: instance.id, value: source});
-			dispatch('loadImage', instance);
+			dispatch('loadImage', {id: instance.id, source: source});
 		}
 		commit('records', new Map(state.records));
 	},
 	[updateSource]({state, commit, dispatch}, source)
 	{
-		if(state.record === null) return;
-		const record = state.records.get(state.record);
-		const value = state.records.get(state.record).source;
-		commit('source', {id: record.id, value: getDeepCopy(source)});
-
-		if(value.url.href !== source.url.href) dispatch('loadImage', record);
+		if(state.selected === null) return;
+		const previous = state.records.get(state.selected).source;
+		const wasUrlChanged = previous.url.href !== source.url.href;
+		
+		commit('source', {id: state.selected, value: {...source}});
+		if(wasUrlChanged == true) dispatch('loadImage', {id: state.selected, source: source});
 	},
-	[updateMetrics]({commit}, metrics)
+	[updateMetrics]({state, commit}, metrics)
 	{
-		commit('metrics', metrics);
+		if(state.selected === null) return;
+		commit('metrics', {id: state.selected, value: {...metrics}});
 	},
 	[selectRecord]({commit}, record)
 	{
-		commit('record', record?.id ?? null);
+		commit('selected', record?.id ?? null);
 	},
-	loadImage({commit}, record)
+	loadImage({commit}, {id, source})
 	{
-		record.source.loading = Loading.Waiting;
-		record.source.img = new Image();
-		record.source.img.addEventListener('load', onImageLoad);
-		record.source.img.addEventListener('error', onImageError);
-		record.source.img.src = record.source.url;
+		source.loading = Loading.Waiting;
+		commit('source', {id: id, value: {...source}});
 		
+		source.img = new Image();
+		source.img.addEventListener('load', onImageLoad);
+		source.img.addEventListener('error', onImageError);
+		source.img.src = source.url;
 		function onImageLoad(e)
 		{
-			const source = getDeepCopy(record.source);
-					source.loading = Loading.Done;
-					source.width = e.target.naturalWidth;
-					source.height = e.target.naturalHeight;
-			commit('source', {id: record.id, value: source});
+			source.loading = Loading.Done;
+			source.width = e.target.naturalWidth;
+			source.height = e.target.naturalHeight;
+			commit('source', {id: id, value: {...source}});
 		}
 		function onImageError()
 		{
-			const source = getDeepCopy(record.source);
-					source.loading = Loading.Idle;
-					source.errors.loading = 'Cant load image';
-			commit('source', {id: record.id, value: source});
+			source.loading = Loading.Idle;
+			source.errors.loading = 'Cant load image';
+			commit('source', {id: id, value: {...source}});
 		}
 	}
 }
@@ -137,7 +136,7 @@ const mutations =
 	records(state, records){ state.records = records; },
 	source(state, {id, value}){ state.records.get(id).source = value; },
 	metrics(state, {id, value}){ state.records.get(id).metrics = value; },
-	record(state, id){ state.record = id; }
+	selected(state, id){ state.selected = id; }
 }
 
 export default { state, getters, actions, mutations };
