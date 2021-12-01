@@ -1,12 +1,12 @@
 <template>
 	<template v-if="isLoadingIdle">
-		<div :class="getEditorClass" :style="getEditorStyle" v-bind="$attrs">
+		<div :class="getEditorClass" v-bind="$attrs">
 			<img class="placeholder" src="../../assets/placeholder.svg" />
 			<div class="name" v-html="getName"></div>
 		</div>
 	</template>
 	<template v-if="isLoadingWaiting">
-		<div :class="getEditorClass" :style="getEditorStyle" v-bind="$attrs">
+		<div :class="getEditorClass" v-bind="$attrs">
 			<img class="waiting" src="../../assets/waiting.svg" />
 			<div class="name" v-html="getName"></div>
 		</div>
