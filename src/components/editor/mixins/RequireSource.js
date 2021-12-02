@@ -17,11 +17,11 @@ const RequireSource = {
 	{
 		isSource()
 		{
-			return this.source !== null;
+			return this.source != null;
 		},
 		isSourceNull()
 		{
-			return this.source === null;
+			return this.source == null;
 		},
 		isLoadingIdle()
 		{

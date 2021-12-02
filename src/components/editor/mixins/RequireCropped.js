@@ -10,11 +10,11 @@ const RequireCropped = {
 	{
 		isCropped()
 		{
-			return this.cropped !== null;
+			return this.cropped != null;
 		},
 		isCroppedNull()
 		{
-			return this.cropped === null;
+			return this.cropped == null;
 		},
 		isCroppedDirty()
 		{

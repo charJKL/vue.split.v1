@@ -16,11 +16,11 @@ const RequireMetrics = {
 	{
 		isMetric()
 		{
-			return this.metrics !== null;
+			return this.metrics != null;
 		},
 		isMetricNull()
 		{
-			return this.metrics === null;
+			return this.metrics == null;
 		}
 	}
 }
