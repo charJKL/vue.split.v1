@@ -1,4 +1,4 @@
-const Button = {left: 1, right: 2};
+const Button = {left: 0, right: 2};
 const ProvidePosition = {
 	data()
 	{
