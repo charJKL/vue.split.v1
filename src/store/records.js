@@ -99,13 +99,10 @@ const actions =
 		commit('source', {id: state.selected, value: {...source}});
 		if(wasUrlChanged == true) dispatch('loadImage', {id: state.selected, source: source});
 	},
-	[updateMetrics]({getters, commit, dispatch}, metrics)
+	[updateMetrics]({commit}, metrics)
 	{
 		if(state.selected === null) return;
 		commit('metrics', {id: state.selected, value: {...metrics}});
-		
-		const isCurrentlyWorking = getters.cropped.status === Status.Working;
-		if(isCurrentlyWorking === false) dispatch('cropImage', {id: state.selected, source: getters.source, metrics: metrics, cropped: getters.cropped});
 	},
 	[selectRecord]({commit}, record)
 	{
@@ -132,46 +129,6 @@ const actions =
 			source.loading = Loading.Idle;
 			source.errors.loading = 'Cant load image';
 			commit('source', {id: id, value: {...source}});
-		}
-	},
-	cropImage({commit}, {id, source, metrics, cropped})
-	{
-		cropped.status = Status.Working;
-		commit('cropped', {id: id, value: {...cropped}});
-		
-		const rotated = drawRotated(source, metrics);
-		const clip = drawClip(rotated, metrics);
-		clip.convertToBlob({type: "image/png"}).then(function(blob){
-			cropped.status = Status.Done;
-			cropped.width = clip.width;
-			cropped.height = clip.height;
-			cropped.blob = blob;
-			commit('cropped', {id: id, value: {...cropped}});
-		});
-
-		function drawRotated(source, metrics)
-		{
-			const canvas = new OffscreenCanvas(source.width, source.height);
-			const context = canvas.getContext("2d", {alpha: false});
-			
-			const halfX = source.width / 2;
-			const halfY = source.height / 2;
-			
-			context.translate(halfX, halfY);
-			context.rotate(metrics.rotate * Math.PI / 180);
-			context.translate(halfX * -1, halfY * -1);
-			context.drawImage(source.img, 0, 0);
-			return canvas;
-		}
-		function drawClip(rotated, metrics)
-		{
-			const width = metrics.x2 - metrics.x1;
-			const height = metrics.y2 - metrics.y1;
-			
-			const canvas = new OffscreenCanvas(width, height);
-			const context = canvas.getContext("2d", {alpha: false});
-			context.drawImage(rotated, metrics.x1, metrics.y1, width, height, 0, 0, width, height);
-			return canvas;
 		}
 	}
 }
