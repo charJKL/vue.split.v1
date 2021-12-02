@@ -22,6 +22,10 @@ const ProvideScale = {
 				y1: this.metrics.y1 * this.scale.y,
 				y2: this.metrics.y2 * this.scale.y,
 			}
+		},
+		getScale()
+		{
+			return `${this.scale.x.toFixed(2) } / ${this.scale.y.toFixed(2)}`;
 		}
 	},
 	methods:

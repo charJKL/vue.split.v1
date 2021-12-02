@@ -1,10 +1,13 @@
 <template>
+<div class="editor">
 	<template v-if="isCropped">
-			<div v-if="isCroppedDirty">
-				Dirty
-			</div>
-			<img src="" :style="getImageStyle"/>
+		<div class="status" v-if="isCroppedNotDone">
+			<div class="status-text">{{cropped.status}}</div>
+		</div>
+		<img class="image" :src="getImageUrl" :style="getImageStyle"/>
 	</template>
+	<div class="editor-scale">🔍 {{getScale}}</div>
+</div>
 </template>
 
 <script>
@@ -19,18 +22,60 @@ export default
 	mixins: [RequireSource, RequireMetrics, RequireCropped, ProvideScale, ProvidePosition],
 	computed:
 	{
+		getImageUrl()
+		{
+			return this.cropped?.blob ? URL.createObjectURL(this.cropped.blob) : null;
+		},
 		getImageStyle()
 		{
-			const width = this.cropped.width * this.scale;
-			const height = this.cropped.height * this.scale;
+			const width = this.cropped.width * this.scale.x;
+			const height = this.cropped.height * this.scale.y;
 			const left = this.position.x;
 			const top = this.position.y;
 			return { width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px` };
 		},
+	},
+	watch:
+	{
+		getImageUrl(value, old)
+		{
+			URL.revokeObjectURL(old);
+		}
 	}
 }
 </script>
 
 <style scoped>
-
+.editor
+{
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+.status
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	background: rgba(0, 0, 0, .2);
+}
+.status-text
+{
+	font: bold 25px var(--font);
+}
+.image
+{
+	position: absolute;
+}
+.editor-scale
+{
+	position:absolute;
+	top: 3px; left: 3px;
+	font: 12px var(--font);
+}
 </style>

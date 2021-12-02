@@ -35,6 +35,10 @@ const RequireCropped = {
 		isCroppedDone()
 		{
 			return this.cropped.status === Status.Done;
+		},
+		isCroppedNotDone()
+		{
+			return this.cropped.status !== Status.Done;
 		}
 	}
 }
