@@ -1,15 +1,24 @@
 import {Status} from '../store/records';
+import {debounce} from 'lodash';
 
 function ManagerCropping(store)
 {
+	const doCropImageWork = debounce(cropImage, 200, {leading: false, trailing: true});
 	store.subscribe(function(mutation, state){
 		if(mutation.type !== 'metrics') return;
 		const id = mutation.payload.id;
 		const cropped = state.records.records.get(id).cropped;
 		
-		if(cropped.status === Status.Working) return;
+		cropped.status = Status.Waiting;
+		store.commit('cropped', {id: id, value: {...cropped}});
+		doCropImageWork(store, state, id);
+	});
+	
+	function cropImage(store, state, id)
+	{
 		const source = state.records.records.get(id).source;
 		const metrics = state.records.records.get(id).metrics;
+		const cropped = state.records.records.get(id).cropped;
 		cropped.status = Status.Working;
 		store.commit('cropped', {id: id, value: {...cropped}});
 		
@@ -22,7 +31,7 @@ function ManagerCropping(store)
 			cropped.blob = blob;
 			store.commit('cropped', {id: id, value: {...cropped}});
 		});
-	});
+	}
 	
 	function drawRotated(source, metrics)
 	{
