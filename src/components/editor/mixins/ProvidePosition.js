@@ -19,8 +19,18 @@ const ProvidePosition = {
 			const x = (viewport.width - size.width) / 2;
 			const y = (viewport.height - size.height) / 2;
 			return {x: x, y: y};
-		},
-		mousedown(e)
+		}
+	},
+	mounted()
+	{
+		// There is no need to remove those listeners, will get lost with element.
+		this.$el.addEventListener('mousedown', mousedown.bind(this));
+		this.$el.addEventListener('mousemove', mousemove.bind(this));
+		this.$el.addEventListener('mouseup', mouseup.bind(this));
+		this.$el.addEventListener('mouseleave', mouseleave.bind(this));
+		this.$el.addEventListener('contextmenu', contextmenu.bind(this));
+		
+		function mousedown(e)
 		{
 			if(this.isSource === false) return;
 			if(e.button !== Button.right) return;
@@ -28,8 +38,8 @@ const ProvidePosition = {
 			this.providePosition.isMoving = true;
 			this.providePosition.initalMouse = {x: e.clientX, y: e.clientY};
 			this.providePosition.initalPosition = {...this.position};
-		},
-		mousemove(e)
+		}
+		function mousemove(e)
 		{
 			if(this.isSource === false) return;
 			if(this.providePosition.isMoving === false) return;
@@ -39,29 +49,20 @@ const ProvidePosition = {
 		
 			this.position.x = this.providePosition.initalPosition.x + diff.x;
 			this.position.y = this.providePosition.initalPosition.y + diff.y;
-		},
-		mouseup(e)
+		}
+		function mouseup(e)
 		{
 			if(e.button !== Button.right) return;
 			this.providePosition.isMoving = false;
-		},
-		mouseleave()
+		}
+		function mouseleave()
 		{
 			this.providePosition.isMoving = false;
-		},
-		contextmenu(e)
+		}
+		function contextmenu(e)
 		{
 			e.preventDefault();
 		}
-	},
-	mounted()
-	{
-		// There is no need to remove those listeners, will get lost with element.
-		this.$el.addEventListener('mousedown', this.mousedown.bind(this));
-		this.$el.addEventListener('mousemove', this.mousemove.bind(this));
-		this.$el.addEventListener('mouseup', this.mouseup.bind(this));
-		this.$el.addEventListener('mouseleave', this.mouseleave.bind(this));
-		this.$el.addEventListener('contextmenu', this.contextmenu.bind(this));
 	}
 }
 
