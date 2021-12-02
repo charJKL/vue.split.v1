@@ -1,5 +1,5 @@
 <template>
-	<div class="editor" ref="editor" @mousedown.left="onLeftDown" @mousedown.right="onRightDown" @mouseup.left="onLeftUp" @mouseup.right= "onRightUp" @mousemove="onMove" @mouseleave="onLeave" @wheel="onWheel" @contextmenu="onContextmenu">
+	<div class="editor" ref="editor">
 		<template v-if="isSource">
 			<div class="desktop" :style="getDesktopStyle">
 				<svg class="svg" :style="getSvgStyle">
@@ -20,7 +20,8 @@ import RequireMetrics from './mixins/RequireMetrics';
 import RequireSource from './mixins/RequireSource';
 import ProvideScale from './mixins/ProvideScale';
 import ProvidePosition from './mixins/ProvidePosition';
-import EditorMetricsMouse from './EditorMetricsMouse';
+import EditorMetricsMouseHover from './EditorMetricsMouseHover';
+import EditorMetricsMouseDragging from './EditorMetricsMouseDragging';
 import EditorMetricsLine from './EditorMetricsLine';
 import {isMatch} from '../../lib/isMatch';
 
@@ -28,7 +29,7 @@ export const offset = { top: 8, right: 8, bottom: 8, left: 8 };
 
 export default
 {
-	mixins: [RequireMetrics, RequireSource, ProvideScale, ProvidePosition, EditorMetricsMouse],
+	mixins: [RequireMetrics, RequireSource, ProvideScale, ProvidePosition, EditorMetricsMouseHover, EditorMetricsMouseDragging],
 	components: { EditorMetricsLine },
 	props:
 	{
