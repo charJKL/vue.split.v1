@@ -2,6 +2,7 @@ import {Status} from '../store/records';
 //import {debounce} from 'lodash';
 import {createWorker} from 'tesseract.js';
 
+var isWorking = false;
 const queue = [];
 
 function ManagerOcr(store)
@@ -10,47 +11,105 @@ function ManagerOcr(store)
 		workerPath: '/worker.min.js',
 		langPath: '/',
 		corePath: '/tesseract-core.wasm.js',
-		logger: m => console.log('tesseract logging:', m),
+		logger: parseImageProgress.bind(null, store),
 		errorHandler: error => console.error('tesseract error:', error)
 	})
 	const isTesseractReady = initTesseract(worker);
 
-	//const doCropImageWork = debounce(cropImage, 200, {leading: false, trailing: true});
+	store.subscribe(filterMutations);
 	
-	store.subscribe(function(mutation, state){
-		if(mutation.type == 'selected') selectedChanged(store, state, mutation);
-		if(mutation.type == 'cropped') croppedChanged(store, state, mutation);
-	});
+	function filterMutations(mutation, state)
+	{
+		if(mutation.type == 'selected' && mutation.payload !== null)
+		{
+			selectedChanged(store, state, mutation);
+			return;
+		}
+		if(mutation.type == 'cropped' && mutation.payload.value.status === Status.Dirty)
+		{
+			croppedChangedToDirty(store, state, mutation);
+			return;
+		}
+		if(mutation.type == 'cropped' && mutation.payload.value.status === Status.Done)
+		{
+			croppedChangedToDone(store, state, mutation);
+			return;
+		}
+	}
 	
 	function selectedChanged(store, state, mutation)
 	{
 		const id = mutation.payload;
-		parseImage(store)
-		console.log('ocr selected changes', id);
+		const cropped = state.records.records.get(id).cropped;
+		const ocr = state.records.records.get(id).ocr;
+		if(cropped.status !== Status.Done) return; // cropped data is not ready yet.
+		if(ocr.status > Status.Dirty) return; // cord data is already done or in process.
+		
+		ocr.status = Status.Queued;
+		store.commit('ocr', {id: id, value: {...ocr}});
+		queue.push(parseImage.bind(this, store, state, id));
+		doParseImage();
 	}
 	
-	function croppedChanged(store, state, mutation)
+	function croppedChangedToDirty(store, state, mutation)
 	{
 		const id = mutation.payload.id;
-		const cropped = state.records.records.get(id).cropped;
-		if(cropped.status != Status.Done) return;
-		console.log('ocr cropped changes', id);
-		if(working === true) return;
-		parseImage(store, state, id);
+		const ocr = state.records.records.get(id).ocr;
+		
+		// Cropped values changes hence current result are dirty, not valid anymore:
+		ocr.status = Status.Dirty;
+		store.commit('ocr', {id: id, value: {...ocr}});
+	}
+	
+	function croppedChangedToDone(store, state, mutation)
+	{
+		const id = mutation.payload.id;
+		const ocr = state.records.records.get(id).ocr;
+
+		ocr.status = Status.Queued;
+		store.commit('ocr', {id: id, value: {...ocr}});
+		queue.push(parseImage.bind(this, store, state, id));
+		doParseImage();
+	}
+	
+	function doParseImage()
+	{
+		if(isWorking === true) return;
+		queue.shift()?.call();
 	}
 	
 	function parseImage(store, state, id)
 	{
+		isWorking = true;
 		isTesseractReady.then(async function(){
 			const cropped = state.records.records.get(id).cropped;
+			const ocr = state.records.records.get(id).ocr;
+			ocr.status = Status.Working;
+			store.commit('ocr', {id: id, value: {...ocr}});
+			
 			//const ocr = state.records.records.get(id).ocr;
-			working = true;
-			console.log('parseImage for', id);
 			cropped.blob.name = 'some fake name'; // there is a bug in tesseract which require that blob should have name property.
-			const result = await worker.recognize(cropped.blob);
+			const result = await worker.recognize(cropped.blob, {}, id);
 			console.log(result);
-			working = false;
+			
+			ocr.status = Status.Done;
+			ocr.lines = [...result.data.lines];
+			store.commit('ocr', {id: id, value: {...ocr}});
+			isWorking = false;
+			doParseImage();
 		});
+	}
+	
+	function parseImageProgress(store, e)
+	{
+		console.log(store);
+		if(e.status !== "recognizing text") return;
+		
+		const id = e.userJobId;
+		console.log(store, id);
+		//const ocr = 
+		//ocr.info = e.progress;
+		//store.commit('ocr', {id: id, value: {...ocr}});
 	}
 }
 
