@@ -1,7 +1,7 @@
 import {getRandomHash} from '../lib/getRandomHash';
 
 export const Loading = { Idle: 'Idle', Waiting: 'Waiting', Done: 'Done' };
-export const Status = { Dirty: 'Dirty', Waiting: 'Waiting', Queued: `Queued`, Working: 'Working', Done: 'Done'};
+export const Status = { Dirty: 1, Waiting: 2, Queued: 3, Working: 4, Done: 5};
 export const record = 
 {
 	id: '',
@@ -30,6 +30,11 @@ export const record =
 		blob: null,
 		width: 0,
 		height: 0,
+	},
+	ocr: 
+	{
+		status: Status.Dirty,
+		data: null,
 	}
 }
 
@@ -60,6 +65,10 @@ const getters = {
 	cropped(state)
 	{
 		return state.records.get(state.selected)?.cropped ?? null;
+	},
+	ocr(state)
+	{
+		return state.records.get(state.selected)?.ocr ?? null;
 	}
 }
 
@@ -140,6 +149,7 @@ const mutations =
 	source(state, {id, value}){ state.records.get(id).source = value; },
 	metrics(state, {id, value}){ state.records.get(id).metrics = value; },
 	cropped(state, {id, value}){ state.records.get(id).cropped = value; },
+	ocr(staet, {id, value}){ state.records.get(id).ocr = value; },
 	selected(state, id){ state.selected = id; }
 }
 
