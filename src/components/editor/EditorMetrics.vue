@@ -1,12 +1,12 @@
 <template>
-	<div class="editor" ref="editor">
+	<div :class="getEditorClass" ref="editor">
 		<template v-if="isSource">
 			<div class="desktop" :style="getDesktopStyle">
 				<svg class="svg" :style="getSvgStyle">
-					<editor-metrics-line :offset="offset" type="vertical" :value="scaled.x1" />
-					<editor-metrics-line :offset="offset" type="vertical" :value="scaled.x2" />
-					<editor-metrics-line :offset="offset" type="horizontal" :value="scaled.y1" />
-					<editor-metrics-line :offset="offset" type="horizontal" :value="scaled.y2" />
+					<editor-metrics-line :offset="offset" type="vertical" :value="scaled.x1" :hover="hover == 'x1'" />
+					<editor-metrics-line :offset="offset" type="vertical" :value="scaled.x2" :hover="hover == 'x2'" />
+					<editor-metrics-line :offset="offset" type="horizontal" :value="scaled.y1" :hover="hover == 'y1'" />
+					<editor-metrics-line :offset="offset" type="horizontal" :value="scaled.y2" :hover="hover == 'y2'" />
 				</svg>
 				<img class="image" :style="getImageStyle" :src="source.url" />
 			</div>
@@ -43,6 +43,12 @@ export default
 	},
 	computed:
 	{
+		getEditorClass()
+		{
+			const isHover = this.hover ? 'cursor-hover' : '';
+			const isDragging = this.dragging ? 'cursor-dragging' : '';
+			return ['editor', isHover, isDragging];
+		},
 		getImageStyle()
 		{
 			const width = this.scaled.width - 2;
@@ -91,7 +97,10 @@ export default
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+	user-select: none;
 }
+.editor.cursor-hover{ cursor: grab; }
+.editor.cursor-dragging{ cursor: grabbing; }
 .desktop
 {
 	position: absolute;

@@ -2,7 +2,6 @@ import {updateMetrics} from './mixins/RequireMetrics';
 import {minBy} from 'lodash';
 
 const sensitivity = 0.001;
-const threshold = 20;
 
 function calcMousePosition(boundingRect, position, x, y)
 {
@@ -15,6 +14,9 @@ const EditorMetricsMouseHover =
 	{
 		return {
 			hover: null,
+			mouseHover: {
+				threshold: 20
+			}
 		}
 	},
 	mounted()
@@ -26,6 +28,8 @@ const EditorMetricsMouseHover =
 		function mousemove(e)
 		{
 			if(this.isSource === false) return;
+			e.preventDefault();
+			
 			const position = calcMousePosition(this.$refs.editor.getBoundingClientRect(), this.position, e.clientX, e.clientY);
 			const lines = [];
 				lines.push({line: 'x1', diff: Math.abs(this.scaled.x1 - position.x) });
@@ -34,7 +38,7 @@ const EditorMetricsMouseHover =
 				lines.push({line: 'y2', diff: Math.abs(this.scaled.y2 - position.y) });
 		
 			const nearest = minBy(lines, (line) => line.diff);
-			this.hover = (nearest.diff < threshold) ? nearest.line : null;
+			this.hover = (nearest.diff < this.mouseHover.threshold) ? nearest.line : null;
 		}
 		function wheel(e)
 		{

@@ -7,7 +7,7 @@ const EditorMetricsMouseDragging =
 	data()
 	{
 		return {
-			hover: null,
+			dragging: null,
 			mouseDragging: {
 				isDragging: false,
 				initalMouse: {x: 0, y: 0},
@@ -28,25 +28,28 @@ const EditorMetricsMouseDragging =
 		{
 			if(this.hover === null) return;
 			if(e.button !== Button.left) return;
+			e.preventDefault();
 			
+			this.dragging = this.hover;
 			this.mouseDragging.isDragging = true;
 			this.mouseDragging.initalMouse = {x: e.clientX, y: e.clientY};
-			this.mouseDragging.initalValue = this.scaled[this.hover];
+			this.mouseDragging.initalValue = this.scaled[this.dragging];
 		}
 		function mousemove(e)
 		{
 			if(this.mouseDragging.isDragging === false) return;
+			e.preventDefault();
 			
 			const position = {x: e.clientX, y: e.clientY};
 			const diff = {x: position.x - this.mouseDragging.initalMouse.x, y: position.y - this.mouseDragging.initalMouse.y};
-			const displacement = ['x1','x2'].includes(this.hover) ? diff.x : diff.y;
+			const displacement = ['x1','x2'].includes(this.dragging) ? diff.x : diff.y;
 			const update = this.mouseDragging.initalValue + displacement;
 			
-			if(this.hover === 'x1' && update > this.scaled.x2) this.hover = 'x2';
-			if(this.hover === 'x2' && update < this.scaled.x1) this.hover = 'x1';
-			if(this.hover === 'y1' && update > this.scaled.y2) this.hover = 'y2';
-			if(this.hover === 'y2' && update < this.scaled.y1) this.hover = 'y1';
-			this.scaled[this.hover] = update;
+			if(this.dragging === 'x1' && update > this.scaled.x2) this.hover = this.dragging = 'x2';
+			if(this.dragging === 'x2' && update < this.scaled.x1) this.hover = this.dragging = 'x1';
+			if(this.dragging === 'y1' && update > this.scaled.y2) this.hover = this.dragging = 'y2';
+			if(this.dragging === 'y2' && update < this.scaled.y1) this.hover = this.dragging = 'y1';
+			this.scaled[this.dragging] = update;
 			
 			// Scale up metrics:
 			const metrics = {...this.metrics};
@@ -59,10 +62,12 @@ const EditorMetricsMouseDragging =
 		function mouseup(e)
 		{
 			if(e.button !== Button.left) return;
+			this.dragging = null;
 			this.mouseDragging.isDragging = false;
 		}
 		function mouseleave()
 		{
+			this.dragging = null;
 			this.mouseDragging.isDragging = false;
 		}
 	}
