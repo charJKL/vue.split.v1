@@ -2,20 +2,22 @@
 	<ui-header></ui-header>
 	<ui-list></ui-list>
 	<main id="main">
-		<ui-blueprint></ui-blueprint>
-		<!--
+		<!-- <ui-blueprint></ui-blueprint> -->
+		
 		<div class="editor-box" v-show="isMetricsStage">
-			<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics"></editor-metrics>
+			<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics" />
 		</div>
 		<div class="preview-box" v-show="isMetricsStage">
-			<preview class="preview" :source="source" :metrics="metrics"></preview>
+			<editor-preview class="preview" :source="source" :cropped="cropped" />
 		</div>
+		<div class="box-editor-results" v-show="isTextStage">
+			<editor-results :ocr="ocr" class="results"/>
+		</div>
+		<!--
 		<div class="preview-box" v-show="isTextStage">
 			<preview class="preview" :source="source" :metrics="metrics"></preview>
 		</div>
-		<div class="text-box" v-show="isTextStage">
-			<editor-text :source="source" :cropped="cropped"></editor-text>
-		</div>
+
 		-->
 	</main>
 	<ui-footer></ui-footer>
@@ -27,9 +29,9 @@
 import UiHeader from './components/UiHeader';
 import UiList from './components/UiList';
 import UiBlueprint from './components/UiBlueprint';
-import EditorMetrics from './components/EditorMetrics';
-import Preview from './components/Preview';
-import EditorText from './components/EditorText';
+import EditorMetrics from './components/editor/EditorMetrics';
+import EditorPreview from './components/editor/EditorPreview';
+import EditorResults from './components/editor/EditorResults';
 import UiFooter from './components/UiFooter';
 import {updateMetrics} from './store/records';
 import {Stage} from './store/ui';
@@ -38,7 +40,7 @@ import _ from 'lodash';
 
 export default 
 {
-	components: { UiHeader, UiList, UiBlueprint, EditorMetrics, Preview, EditorText, UiFooter },
+	components: { UiHeader, UiList, UiBlueprint, EditorMetrics, EditorPreview, EditorResults, UiFooter },
 	name: 'App',
 	data()
 	{
@@ -48,7 +50,7 @@ export default
 	},
 	computed:
 	{
-		...mapGetters(['current', 'source', 'metrics', 'cropped']),
+		...mapGetters(['current', 'source', 'metrics', 'cropped', 'ocr']),
 		...mapGetters(['stage']),
 		isMetricsStage()
 		{
@@ -150,12 +152,6 @@ body
 	align-items: center;
 	flex: 0 0 70%;
 }
-.editor
-{
-	border: solid 1px #000;
-	width: calc(100% - 20px);
-	height: calc(100% - 20px);
-}
 .preview-box
 {
 	display: flex;
@@ -163,6 +159,13 @@ body
 	align-items: center;
 	flex: 0 0 calc(30% - 1px);
 	border-left: dashed 1px #000;
+}
+.box-editor-results
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex: 0 0 50%;
 }
 .preview
 {
