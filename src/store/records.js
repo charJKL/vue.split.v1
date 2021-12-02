@@ -99,7 +99,7 @@ const actions =
 		commit('source', {id: state.selected, value: {...source}});
 		if(wasUrlChanged == true) dispatch('loadImage', {id: state.selected, source: source});
 	},
-	[updateMetrics]({commit}, metrics)
+	[updateMetrics]({state, commit}, metrics)
 	{
 		if(state.selected === null) return;
 		commit('metrics', {id: state.selected, value: {...metrics}});
