@@ -11,6 +11,7 @@
 				<img class="image" :style="getImageStyle" :src="source.url" />
 			</div>
 		</template>
+		<div class="editor-scale">🔍 {{ printScaleValue }}</div>
 	</div>
 </template>
 
@@ -104,5 +105,11 @@ export default
 	position: absolute;
 	z-index: 0;
 	border: solid 1px #000;
+}
+.editor-scale
+{
+	position:absolute;
+	top: 3px; left: 3px;
+	font: 12px var(--font);
 }
 </style>

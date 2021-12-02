@@ -23,7 +23,7 @@ const ProvideScale = {
 				y2: this.metrics.y2 * this.scale.y,
 			}
 		},
-		getScale()
+		printScaleValue()
 		{
 			return `${this.scale.x.toFixed(2) } / ${this.scale.y.toFixed(2)}`;
 		}

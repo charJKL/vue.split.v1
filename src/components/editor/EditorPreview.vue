@@ -6,7 +6,7 @@
 		</div>
 		<img class="image" :src="getImageUrl" :style="getImageStyle"/>
 	</template>
-	<div class="editor-scale">🔍 {{getScale}}</div>
+	<div class="editor-scale">🔍 {{ printScaleValue }}</div>
 </div>
 </template>
 
