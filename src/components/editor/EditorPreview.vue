@@ -12,14 +12,13 @@
 
 <script>
 import RequireSource from './mixins/RequireSource';
-import RequireMetrics from './mixins/RequireMetrics';
 import RequireCropped from './mixins/RequireCropped';
 import ProvideScale from './mixins/ProvideScale';
 import ProvidePosition from './mixins/ProvidePosition';
 
 export default
 {
-	mixins: [RequireSource, RequireMetrics, RequireCropped, ProvideScale, ProvidePosition],
+	mixins: [RequireSource, RequireCropped, ProvideScale, ProvidePosition],
 	computed:
 	{
 		getImageUrl()
