@@ -5,14 +5,29 @@ function ManagerCropping(store)
 {
 	const doCropImageWork = debounce(cropImage, 200, {leading: false, trailing: true});
 	store.subscribe(function(mutation, state){
-		if(mutation.type !== 'metrics') return;
-		const id = mutation.payload.id;
+		if(mutation.type == 'selected') selectedChanged(store, state, mutation);
+		if(mutation.type == 'metrics') metricsChanged(store, state, mutation);
+	});
+	
+	function selectedChanged(store, state, mutation)
+	{
+		const id = mutation.payload;
 		const cropped = state.records.records.get(id).cropped;
+		if(cropped.status === Status.Done) return;
 		
 		cropped.status = Status.Waiting;
 		store.commit('cropped', {id: id, value: {...cropped}});
 		doCropImageWork(store, state, id);
-	});
+	}
+	
+	function metricsChanged(store, state, mutation)
+	{
+		const id = mutation.payload.id;
+		const cropped = state.records.records.get(id).cropped;
+				cropped.status = Status.Waiting;
+		store.commit('cropped', {id: id, value: {...cropped}});
+		doCropImageWork(store, state, id);
+	}
 	
 	function cropImage(store, state, id)
 	{
