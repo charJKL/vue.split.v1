@@ -45,6 +45,13 @@ function ManagerCropping(store)
 		const source = state.records.records.get(id).source;
 		const metrics = state.records.records.get(id).metrics;
 		const cropped = state.records.records.get(id).cropped;
+		if(source.status != Status.Done )
+		{
+			cropped.status = Status.Dirty;
+			store.commit('cropped', {id: id, value: {...cropped}});
+			return;
+		}
+		
 		cropped.status = Status.Working;
 		store.commit('cropped', {id: id, value: {...cropped}});
 		
