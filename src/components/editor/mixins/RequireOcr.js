@@ -10,6 +10,10 @@ const RequireOcr = {
 	},
 	computed:
 	{
+		printOcrStatus()
+		{
+			return Status.toString(this.ocr.status);
+		},
 		isOcr()
 		{
 			return this.ocr != null;

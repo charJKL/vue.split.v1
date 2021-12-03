@@ -2,7 +2,7 @@
 <div class="editor">
 	<template v-if="isOcr">
 		<div class="status" v-if="isOcrNotCompleted">
-			<div class="status-text">{{ocr.status}}</div>
+			<div class="status-text">{{ printOcrStatus }}</div>
 		</div>
 		<div v-for="(line, i) of ocr.lines" :key="i">
 			<input :value="line.text" />
