@@ -18,9 +18,9 @@ const RequireOcr = {
 		{
 			return this.ocr == null;
 		},
-		isOcrNotDone()
+		isOcrNotCompleted()
 		{
-			return this.ocr.status !== Status.Done;
+			return this.ocr.status !== Status.Completed;
 		}
 	}
 }

@@ -30,7 +30,7 @@ function ManagerOcr(store)
 			croppedChangedToDirty(store, state, mutation);
 			return;
 		}
-		if(mutation.type == 'cropped' && mutation.payload.value.status === Status.Done)
+		if(mutation.type == 'cropped' && mutation.payload.value.status === Status.Completed)
 		{
 			croppedChangedToDone(store, state, mutation);
 			return;
@@ -42,7 +42,7 @@ function ManagerOcr(store)
 		const id = mutation.payload;
 		const cropped = state.records.records.get(id).cropped;
 		const ocr = state.records.records.get(id).ocr;
-		if(cropped.status !== Status.Done) return; // cropped data is not ready yet.
+		if(cropped.status !== Status.Completed) return; // cropped data is not ready yet.
 		if(ocr.status > Status.Dirty) return; // cord data is already done or in process.
 		
 		ocr.status = Status.Queued;
@@ -92,7 +92,7 @@ function ManagerOcr(store)
 			const result = await worker.recognize(cropped.blob, {}, id);
 			console.log(result);
 			
-			ocr.status = Status.Done;
+			ocr.status = Status.Completed;
 			ocr.lines = [...result.data.lines];
 			store.commit('ocr', {id: id, value: {...ocr}});
 			isWorking = false;
@@ -100,13 +100,13 @@ function ManagerOcr(store)
 		});
 	}
 	
-	function parseImageProgress(store, e)
+	function parseImageProgress()
 	{
-		console.log(store);
-		if(e.status !== "recognizing text") return;
+		//console.log(store,);
+		//if(e.status !== "recognizing text") return;
 		
-		const id = e.userJobId;
-		console.log(store, id);
+		//const id = e.userJobId;
+		//console.log(store, id);
 		//const ocr = 
 		//ocr.info = e.progress;
 		//store.commit('ocr', {id: id, value: {...ocr}});

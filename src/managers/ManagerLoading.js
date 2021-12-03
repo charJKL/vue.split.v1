@@ -34,7 +34,7 @@ function ManagerLoading(store)
 		source.img.src = source.url;
 		function onImageLoad(e)
 		{
-			source.status = Status.Done;
+			source.status = Status.Completed;
 			source.width = e.target.naturalWidth;
 			source.height = e.target.naturalHeight;
 			store.commit('source', {id: id, value: {...source}});

@@ -102,7 +102,7 @@ const actions =
 	[updateSource]({state, commit}, source)
 	{
 		if(state.selected === null) return;
-		if(source.status < Status.Done) throw new Error(`You can't change source status.`, state.records.get(state.selected));
+		if(source.status < Status.Completed) throw new Error(`You can't change source status.`, state.records.get(state.selected));
 		commit('source', {id: state.selected, value: {...source}});
 	},
 	[updateMetrics]({state, commit}, metrics)

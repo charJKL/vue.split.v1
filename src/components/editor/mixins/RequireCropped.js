@@ -37,13 +37,13 @@ const RequireCropped = {
 		{
 			return this.cropped.status === Status.Working;
 		},
-		isCroppedDone()
+		isCroppedCompleted()
 		{
-			return this.cropped.status === Status.Done;
+			return this.cropped.status === Status.Completed;
 		},
-		isCroppedNotDone()
+		isCroppedNotCompleted()
 		{
-			return this.cropped.status !== Status.Done;
+			return this.cropped.status !== Status.Completed;
 		}
 	}
 }

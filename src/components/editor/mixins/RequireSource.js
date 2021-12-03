@@ -31,9 +31,13 @@ const RequireSource = {
 		{
 			return this.source.status == Status.Waiting;
 		},
+		isSourceLoading()
+		{
+			return this.source.status == Status.Loading;
+		},
 		isSourceDone()
 		{
-			return this.source.status == Status.Done;
+			return this.source.status == Status.Error || this.source.status == Status.Completed;
 		}
 	}
 }

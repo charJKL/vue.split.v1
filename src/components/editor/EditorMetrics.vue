@@ -77,7 +77,7 @@ export default
 	{
 		source(source)
 		{
-			if(this.isSourceDone === false) return;
+			if(this.isSourceCompleted === false) return;
 			const size = { width: source.width, height: source.height };
 			this.scale = this.calcRatioScaleValue(this.viewport, size);
 			this.position = this.calcCenterPositionValue(this.viewport, this.scaled);

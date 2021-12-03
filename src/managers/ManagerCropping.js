@@ -45,7 +45,7 @@ function ManagerCropping(store)
 		const source = state.records.records.get(id).source;
 		const metrics = state.records.records.get(id).metrics;
 		const cropped = state.records.records.get(id).cropped;
-		if(source.status != Status.Done )
+		if(source.status != Status.Completed )
 		{
 			cropped.status = Status.Dirty;
 			store.commit('cropped', {id: id, value: {...cropped}});
@@ -58,7 +58,7 @@ function ManagerCropping(store)
 		const rotated = drawRotated(source, metrics);
 		const clip = drawClip(rotated, metrics);
 		clip.convertToBlob({type: "image/png"}).then(function(blob){
-			cropped.status = Status.Done;
+			cropped.status = Status.Completed;
 			cropped.width = clip.width;
 			cropped.height = clip.height;
 			cropped.blob = blob;

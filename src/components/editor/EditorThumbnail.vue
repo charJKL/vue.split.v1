@@ -5,7 +5,7 @@
 			<div class="name" v-html="getName"></div>
 		</div>
 	</template>
-	<template v-if="isSourceWaiting">
+	<template v-if="isSourceLoading">
 		<div :class="getEditorClass" v-bind="$attrs">
 			<img class="waiting" src="../../assets/waiting.svg" />
 			<div class="name" v-html="getName"></div>
