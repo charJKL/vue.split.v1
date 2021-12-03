@@ -8,11 +8,12 @@ export const record =
 	source:
 	{
 		status: Status.Dirty,
+		blob: null,
 		filename: '',
 		url: '',
+		img: null,
 		width: 0,
 		height: 0,
-		img: null,
 		errors: {},
 	},
 	metrics:
@@ -93,7 +94,7 @@ const actions =
 			
 			const source = {...instance.source};
 					source.filename = file.name;
-					source.url = URL.createObjectURL(file);
+					source.blob = file;
 			commit('source', {id: instance.id, value: source});
 		}
 		commit('records', new Map(state.records));
@@ -101,6 +102,7 @@ const actions =
 	[updateSource]({state, commit}, source)
 	{
 		if(state.selected === null) return;
+		if(source.status < Status.Done) throw new Error(`You can't change source status.`, state.records.get(state.selected));
 		commit('source', {id: state.selected, value: {...source}});
 	},
 	[updateMetrics]({state, commit}, metrics)
