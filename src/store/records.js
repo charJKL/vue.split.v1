@@ -2,14 +2,12 @@ import Status from '../lib/Status';
 import {getRandomHash} from '../lib/getRandomHash';
 import {cloneDeep} from 'lodash';
 
-export const Loading = { Idle: 'Idle', Waiting: 'Waiting', Done: 'Done' };
-
 export const record = 
 {
 	id: '',
 	source:
 	{
-		loading: Loading.Idle,
+		status: Status.Dirty,
 		filename: '',
 		url: '',
 		width: 0,
@@ -85,7 +83,7 @@ export const selectRecord = 'select-record-action';
 export const applyBlueprint = 'apply-blueprint-action';
 const actions = 
 {
-	[loadImagesFiles]({state, commit, dispatch}, files)
+	[loadImagesFiles]({state, commit}, files)
 	{
 		for(const file of files)
 		{
@@ -97,18 +95,13 @@ const actions =
 					source.filename = file.name;
 					source.url = URL.createObjectURL(file);
 			commit('source', {id: instance.id, value: source});
-			dispatch('loadImage', {id: instance.id, source: source});
 		}
 		commit('records', new Map(state.records));
 	},
-	[updateSource]({state, commit, dispatch}, source)
+	[updateSource]({state, commit}, source)
 	{
 		if(state.selected === null) return;
-		const previous = state.records.get(state.selected).source;
-		const wasUrlChanged = previous.url.href !== source.url.href;
-		
 		commit('source', {id: state.selected, value: {...source}});
-		if(wasUrlChanged == true) dispatch('loadImage', {id: state.selected, source: source});
 	},
 	[updateMetrics]({state, commit}, metrics)
 	{
@@ -118,29 +111,6 @@ const actions =
 	[selectRecord]({commit}, record)
 	{
 		commit('selected', record?.id ?? null);
-	},
-	loadImage({commit}, {id, source})
-	{
-		source.loading = Loading.Waiting;
-		commit('source', {id: id, value: {...source}});
-		
-		source.img = new Image();
-		source.img.addEventListener('load', onImageLoad);
-		source.img.addEventListener('error', onImageError);
-		source.img.src = source.url;
-		function onImageLoad(e)
-		{
-			source.loading = Loading.Done;
-			source.width = e.target.naturalWidth;
-			source.height = e.target.naturalHeight;
-			commit('source', {id: id, value: {...source}});
-		}
-		function onImageError()
-		{
-			source.loading = Loading.Idle;
-			source.errors.loading = 'Cant load image';
-			commit('source', {id: id, value: {...source}});
-		}
 	}
 }
 

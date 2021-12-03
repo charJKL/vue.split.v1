@@ -1,17 +1,17 @@
 <template>
-	<template v-if="isLoadingIdle">
+	<template v-if="isSourceDirty">
 		<div :class="getEditorClass" v-bind="$attrs">
 			<img class="placeholder" src="../../assets/placeholder.svg" />
 			<div class="name" v-html="getName"></div>
 		</div>
 	</template>
-	<template v-if="isLoadingWaiting">
+	<template v-if="isSourceWaiting">
 		<div :class="getEditorClass" v-bind="$attrs">
 			<img class="waiting" src="../../assets/waiting.svg" />
 			<div class="name" v-html="getName"></div>
 		</div>
 	</template>
-	<template v-if="isLoadingDone">
+	<template v-if="isSourceDone">
 		<div :class="getEditorClass" :style="getEditorStyle" v-bind="$attrs">
 			<img class="image" :style="getImageStyle" :src="getImageUrl" />
 			<div class="name" v-html="getName"></div>
@@ -62,7 +62,7 @@ export default
 	{
 		source(source)
 		{
-			if(this.isLoadingDone === false) return;
+			if(this.isSourceDone === false) return;
 			const viewport = { width: Infinity, height: 96 };
 			const size = { width: source.width, height: source.height };
 			this.scale = this.calcRatioScaleValue(viewport, size);

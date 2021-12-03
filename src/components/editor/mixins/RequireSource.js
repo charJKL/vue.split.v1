@@ -1,6 +1,6 @@
-import {Loading, record} from '../../../store/records';
+import Status from '../../../lib/Status';
+import {record} from '../../../store/records';
 import {isMatch} from '../../../lib/isMatch';
-
 
 export const updateSource = 'update:source';
 
@@ -23,17 +23,17 @@ const RequireSource = {
 		{
 			return this.source == null;
 		},
-		isLoadingIdle()
+		isSourceDirty()
 		{
-			return this.source.loading == Loading.Idle;
+			return this.source.status == Status.Dirty;
 		},
-		isLoadingWaiting()
+		isSourceWaiting()
 		{
-			return this.source.loading == Loading.Waiting;
+			return this.source.status == Status.Waiting;
 		},
-		isLoadingDone()
+		isSourceDone()
 		{
-			return this.source.loading == Loading.Done;
+			return this.source.status == Status.Done;
 		}
 	}
 }
