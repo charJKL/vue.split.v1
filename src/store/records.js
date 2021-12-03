@@ -1,6 +1,6 @@
 import Status from '../lib/Status';
 import {getRandomHash} from '../lib/getRandomHash';
-
+import {cloneDeep} from 'lodash';
 
 export const Loading = { Idle: 'Idle', Waiting: 'Waiting', Done: 'Done' };
 
@@ -89,11 +89,11 @@ const actions =
 	{
 		for(const file of files)
 		{
-			const instance = {...record};
+			const instance = cloneDeep(record);
 			while(instance.id === '' || state.records.has(instance.id)) instance.id = getRandomHash(16);
 			state.records.set(instance.id, instance);
 			
-			const source = {...record.source};
+			const source = {...instance.source};
 					source.filename = file.name;
 					source.url = URL.createObjectURL(file);
 			commit('source', {id: instance.id, value: source});
@@ -151,7 +151,7 @@ const mutations =
 	source(state, {id, value}){ state.records.get(id).source = value; },
 	metrics(state, {id, value}){ state.records.get(id).metrics = value; },
 	cropped(state, {id, value}){ state.records.get(id).cropped = value; },
-	ocr(staet, {id, value}){ state.records.get(id).ocr = value; },
+	ocr(state, {id, value}){ state.records.get(id).ocr = value; },
 	selected(state, id){ state.selected = id; }
 }
 
