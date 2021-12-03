@@ -1,5 +1,6 @@
-import {record, Status} from '../../../store/records';
+import {record} from '../../../store/records';
 import {isMatch} from '../../../lib/isMatch';
+import {Status} from '../../../lib/Status';
 
 const RequireCropped = {
 	props:
@@ -8,6 +9,10 @@ const RequireCropped = {
 	},
 	computed:
 	{
+		printCroppedStatus()
+		{
+			return Status.toString(this.cropped.status);
+		},
 		isCropped()
 		{
 			return this.cropped != null;

@@ -1,5 +1,7 @@
-import {record, Status} from '../../../store/records';
+import Status from '../../../lib/Status';
+import {record} from '../../../store/records';
 import {isMatch} from '../../../lib/isMatch';
+
 
 const RequireOcr = {
 	props:

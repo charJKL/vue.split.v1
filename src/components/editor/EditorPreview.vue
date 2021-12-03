@@ -2,7 +2,7 @@
 <div class="editor">
 	<template v-if="isCropped">
 		<div class="status" v-if="isCroppedNotDone">
-			<div class="status-text">{{cropped.status}}</div>
+			<div class="status-text">{{ printCroppedStatus }}</div>
 		</div>
 		<img class="image" :src="getImageUrl" :style="getImageStyle"/>
 	</template>

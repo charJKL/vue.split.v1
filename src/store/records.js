@@ -1,7 +1,9 @@
+import Status from '../lib/Status';
 import {getRandomHash} from '../lib/getRandomHash';
 
+
 export const Loading = { Idle: 'Idle', Waiting: 'Waiting', Done: 'Done' };
-export const Status = { Dirty: 1, Waiting: 2, Queued: 3, Working: 4, Done: 5};
+
 export const record = 
 {
 	id: '',

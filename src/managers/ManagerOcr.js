@@ -1,4 +1,4 @@
-import {Status} from '../store/records';
+import {Status} from '../lib/Status';
 //import {debounce} from 'lodash';
 import {createWorker} from 'tesseract.js';
 
