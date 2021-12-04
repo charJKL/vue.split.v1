@@ -5,6 +5,7 @@ import ParseJob from './ocr/ParseJob';
 function ManagerOcr(store)
 {
 	var queue = new SchedulerList();
+	var refs = new Map();
 	var maxWorkers = 1;
 	
 	store.subscribe(filterMutations);
@@ -63,14 +64,20 @@ function ManagerOcr(store)
 	
 	function scheduleParse(store, state, id)
 	{
-		queue.push(new ParseJob(store, state, id));
+		const job = new ParseJob(store, state, id);
+		refs.get(id)?.terminate();
+		refs.set(id, job);
+		queue.push(job);
 		scheduleLoop();
 	}
 	
 	function forceParse(store, state, id)
 	{
-		queue.enqueue(new ParseJob(store, state, id));
-		queue.get(id).run().then(scheduleLoop);
+		const job = new ParseJob(store, state, id);
+		refs.get(id)?.terminate();
+		refs.set(id, job);
+		queue.push(job);
+		job.run().then(scheduleLoop);
 	}
 	
 	function scheduleLoop()
