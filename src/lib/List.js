@@ -1,28 +1,16 @@
-function SchedulerList()
+function List()
 {
 	this.head = null;
 	this.tail = null;
 	this.length = null;
 }
 
-SchedulerList.prototype[Symbol.iterator] = function* () 
+List.prototype[Symbol.iterator] = function* () 
 {
 	for(var current = this.head ; current !== null ; current = current.next) yield current.value;
 };
 
-SchedulerList.prototype.enqueue = function(object)
-{
-	if(this.head === null)
-	{
-		this.push(object);
-		return;
-	}
-	const temp = this.head;
-	this.head = {value: object, next: temp};
-	this.length++;
-}
-
-SchedulerList.prototype.push = function(object) 
+List.prototype.push = function(object) 
 {
 	if(this.tail === null)
 	{
@@ -36,7 +24,7 @@ SchedulerList.prototype.push = function(object)
 	this.length++;
 };
 
-SchedulerList.prototype.pop = function () 
+List.prototype.pop = function () 
 {
 	const temp = this.head;
 	this.head = temp.next;
@@ -44,12 +32,24 @@ SchedulerList.prototype.pop = function ()
 	return temp.value;
 };
 
-SchedulerList.prototype.peek = function()
+List.prototype.enqueue = function(object)
+{
+	if(this.head === null)
+	{
+		this.push(object);
+		return;
+	}
+	const temp = this.head;
+	this.head = {value: object, next: temp};
+	this.length++;
+}
+
+List.prototype.peek = function()
 {
 	return this.head.value;
 }
 
-SchedulerList.prototype.delete = function(object)
+List.prototype.delete = function(object)
 {
 	if(this.head.value === object)
 	{
@@ -58,8 +58,9 @@ SchedulerList.prototype.delete = function(object)
 		return;
 	}
 	
-	var previous = null;
-	for(const current of this)
+	var previous = this.head;
+	var current = this.head.next;
+	while(current != null)
 	{
 		if(current.value === object)
 		{
@@ -69,14 +70,15 @@ SchedulerList.prototype.delete = function(object)
 			return;
 		}
 		previous = current;
+		current = current.next;
 	}
 }
 
-SchedulerList.prototype.toArray = function()
+List.prototype.toArray = function()
 {
 	const array = [];
 	for(const element of this) array.push(element);
 	return array;
 }
 
-export default SchedulerList;
+export default List;
