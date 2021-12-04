@@ -1,7 +1,11 @@
 <template>
 <div class="editor">
 	<template v-if="isCropped">
-		<img class="image" :src="getCroppedUrl" :style="getImageStyle"/>
+		<div class="desktop" :style="getDesktopStyle">
+			<img class="image" :src="getCroppedUrl" />
+			<editor-adjust-boxes class="boxes" :width="getSize.width" :height="getSize.height" :boxes="getBoxes" />
+			<editor-adjust-marks class="marks" />
+		</div>
 	</template>
 	<div class="editor-scale">🔍 {{ printScaleValue }}</div>
 </div>
@@ -9,15 +13,25 @@
 
 <script>
 import RequireCropped from './mixins/RequireCropped';
+import RequireOcr from './mixins/RequireOcr';
 import ProvideScale from './mixins/ProvideScale';
 import ProvidePosition from './mixins/ProvidePosition';
+import EditorAdjustBoxes from './EditorAdjustBoxes';
+import EditorAdjustMarks from './EditorAdjustMarks';
 
 export default
 {
-	mixins: [RequireCropped, ProvideScale, ProvidePosition],
+	mixins: [RequireCropped, RequireOcr, ProvideScale, ProvidePosition],
+	components: { EditorAdjustBoxes, EditorAdjustMarks },
 	computed:
 	{
-		getImageStyle()
+		getSize()
+		{
+			const width = this.cropped.width * this.scale.x;
+			const height = this.cropped.height * this.scale.y;
+			return {width: width, height: height};
+		},
+		getDesktopStyle()
 		{
 			const width = this.cropped.width * this.scale.x;
 			const height = this.cropped.height * this.scale.y;
@@ -25,6 +39,18 @@ export default
 			const top = this.position.y;
 			return { width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px` };
 		},
+		getBoxes()
+		{
+			const boxes = [];
+			for(const line of this.ocr.lines)
+			{
+				for(const word of line.words)
+				{
+					boxes.push(word.bbox);
+				}
+			}
+			return boxes;
+		}
 	}
 }
 </script>
@@ -37,29 +63,26 @@ export default
 	height: 100%;
 	overflow: hidden;
 }
-.status
+.desktop
 {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	position: absolute;
-	width: 100%;
-	height: 100%;
+	position:absolute;
 	z-index: 1;
-	background: rgba(0, 0, 0, .2);
-}
-.status-text
-{
-	font: bold 25px var(--font);
 }
 .image
 {
 	position: absolute;
+	z-index: 0;
+	width: 100%;
+	height: 100%;
 }
-.editor-scale
+.boxes
 {
-	position:absolute;
-	top: 3px; left: 3px;
-	font: 12px var(--font);
+	position: absolute;
+	z-index: 1;
+}
+.marks
+{
+	position: absolute;
+	z-index: 2;
 }
 </style>
