@@ -70,8 +70,11 @@ ParseJob.prototype.log = function()
 }
 ParseJob.prototype.terminate = function()
 {
-	this.status = ParseJobStatus.Terminated;
-	this.worker.terminate();
+	if(this.status === ParseJobStatus.Active)
+	{
+		this.status = ParseJobStatus.Terminated;
+		this.worker.terminate();
+	}
 	
 	const ocr = this.state.records.records.get(this.id).ocr;
 	ocr.status = Status.Dirty;
