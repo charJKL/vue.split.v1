@@ -9,6 +9,10 @@ const RequireCropped = {
 	},
 	computed:
 	{
+		getCroppedUrl()
+		{
+			return this.cropped?.blob ? URL.createObjectURL(this.cropped.blob) : null;
+		},
 		printCroppedStatus()
 		{
 			return Status.toString(this.cropped.status);
@@ -44,6 +48,13 @@ const RequireCropped = {
 		isCroppedNotCompleted()
 		{
 			return this.cropped.status !== Status.Completed;
+		}
+	},
+	watch:
+	{
+		getImageUrl(value, old)
+		{
+			URL.revokeObjectURL(old);
 		}
 	}
 }
