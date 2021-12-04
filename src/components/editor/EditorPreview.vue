@@ -4,7 +4,7 @@
 		<div class="status" v-if="isCroppedNotCompleted">
 			<div class="status-text">{{ printCroppedStatus }}</div>
 		</div>
-		<img class="image" :src="getImageUrl" :style="getImageStyle"/>
+		<img class="image" :src="getCroppedUrl" :style="getImageStyle"/>
 	</template>
 	<div class="editor-scale">🔍 {{ printScaleValue }}</div>
 </div>
@@ -21,10 +21,6 @@ export default
 	mixins: [RequireSource, RequireCropped, ProvideScale, ProvidePosition],
 	computed:
 	{
-		getImageUrl()
-		{
-			return this.cropped?.blob ? URL.createObjectURL(this.cropped.blob) : null;
-		},
 		getImageStyle()
 		{
 			const width = this.cropped.width * this.scale.x;
@@ -33,13 +29,6 @@ export default
 			const top = this.position.y;
 			return { width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px` };
 		},
-	},
-	watch:
-	{
-		getImageUrl(value, old)
-		{
-			URL.revokeObjectURL(old);
-		}
 	}
 }
 </script>
