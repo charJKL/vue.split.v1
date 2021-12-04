@@ -61,6 +61,7 @@ const ProvideScale = {
 		function wheel(e)
 		{
 			if(this.provideScale.isScaling === false) return;
+			e.preventDefault();
 			this.scale.x = this.scale.x - e.deltaY * this.provideScale.sensitivity;
 			this.scale.y = this.scale.y - e.deltaY * this.provideScale.sensitivity;
 		}
