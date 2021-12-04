@@ -78,7 +78,7 @@ class ParseJob
 		await this.#worker.initialize('pol');
 		await this.#worker.setParameters(ParseJob.#parameters);
 		const result = await this.#worker.recognize(this.#blob);
-		this.dispatchEvent(ParseJobEvents.done, result);
+		this.dispatchEvent(ParseJobEvents.done, result.data);
 		this.#status = ParseJobStatus.Ended;
 		this.dispatchEvent(ParseJobEvents.ended);
 		await this.#worker.terminate();
