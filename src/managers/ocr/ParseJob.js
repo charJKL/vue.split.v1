@@ -1,7 +1,7 @@
 import {createWorker} from 'tesseract.js';
 /* eslint-disable */
 const ParseJobStatus = {Idle: 'Idle', Active: 'Active', Ended: 'Ended'};
-const ParseJobEvents = {initialize: 'initialize', recognize: 'recognize', interrupted: 'interrupted', done: 'done', ended: 'ended'};
+const ParseJobEvents = {initialization: 'initialization', recognize: 'recognize', interrupted: 'interrupted', done: 'done', ended: 'ended'};
 
 class ParseJob
 {
@@ -10,7 +10,7 @@ class ParseJob
 	#interrupted = false;
 	#worker = null;
 	#listeners = {
-		[ParseJobEvents.initialize]: [],
+		[ParseJobEvents.initialization]: [],
 		[ParseJobEvents.recognize]: [],
 		[ParseJobEvents.interrupted]: [],
 		[ParseJobEvents.done]: [],
@@ -124,7 +124,7 @@ class ParseJob
 			case "loaded language traineddata":
 			case "initializing api":
 			case "initialized api":
-				this.dispatchEvent(ParseJobEvents.initialize, log.status);
+				this.dispatchEvent(ParseJobEvents.initialization, log.status);
 				return;
 			
 			case "recognizing text":
