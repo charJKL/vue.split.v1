@@ -1,13 +1,13 @@
 import {Status} from '../lib/Status';
-import SchedulerList from './ocr/SchedulerList';
+import List from '../lib/List';
 import ParseJob from './ocr/ParseJob';
 
 function ManagerOcr(store)
 {
-	var queue = new SchedulerList();
+	var list = new List();
 	var refs = new Map();
 	var maxWorkers = 1;
-	
+
 	store.subscribe(filterMutations);
 	
 	function filterMutations(mutation, state)
@@ -64,32 +64,68 @@ function ManagerOcr(store)
 	
 	function scheduleParse(store, state, id)
 	{
-		const job = new ParseJob(store, state, id);
-		refs.get(id)?.terminate();
+		const job = prepareJob(store, state, id);
+		refs.get(id)?.terminate('Result is obsolete');
 		refs.set(id, job);
-		queue.push(job);
+		list.push(job);
 		scheduleLoop();
 	}
 	
 	function forceParse(store, state, id)
 	{
-		const job = new ParseJob(store, state, id);
-		refs.get(id)?.terminate();
+		const job = prepareJob(store, state, id)
+		refs.get(id)?.terminate('Result is obsolete');
 		refs.set(id, job);
-		queue.push(job);
-		job.run().then(scheduleLoop);
+		list.enqueue(job);
+		job.run();
+	}
+	
+	function prepareJob(store, state, id)
+	{
+		const blob = state.records.records.get(id).cropped.blob;
+		const job = new ParseJob(blob);
+				job.addEventListener('initialization', notifyOcrAboutProgress);
+				job.addEventListener('recognize', notifyOcrAboutProgress);
+				job.addEventListener('interrupted', notifyOcrAboutError);
+				job.addEventListener('done', notifyOcrAboutData);
+				job.addEventListener('ended', () => refs.delete(job));
+				job.addEventListener('ended', scheduleLoop);
+		return job;
+		
+		function notifyOcrAboutProgress(log)
+		{
+			const ocr = state.records.records.get(id).ocr;
+					ocr.status = Status.Working;
+					ocr.details = log.toString();
+			store.commit('ocr', {id: id, value: {...ocr}});
+		}
+		function notifyOcrAboutError(log)
+		{
+			const ocr = state.records.records.get(id).ocr;
+					ocr.status = Status.Error;
+					ocr.details = log;
+			store.commit('ocr', {id: id, value: {...ocr}});
+		}
+		function notifyOcrAboutData(data)
+		{
+			const ocr = state.records.records.get(id).ocr;
+					ocr.status = Status.Completed;
+					ocr.lines = [...data.lines];
+			store.commit('ocr', {id: id, value: {...ocr}});
+		}
 	}
 	
 	function scheduleLoop()
 	{
-		console.log(queue.toArray());
+		console.log(list.toArray(), list);
 		var active = 0;
-		for(const job of queue)
+		for(const job of list)
 		{
 			if(active >= maxWorkers) return;
-			if(job.isTerminated() === true)
+			if(job.isEnded() === true)
 			{
-				queue.delete(job);
+				console.log('list.delete', job.id, job);
+				list.delete(job);
 				continue;
 			}
 			if(job.isActive() === true)
@@ -99,7 +135,8 @@ function ManagerOcr(store)
 			}
 			if(job.isIdle() === true)
 			{
-				job.run().then(() => {console.log('Job was done'); scheduleLoop();});
+				console.log('job.run', job);
+				job.run();
 			}
 		}
 	}

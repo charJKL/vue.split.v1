@@ -35,6 +35,7 @@ export const record =
 	ocr: 
 	{
 		status: Status.Dirty,
+		details: '',
 		lines: [],
 	}
 }
