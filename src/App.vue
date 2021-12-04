@@ -3,15 +3,17 @@
 	<ui-list></ui-list>
 	<main id="main">
 		<!-- <ui-blueprint></ui-blueprint> -->
-		
-		<div class="editor-box" v-show="isMetricsStage">
-			<editor-metrics class="editor" :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics" />
+		<div class="box-editor box-editor-metrics" v-show="isMetricsStage">
+			<editor-metrics :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics" />
 		</div>
-		<div class="preview-box" v-show="isMetricsStage">
-			<editor-preview class="preview" :source="source" :cropped="cropped" />
+		<div class="box-editor box-editor-preview" v-show="isMetricsStage">
+			<editor-preview :source="source" :cropped="cropped" />
 		</div>
-		<div class="box-editor-results" v-show="isTextStage">
-			<editor-results :ocr="ocr" class="results"/>
+		<div class="box-editor box-editor-adjust" v-show="isTextStage">
+			<editor-adjust :cropped="cropped" :ocr="ocr"/>
+		</div>
+		<div class="box-editor box-editor-results" v-show="isTextStage">
+			<editor-results :ocr="ocr"/>
 		</div>
 	</main>
 	<ui-footer></ui-footer>
@@ -26,6 +28,7 @@ import UiBlueprint from './components/UiBlueprint';
 import UiFooter from './components/UiFooter';
 import EditorMetrics from './components/editor/EditorMetrics';
 import EditorPreview from './components/editor/EditorPreview';
+import EditorAdjust from './components/editor/EditorAdjust';
 import EditorResults from './components/editor/EditorResults';
 import {updateMetrics} from './store/records';
 import {Stage} from './store/ui';
@@ -34,7 +37,7 @@ import _ from 'lodash';
 
 export default 
 {
-	components: { UiHeader, UiList, UiBlueprint, EditorMetrics, EditorPreview, EditorResults, UiFooter },
+	components: { UiHeader, UiList, UiBlueprint, EditorMetrics, EditorPreview, UiFooter, EditorAdjust, EditorResults },
 	name: 'App',
 	data()
 	{
@@ -139,31 +142,28 @@ body
 	flex-flow: row nowrap;
 	width: 100%;
 }
-.editor-box
+.box-editor
 {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+.box-editor-metrics
+{
 	flex: 0 0 70%;
 }
-.preview-box
+.box-editor-preview
 {
-	display: flex;
-	justify-content: center;
-	align-items: center;
 	flex: 0 0 calc(30% - 1px);
 	border-left: dashed 1px #000;
 }
+.box-editor-adjust
+{
+	flex: 0 0 calc(40% - 1px);
+	border-right: dashed 1px #000;
+}
 .box-editor-results
 {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex: 0 0 50%;
-}
-.preview
-{
-	width: 100%;
-	height: 100%;
+	flex: 0 0 60%;
 }
 </style>
