@@ -25,7 +25,17 @@ class ParseJob
 		tessjs_create_unlv: '0',
 		tessjs_create_osd: '0'
 	};
-
+	
+	get status()
+	{
+		return this.#status;
+	}
+	
+	get id()
+	{
+		return this.#worker?.id;
+	}
+	
 	constructor(blob)
 	{
 		if(!(blob instanceof Blob)) throw new Error(`ParseJob take blob as data.`);
@@ -114,11 +124,11 @@ class ParseJob
 			case "loaded language traineddata":
 			case "initializing api":
 			case "initialized api":
-				this.dispatchEvent(ParseJobEvents.initialize, log);
+				this.dispatchEvent(ParseJobEvents.initialize, log.status);
 				return;
 			
 			case "recognizing text":
-				this.dispatchEvent(ParseJobEvents.recognize, log);
+				this.dispatchEvent(ParseJobEvents.recognize, log.progress);
 				return;
 			
 			default:
@@ -129,7 +139,7 @@ class ParseJob
 	
 	#handler(cause) // eslint-disable-line no-dupe-class-members
 	{
-		console.log('ParseJob handler', cause);
+		this.terminate(cause);
 	}
 }
 
