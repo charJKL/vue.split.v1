@@ -51,20 +51,14 @@ List.prototype.peek = function()
 
 List.prototype.delete = function(object)
 {
-	if(this.head.value === object)
-	{
-		this.head = this.head.next;
-		this.length--;
-		return;
-	}
-	
-	var previous = this.head;
-	var current = this.head.next;
+	var previous = null;
+	var current = this.head;
 	while(current != null)
 	{
 		if(current.value === object)
 		{
-			previous.next = current.next;
+			if(previous != null) previous.next = current.next;
+			if(previous === null) this.head = current.next;
 			if(current.next === null) this.tail = previous;
 			this.length--;
 			return;
