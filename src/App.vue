@@ -13,12 +13,6 @@
 		<div class="box-editor-results" v-show="isTextStage">
 			<editor-results :ocr="ocr" class="results"/>
 		</div>
-		<!--
-		<div class="preview-box" v-show="isTextStage">
-			<preview class="preview" :source="source" :metrics="metrics"></preview>
-		</div>
-
-		-->
 	</main>
 	<ui-footer></ui-footer>
 	<a ref="download" style="display:none"/>
@@ -29,10 +23,10 @@
 import UiHeader from './components/UiHeader';
 import UiList from './components/UiList';
 import UiBlueprint from './components/UiBlueprint';
+import UiFooter from './components/UiFooter';
 import EditorMetrics from './components/editor/EditorMetrics';
 import EditorPreview from './components/editor/EditorPreview';
 import EditorResults from './components/editor/EditorResults';
-import UiFooter from './components/UiFooter';
 import {updateMetrics} from './store/records';
 import {Stage} from './store/ui';
 import {mapGetters} from 'vuex';

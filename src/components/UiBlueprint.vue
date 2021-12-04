@@ -22,7 +22,7 @@
 
 <script>
 import ToggleButton from './commons/ToggleButton';
-import EditorInput from './EditorInput';
+import EditorInput from './editor/EditorInput';
 import UiBlueprintMouse from './UiBlueprintMouse';
 import {addBlueprint, updateBlueprint, removeBlueprint} from '../store/blueprints';
 import {applyBlueprint} from '../store/records';
