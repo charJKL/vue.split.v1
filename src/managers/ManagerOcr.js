@@ -9,7 +9,7 @@ function ManagerOcr(store)
 	var maxWorkers = 1;
 
 	store.subscribe(filterMutations);
-	
+
 	function filterMutations(mutation, state)
 	{
 		if(mutation.type == 'selected' && mutation.payload !== null)
@@ -37,28 +37,29 @@ function ManagerOcr(store)
 		if(cropped.status !== Status.Completed) return; // cropped data is not ready yet.
 		if(ocr.status > Status.Dirty) return; // cord data is already done or in process.
 		
-		ocr.status = Status.Queued;
-		store.commit('ocr', {id: id, value: {...ocr}});
+		const instance = {...state.records.records.get(id).ocr};
+				instance.status = Status.Queued;
+		store.commit('ocr', {id: id, value: instance});
 		forceParse(store, state, id);
 	}
 	
 	function croppedChangedToDirty(store, state, mutation)
 	{
 		const id = mutation.payload.id;
-		const ocr = state.records.records.get(id).ocr;
-		
+
 		// Cropped values changes hence current result are dirty, not valid anymore:
-		ocr.status = Status.Dirty;
-		store.commit('ocr', {id: id, value: {...ocr}});
+		const instance = {...state.records.records.get(id).ocr};
+				instance.status = Status.Dirty;
+		store.commit('ocr', {id: id, value: instance});
 	}
-	
+
 	function croppedChangedToDone(store, state, mutation)
 	{
 		const id = mutation.payload.id;
-		const ocr = state.records.records.get(id).ocr;
 		
-		ocr.status = Status.Queued;
-		store.commit('ocr', {id: id, value: {...ocr}});
+		const instance = {...state.records.records.get(id).ocr};
+				instance.status = Status.Queued;
+		store.commit('ocr', {id: id, value: instance});
 		scheduleParse(store, state, id);
 	}
 	
@@ -83,35 +84,46 @@ function ManagerOcr(store)
 	function prepareJob(store, state, id)
 	{
 		const blob = state.records.records.get(id).cropped.blob;
+		const ocr = state.records.records.get(id).ocr;
 		const job = new ParseJob(blob);
-				job.addEventListener('initialization', notifyOcrAboutProgress);
-				job.addEventListener('recognize', notifyOcrAboutProgress);
-				job.addEventListener('interrupted', notifyOcrAboutError);
-				job.addEventListener('done', notifyOcrAboutData);
+				job.addEventListener('initialization', notifyOcrAboutLoading.bind(job, store, id, ocr));
+				job.addEventListener('recognize', notifyOcrAboutProgress.bind(job, store, id, ocr));
+				job.addEventListener('interrupted', notifyOcrAboutError.bind(job, store, id, ocr));
+				job.addEventListener('done', notifyOcrAboutData.bind(job, store, id, ocr));
 				job.addEventListener('ended', () => refs.delete(job));
 				job.addEventListener('ended', scheduleLoop);
 		return job;
 		
-		function notifyOcrAboutProgress(log)
+		function notifyOcrAboutLoading(store, id, ocr, log)
 		{
-			const ocr = state.records.records.get(id).ocr;
-					ocr.status = Status.Working;
-					ocr.details = log.toString();
-			store.commit('ocr', {id: id, value: {...ocr}});
+			const instance = {...ocr};
+					instance.status = Status.Loading;
+					instance.details = log;
+			store.commit('ocr', {id: id, value: instance});
 		}
-		function notifyOcrAboutError(log)
+		function notifyOcrAboutProgress(store, id, ocr, log)
 		{
-			const ocr = state.records.records.get(id).ocr;
-					ocr.status = Status.Error;
-					ocr.details = log;
-			store.commit('ocr', {id: id, value: {...ocr}});
+			const instance = {...ocr};
+					instance.status = Status.Working;
+					instance.details = (log * 100).toFixed(0);
+			store.commit('ocr', {id: id, value: instance});
 		}
-		function notifyOcrAboutData(data)
+		function notifyOcrAboutError(store, id, ocr, log)
 		{
-			const ocr = state.records.records.get(id).ocr;
-					ocr.status = Status.Completed;
-					ocr.lines = [...data.lines];
-			store.commit('ocr', {id: id, value: {...ocr}});
+			const instance = {...ocr};
+					instance.status = Status.Error;
+					instance.details = log;
+			store.commit('ocr', {id: id, value: instance});
+		}
+		function notifyOcrAboutData(store, id, ocr, data)
+		{
+			console.log('daa', data);
+			const instance = {...ocr};
+					instance.status = Status.Completed;
+					instance.text = data.text;
+					instance.lines = data.lines.map(line => {return {bbox: line.bbox, baseline: line.baseline, text: line.text}});
+					instance.words = data.words.map(word => {return {bbox: word.bbox, baseline: word.baseline, text: word.text, choices: word.choices}});
+			store.commit('ocr', {id: id, value: instance});
 		}
 	}
 	

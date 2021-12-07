@@ -36,6 +36,8 @@ export const record =
 	{
 		status: Status.Dirty,
 		details: '',
+		text: '',
+		words: [],
 		lines: [],
 	}
 }
@@ -104,12 +106,13 @@ const actions =
 	{
 		if(state.selected === null) return;
 		if(source.status < Status.Completed) throw new Error(`You can't change source status.`, state.records.get(state.selected));
-		commit('source', {id: state.selected, value: {...source}});
+		console.log('commit', source);
+		commit('source', {id: state.selected, value: source});
 	},
 	[updateMetrics]({state, commit}, metrics)
 	{
 		if(state.selected === null) return;
-		commit('metrics', {id: state.selected, value: {...metrics}});
+		commit('metrics', {id: state.selected, value: metrics});
 	},
 	[selectRecord]({commit}, record)
 	{
