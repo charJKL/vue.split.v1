@@ -9,6 +9,7 @@ const RequireCropped = {
 	},
 	computed:
 	{
+		
 		getCroppedUrl()
 		{
 			return this.cropped?.blob ? URL.createObjectURL(this.cropped.blob) : null;
@@ -17,7 +18,7 @@ const RequireCropped = {
 		{
 			return Status.toString(this.cropped.status);
 		},
-		isCropped()
+		isCroppedNotNull()
 		{
 			return this.cropped != null;
 		},

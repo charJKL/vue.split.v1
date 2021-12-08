@@ -1,6 +1,6 @@
 <template>
 <div class="editor">
-	<template v-if="isCropped">
+	<template v-if="isCroppedNotNull">
 		<div class="status" v-if="isCroppedNotCompleted">
 			<div class="status-text">{{ printCroppedStatus }}</div>
 		</div>
