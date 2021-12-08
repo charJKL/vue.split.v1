@@ -120,6 +120,7 @@ body
 	padding: 0px;
 	margin: 0px;
 }
+.cursor-moving{ cursor: move; }
 #app
 {
 	display: flex;

@@ -12,6 +12,14 @@ const ProvidePosition = {
 			}
 		}
 	},
+	watch:
+	{
+		'providePosition.isMoving': function(isMoving)
+		{
+			if(isMoving === true) this.$el.classList.add('cursor-moving');
+			if(isMoving === false) this.$el.classList.remove('cursor-moving');
+		}
+	},
 	methods:
 	{
 		calcCenterPositionValue(viewport, size)
