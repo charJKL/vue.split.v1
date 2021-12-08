@@ -28,6 +28,8 @@ export const record =
 	cropped:
 	{
 		status: Status.Dirty,
+		wasCropped: false,
+		details: '',
 		blob: null,
 		width: 0,
 		height: 0,
@@ -35,6 +37,7 @@ export const record =
 	ocr: 
 	{
 		status: Status.Dirty,
+		wasParsed: false,
 		details: '',
 		text: '',
 		words: [],

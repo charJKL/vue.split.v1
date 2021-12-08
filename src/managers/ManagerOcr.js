@@ -120,6 +120,7 @@ function ManagerOcr(store)
 			console.log('daa', data);
 			const instance = {...ocr};
 					instance.status = Status.Completed;
+					instance.wasParsed = true;
 					instance.text = data.text;
 					instance.lines = data.lines.map(line => {return {bbox: line.bbox, baseline: line.baseline, text: line.text}});
 					instance.words = data.words.map(word => {return {bbox: word.bbox, baseline: word.baseline, text: word.text, choices: word.choices}});

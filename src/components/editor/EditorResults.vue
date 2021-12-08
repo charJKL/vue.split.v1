@@ -1,7 +1,7 @@
 <template>
 <div class="editor">
 	<template v-if="isOcrNotNull">
-		<editor-results-status class="status" :status="ocr.status" :details="ocr.details" />
+		<editor-results-status class="status" :status="ocr.status" :details="ocr.details" :orc="ocr" />
 		<div class="desktop">
 			<div class="line" v-for="(line, i) of ocr.lines" :key="i" >
 				<input class="line-checkbox" type="checkbox">
