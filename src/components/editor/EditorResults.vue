@@ -27,7 +27,7 @@ export default
 .editor
 {
 	position: relative;
-	overflow: hidden;
+	overflow: auto;
 	width: 100%;
 	height: 100%;
 }
