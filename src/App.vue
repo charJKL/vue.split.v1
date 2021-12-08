@@ -121,6 +121,8 @@ body
 	margin: 0px;
 }
 .cursor-moving{ cursor: move; }
+.cursor-scale-out{ cursor: zoom-out; }
+.cursor-scale-in{ cursor: zoom-in; }
 #app
 {
 	display: flex;

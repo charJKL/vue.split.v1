@@ -1,4 +1,6 @@
 const Button = {left: 0, right: 2};
+
+const ScaleType = {out: 'out', in: 'in'};
 const ProvideScale = {
 	data()
 	{
@@ -6,6 +8,7 @@ const ProvideScale = {
 			scale: {x: 1.0, y: 1.0},
 			provideScale: {
 				isScaling: false,
+				wasScaled: null,
 				sensitivity: 0.0001,
 			}
 		}
@@ -22,10 +25,36 @@ const ProvideScale = {
 				y1: this.metrics.y1 * this.scale.y,
 				y2: this.metrics.y2 * this.scale.y,
 			}
+			
 		},
 		printScaleValue()
 		{
 			return `${this.scale.x.toFixed(2) } / ${this.scale.y.toFixed(2)}`;
+		}
+	},
+	watch:
+	{
+		'provideScale.wasScaled': function(wasScaled)
+		{
+			switch(wasScaled)
+			{
+				case null:
+					this.$el.classList.remove('cursor-scale-in');
+					this.$el.classList.remove('cursor-scale-out');
+					return;
+					
+				case ScaleType.in:
+					setTimeout(()=>{this.provideScale.wasScaled = null;}, 200);
+					this.$el.classList.remove('cursor-scale-out');
+					this.$el.classList.add('cursor-scale-in');
+					return;
+				
+				case ScaleType.out:
+					setTimeout(()=>{this.provideScale.wasScaled = null;}, 200);
+					this.$el.classList.remove('cursor-scale-in');
+					this.$el.classList.add('cursor-scale-out');
+					return;
+			}
 		}
 	},
 	methods:
@@ -64,6 +93,7 @@ const ProvideScale = {
 			e.preventDefault();
 			this.scale.x = this.scale.x - e.deltaY * this.provideScale.sensitivity;
 			this.scale.y = this.scale.y - e.deltaY * this.provideScale.sensitivity;
+			this.provideScale.wasScaled = (e.deltaY > 0 ) ? ScaleType.out : ScaleType.in;
 		}
 	}
 }
