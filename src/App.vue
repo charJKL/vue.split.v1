@@ -102,7 +102,7 @@ export default
 }
 </script>
 
-<style>
+<style >
 :root
 {
 	--font: 'Arial';
@@ -113,12 +113,10 @@ export default
 html
 {
 	height: 100%;
-	max-height: 100%;
 }
 body
 {
 	height: 100%;
-	max-height: 100%;
 	padding: 0px;
 	margin: 0px;
 }
@@ -127,20 +125,14 @@ body
 	display: flex;
 	flex-flow: column nowrap;
 	height: 100%;
-	max-height: 100%;
-	overflow-y: none;
-}
-.header
-{
-	flex: 0 0 auto;
 }
 #main
 {
 	position: relative;
 	flex: 1 0 0;
+	height: 0px;
 	display: flex;
 	flex-flow: row nowrap;
-	width: 100%;
 }
 .box-editor
 {

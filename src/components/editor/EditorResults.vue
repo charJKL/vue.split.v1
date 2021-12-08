@@ -27,9 +27,9 @@ export default
 .editor
 {
 	position: relative;
-	width: 100%;
-	height: 250px;
 	overflow: hidden;
+	width: 100%;
+	height: 100%;
 }
 .status
 {
@@ -40,6 +40,10 @@ export default
 	height: 100px;
 	z-index: 1;
 	background: linear-gradient(180deg, rgba(50, 50, 50, .3) 0%, rgba(50, 50, 50, .1) 50%, rgba(50, 50, 50, 0) 100%);
+}
+.desktop
+{
+	overflow: auto;
 }
 .line
 {
