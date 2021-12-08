@@ -6,7 +6,7 @@
 		<label>x2: <input class="input-number" type="number" :value="getX2Value" @input="updateMetrics('x2', $event)"/></label>,
 		<label>y1: <input class="input-number" type="number" :value="getY1Value" @input="updateMetrics('y1', $event)"/></label>,
 		<label>y2: <input class="input-number" type="number" :value="getY2Value" @input="updateMetrics('y2', $event)"/></label>,
-		<label>rotate: <input class="input-number" type="number" step="0.1" :value="getRotateValue"/></label>
+		<label>rotate: <input class="input-number" type="number" step="0.1" :value="getRotateValue" @input="updateMetrics('rotate', $event)"/></label>
 	]
 	</div>
 </template>
