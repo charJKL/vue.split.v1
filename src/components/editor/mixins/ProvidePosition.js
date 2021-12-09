@@ -41,7 +41,7 @@ const ProvidePosition = {
 		
 		function mousedown(e)
 		{
-			if(this.isSource === false) return;
+			if(this.isSourceNull === true) return;
 			if(e.button !== Button.right) return;
 
 			this.providePosition.isMoving = true;
@@ -50,7 +50,7 @@ const ProvidePosition = {
 		}
 		function mousemove(e)
 		{
-			if(this.isSource === false) return;
+			if(this.isSourceNull === true) return;
 			if(this.providePosition.isMoving === false) return;
 			
 			const position = {x: e.clientX, y: e.clientY};

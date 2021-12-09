@@ -1,4 +1,4 @@
-import Status from '../../../lib/Status';
+import {mapStatusEnum} from '../../../lib/Status';
 import {record} from '../../../store/records';
 import {isMatch} from '../../../lib/isMatch';
 
@@ -15,30 +15,7 @@ const RequireSource = {
 	},
 	computed:
 	{
-		isSource()
-		{
-			return this.source != null;
-		},
-		isSourceNull()
-		{
-			return this.source == null;
-		},
-		isSourceDirty()
-		{
-			return this.source.status == Status.Dirty;
-		},
-		isSourceWaiting()
-		{
-			return this.source.status == Status.Waiting;
-		},
-		isSourceLoading()
-		{
-			return this.source.status == Status.Loading;
-		},
-		isSourceDone()
-		{
-			return this.source.status == Status.Error || this.source.status == Status.Completed;
-		}
+		...mapStatusEnum('source'),
 	}
 }
 

@@ -1,6 +1,7 @@
 <template>
 	<div :class="getEditorClass" ref="editor">
-		<template v-if="isSource">
+		<div class="editor-scale">🔍 {{ printScaleValue }}</div>
+		<template v-if="isSourceNotNull">
 			<div class="desktop" :style="getDesktopStyle">
 				<svg class="svg" :style="getSvgStyle">
 					<editor-metrics-line :offset="offset" type="vertical" :value="scaled.x1" :hover="hover == 'x1'" />
@@ -11,7 +12,6 @@
 				<img class="image" :style="getImageStyle" :src="source.url" />
 			</div>
 		</template>
-		<div class="editor-scale">🔍 {{ printScaleValue }}</div>
 	</div>
 </template>
 
@@ -90,36 +90,28 @@ export default
 }
 </script>
 
-<style scoped>
+<style  lang="scss" scoped>
 .editor
 {
-	position:relative;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	user-select: none;
+	@include editor;
 }
-.editor.cursor-hover{ cursor: grab; }
-.editor.cursor-dragging{ cursor: grabbing; }
+.editor-scale
+{
+	@include editor-scale;
+}
 .desktop
 {
-	position: absolute;
+	@include desktop;
 }
 .svg
 {
-	position: absolute;
+	@include layer;
 	z-index: 1;
 }
 .image
 {
-	position: absolute;
+	@include layer;
 	z-index: 0;
 	border: solid 1px #000;
-}
-.editor-scale
-{
-	position:absolute;
-	top: 3px; left: 3px;
-	font: 12px var(--font);
 }
 </style>

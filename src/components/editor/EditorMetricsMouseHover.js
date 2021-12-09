@@ -27,7 +27,7 @@ const EditorMetricsMouseHover =
 		
 		function mousemove(e)
 		{
-			if(this.isSource === false) return;
+			if(this.isSourceNull === true) return;
 			e.preventDefault();
 			
 			const position = calcMousePosition(this.$refs.editor.getBoundingClientRect(), this.position, e.clientX, e.clientY);
@@ -42,7 +42,7 @@ const EditorMetricsMouseHover =
 		}
 		function wheel(e)
 		{
-			if(this.isSource === false) return;
+			if(this.isSourceNull === true) return;
 			if(this.provideScale.isScaling === true) return;
 			const metrics = {...this.metrics};
 				metrics.rotate = this.metrics.rotate + e.deltaY * sensitivity;

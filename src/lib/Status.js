@@ -7,12 +7,13 @@ function mapStatusEnum(name)
 	const uppercaseName = name.charAt(0).toUpperCase() + name.slice(1);
 	for(const [key, value] of Object.entries(Status))
 	{
-		properties[`is${uppercaseName}${key}`] = function(){ return this?.[name].status === value };
+		properties[`is${uppercaseName}${key}`] = function(){ return this?.[name]?.status === value };
 	}
 	properties[`print${uppercaseName}Status`] = function(){ return statusToString(this?.[name].status); }
 	properties[`print${uppercaseName}Details`] = function(){ return this?.[name].details; }
+	properties[`is${uppercaseName}Null`] = function(){ return this?.[name] == null; }
 	properties[`is${uppercaseName}NotNull`] = function(){ return this?.[name] != null; }
-	properties[`is${uppercaseName}NotCompleted`] = function(){ return this?.[name].status != Status.Completed };
+	properties[`is${uppercaseName}NotCompleted`] = function(){ return this?.[name]?.status != Status.Completed };
 	
 	return properties;
 }

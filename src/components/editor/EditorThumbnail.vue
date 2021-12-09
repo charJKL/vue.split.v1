@@ -11,7 +11,7 @@
 			<div class="name" v-html="getName"></div>
 		</div>
 	</template>
-	<template v-if="isSourceDone">
+	<template v-if="isSourceCompleted">
 		<div :class="getEditorClass" :style="getEditorStyle" v-bind="$attrs">
 			<img class="image" :style="getImageStyle" :src="getImageUrl" />
 			<div class="name" v-html="getName"></div>
