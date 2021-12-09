@@ -9,8 +9,8 @@ function mapStatusEnum(name)
 	{
 		properties[`is${uppercaseName}${key}`] = function(){ return this?.[name].status === value };
 	}
-	properties['printStatus'] = function(){ return statusToString(this?.[name].status); }
-	properties['printDetauils'] = function(){ return this?.[name].details; }
+	properties[`print${uppercaseName}Status`] = function(){ return statusToString(this?.[name].status); }
+	properties[`print${uppercaseName}Details`] = function(){ return this?.[name].details; }
 	properties[`is${uppercaseName}NotNull`] = function(){ return this?.[name] != null; }
 	properties[`is${uppercaseName}NotCompleted`] = function(){ return this?.[name].status != Status.Completed };
 	
