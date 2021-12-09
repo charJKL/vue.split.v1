@@ -23,27 +23,29 @@ function ManagerLoading(store)
 	
 	function loadImage(store, state, id)
 	{
-		const source = state.records.records.get(id).source;
+		const source = {...state.records.records.get(id).source};
 		source.url = URL.createObjectURL(source.blob);
 		source.img = new Image();
-		source.img.addEventListener('load', onImageLoad);
-		source.img.addEventListener('error', onImageError);
+		source.img.addEventListener('load', onImageLoad.bind(source.img, store, id, source));
+		source.img.addEventListener('error', onImageError.bind(source.img, store, id, source));
 		source.status = Status.Loading;
-		store.commit('source', {id: id, value: {...source}});
+		store.commit('source', {id: id, value: source});
 
 		source.img.src = source.url;
-		function onImageLoad(e)
+		function onImageLoad(store, id, source, e)
 		{
-			source.status = Status.Completed;
-			source.width = e.target.naturalWidth;
-			source.height = e.target.naturalHeight;
-			store.commit('source', {id: id, value: {...source}});
+			const instance = {...source};
+					instance.status = Status.Completed;
+					instance.width = e.target.naturalWidth;
+					instance.height = e.target.naturalHeight;
+			store.commit('source', {id: id, value: instance});
 		}
-		function onImageError()
+		function onImageError(store, id, source)
 		{
-			source.status = Status.Error;
-			source.errors.loading = 'Cant load image';
-			store.commit('source', {id: id, value: {...source}});
+			const instance = {...source};
+					instance.status = Status.Error;
+					instance.errors.loading = 'Cant load image';
+			store.commit('source', {id: id, value: instance});
 		}
 	}
 }
