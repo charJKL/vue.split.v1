@@ -19,10 +19,10 @@ export const record =
 	metrics:
 	{
 		wasEdited: false,
-		x1: 50,
-		x2: 250,
-		y1: 50,
-		y2: 250,
+		x1: 0,
+		x2: 0,
+		y1: 0,
+		y2: 0,
 		rotate: 0,
 	},
 	cropped:
