@@ -1,4 +1,4 @@
-const Button = {left: 0, right: 2};
+import Button from '../../../lib/Button';
 
 const ScaleType = {out: 'out', in: 'in'};
 const ProvideScale = {
