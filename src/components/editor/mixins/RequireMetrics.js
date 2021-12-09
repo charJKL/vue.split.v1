@@ -14,13 +14,13 @@ const RequireMetrics = {
 	},
 	computed:
 	{
-		isMetric()
-		{
-			return this.metrics != null;
-		},
-		isMetricNull()
+		isMetricsNull()
 		{
 			return this.metrics == null;
+		},
+		isMetricsNotNull()
+		{
+			return this.metrics != null;
 		}
 	}
 }

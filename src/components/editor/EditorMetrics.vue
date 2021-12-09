@@ -1,6 +1,9 @@
 <template>
 	<div :class="getEditorClass" ref="editor">
-		<div class="editor-scale">🔍 {{ printScaleValue }}</div>
+		<div class="toolbar">
+			<label class="tool scale">🔍 {{ printScaleValue }}</label>
+			<label class="tool wasEdited" v-if="isMetricsNotNull"><input type="checkbox" :checked="metrics.wasEdited" @change="onWasEdited" />wasEdited</label>
+		</div>
 		<template v-if="isSourceNotNull">
 			<div class="desktop" :style="getDesktopStyle">
 				<svg class="svg" :style="getSvgStyle">
@@ -16,7 +19,7 @@
 </template>
 
 <script>
-import RequireMetrics from './mixins/RequireMetrics';
+import RequireMetrics, {updateMetrics} from './mixins/RequireMetrics';
 import RequireSource from './mixins/RequireSource';
 import ProvideScale from './mixins/ProvideScale';
 import ProvidePosition from './mixins/ProvidePosition';
@@ -83,6 +86,15 @@ export default
 			this.position = this.calcCenterPositionValue(this.viewport, this.scaled);
 		}
 	},
+	methods:
+	{
+		onWasEdited(e)
+		{
+			const metrics = {...this.metrics};
+			metrics.wasEdited = e.target.checked;
+			this.$emit(updateMetrics, metrics);
+		}
+	},
 	mounted()
 	{
 		this.viewport = {width: this.$refs.editor.clientWidth, height: this.$refs.editor.clientHeight };
@@ -95,9 +107,9 @@ export default
 {
 	@include editor;
 }
-.editor-scale
+.toolbar
 {
-	@include editor-scale;
+	@include toolbar;
 }
 .desktop
 {

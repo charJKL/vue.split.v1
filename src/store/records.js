@@ -115,6 +115,7 @@ const actions =
 	[updateMetrics]({state, commit}, metrics)
 	{
 		if(state.selected === null) return;
+		metrics.wasEdited = true;
 		commit('metrics', {id: state.selected, value: metrics});
 	},
 	[selectRecord]({commit}, record)
