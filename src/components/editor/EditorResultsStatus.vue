@@ -75,7 +75,7 @@ export default
 }
 </script>
 
-<style>
+<style scoped>
 .bar
 {
 	margin: 20px 0px 0px 0px;

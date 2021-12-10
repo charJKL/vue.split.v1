@@ -74,18 +74,19 @@ function ManagerCropping(store)
 		{
 			const vcropped = {...cropped};
 			vcropped.status = Status.Stall;
-			vcropped.details = 'Waiting on source to load.';
+			vcropped.details = 'source';
 			store.commit('cropped', {id: id, value: vcropped});
-			return;
+			return true;
 		}
 		if(isMetricsNotEdited(metrics) === true)
 		{
 			const vcropped = {...cropped};
 			vcropped.status = Status.Stall;
-			vcropped.details = 'Waiting on changes on metrics.';
+			vcropped.details = 'metrics';
 			store.commit('cropped', {id: id, value: vcropped});
-			return;
+			return true;
 		}
+		return false;
 	}
 	function isSourceNotLoadedYet(source){ return source.status != Status.Completed; }
 	function isMetricsNotEdited(metrics){ return metrics.wasEdited === false; }
