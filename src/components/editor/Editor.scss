@@ -16,7 +16,7 @@
 	top: 5px; left: 5px;
 	font: 12px / 16px $font;
 	height: 16px;
-	z-index: 2;
+	z-index: 3;
 	
 	> label:not(:first-child)
 	{
@@ -30,9 +30,21 @@
 		top: -1px;
 	}
 }
+@mixin status-fill
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgba(0, 0, 0, .2);
+	z-index: 2;
+}
 @mixin desktop
 {
 	position: absolute;
+	z-index: 1;
 }
 @mixin layer
 {

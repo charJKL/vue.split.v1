@@ -1,12 +1,14 @@
 <template>
 <div class="editor">
+	<div class="toolbar">
+		<label class="tool scale">🔍 {{ printScaleValue }}</label>
+	</div>
 	<template v-if="isCroppedNotNull">
-		<div class="status" v-if="isCroppedNotCompleted">
-			<div class="status-text">{{ printCroppedStatus }}</div>
+		<editor-preview-status class="status" :cropped="this.cropped" />
+		<div class="desktop" :style="getDesktopStyle">
+			<img class="image" :style="getImageStyle" :src="getCroppedUrl" />
 		</div>
-		<img class="image" :src="getCroppedUrl" :style="getImageStyle"/>
 	</template>
-	<div class="editor-scale">🔍 {{ printScaleValue }}</div>
 </div>
 </template>
 
@@ -15,13 +17,21 @@ import RequireSource from './mixins/RequireSource';
 import RequireCropped from './mixins/RequireCropped';
 import ProvideScale from './mixins/ProvideScale';
 import ProvidePosition from './mixins/ProvidePosition';
+import EditorPreviewStatus from './EditorPreviewStatus';
 
 export default
 {
 	mixins: [RequireSource, RequireCropped, ProvideScale, ProvidePosition],
+	components: { EditorPreviewStatus },
 	computed:
 	{
 		getImageStyle()
+		{
+			const width = this.cropped.width * this.scale.x;
+			const height = this.cropped.height * this.scale.y;
+			return { width: `${width}px`, height: `${height}px`};
+		},
+		getDesktopStyle()
 		{
 			const width = this.cropped.width * this.scale.x;
 			const height = this.cropped.height * this.scale.y;
@@ -29,41 +39,33 @@ export default
 			const top = this.position.y;
 			return { width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px` };
 		},
+	},
+	updated()
+	{
+		console.log('component was updated');
 	}
 }
 </script>
 
-<style scoped>
+<style  lang="scss" scoped>
 .editor
 {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
+	@include editor;
+}
+.toolbar
+{
+	@include toolbar;
 }
 .status
 {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	z-index: 1;
-	background: rgba(0, 0, 0, .2);
+	@include status-fill;
 }
-.status-text
+.desktop
 {
-	font: bold 25px var(--font);
+	@include desktop;
 }
 .image
 {
 	position: absolute;
-}
-.editor-scale
-{
-	position:absolute;
-	top: 3px; left: 3px;
-	font: 12px var(--font);
 }
 </style>
