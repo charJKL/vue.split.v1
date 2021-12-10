@@ -1,9 +1,17 @@
 <template>
 <div :class="getStatusClass" v-if="isCroppedNotCompleted">
+	<template v-if="isCroppedWaiting">
+		<div class="box">
+			<h1>{{ printCroppedStatus }}</h1>
+			<h2>{{ getCouterValue }}</h2>
+		</div>
+	</template>
+	<template v-else>
 		<div class="box">
 			<h1>{{ printCroppedStatus }}</h1>
 			<h2>{{ printCroppedDetails }}</h2>
 		</div>
+	</template>
 </div>
 </template>
 
@@ -13,6 +21,13 @@ import RequireCropped from './mixins/RequireCropped';
 export default
 {
 	mixins: [RequireCropped],
+	data()
+	{
+		return {
+			animationFrameId: null,
+			timestamp: 0
+		}
+	},
 	computed:
 	{
 		getStatusClass()
@@ -23,8 +38,37 @@ export default
 		havePreviousData()
 		{
 			return this.cropped.wasCropped === true;
+		},
+		getCouterValue()
+		{
+			return parseInt(this.cropped.details) - this.timestamp;
 		}
-	}
+	},
+	watch:
+	{
+		isCroppedWaiting(value)
+		{
+			switch(value)
+			{
+				case true:
+					this.animationFrameId = window.requestAnimationFrame(this.animationFrame);
+					return;
+				
+				case false:
+					window.cancelAnimationFrame(this.animationFrameId);
+					return;
+			}
+		}
+	},
+	methods:
+	{
+		animationFrame()
+		{
+			console.log('animation frame');
+			this.timestamp = Date.now();
+			this.animationFrameId = window.requestAnimationFrame(this.animationFrame);
+		}
+	},
 }
 </script>
 
@@ -37,6 +81,7 @@ export default
 {
 	text-align: center;
 	padding: 10px 15px;
+	width: 150px;
 	background: #fff;
 	h1{
 		margin: 0px;
