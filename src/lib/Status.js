@@ -1,5 +1,5 @@
 
-const Status = { Dirty: 1, Waiting: 2, Queued: 3, Loading: 4, Working: 5, Error: 6, Completed: 7 }
+const Status = { Dirty: 1, Stall: 2, Waiting: 3, Queued: 4, Loading: 5, Working: 6, Error: 7, Completed: 8 }
 
 function mapStatusEnum(name)
 {

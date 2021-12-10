@@ -5,64 +5,108 @@ function ManagerCropping(store)
 {
 	store.subscribe(filterMutations);
 	
+	const throttle = 200;
+	const doCropImageWork = debounce(cropImage, throttle, {leading: false, trailing: true});
+	
 	function filterMutations(mutation, state)
 	{
-		if(mutation.type == 'selected' && mutation.payload !== null)
+		if(mutation.type == 'selected')
 		{
-			selectedChanged(store, state, mutation);
+			const id = mutation.payload;
+			const record = state.records.records.get(id);
+			selectedChanged(store, id, record);
 			return;
+		}
+		if(mutation.type == 'source')
+		{
+			const id = mutation.payload.id;
+			const record = state.records.records.get(id);
+			sourceChanged(store, id, record);
 		}
 		if(mutation.type == 'metrics')
 		{
-			metricsChanged(store, state, mutation);
+			const id = mutation.payload.id;
+			const record = state.records.records.get(id);
+			metricsChanged(store, id, record);
 			return;
 		}
 	}
 	
-	const doCropImageWork = debounce(cropImage, 200, {leading: false, trailing: true});
-	function selectedChanged(store, state, mutation)
+	function selectedChanged(store, id, {source, metrics, cropped})
 	{
-		const id = mutation.payload;
-		const cropped = state.records.records.get(id).cropped;
-		if(cropped.status > Status.Dirty) return;
+		if(isThereStallOnDependetRecord(id, source, metrics, cropped) === true) return;
+		if(isAcuallyUnselect(id) === true) return;
+		if(isAlreadyWorkInProgressOnThis(cropped) === true) return;
 		
-		cropped.status = Status.Waiting;
-		store.commit('cropped', {id: id, value: {...cropped}});
-		doCropImageWork(store, state, id);
+		const vcropped = {...cropped};
+		vcropped.status = Status.Waiting;
+		vcropped.details = String(Date.now() + throttle);
+		store.commit('cropped', {id: id, value: vcropped});
+		doCropImageWork(store, id, source, metrics, cropped);
 	}
 	
-	function metricsChanged(store, state, mutation)
+	function sourceChanged(store, id, {source, metrics, cropped})
 	{
-		const id = mutation.payload.id;
-		const cropped = state.records.records.get(id).cropped;
-				cropped.status = Status.Waiting;
-		store.commit('cropped', {id: id, value: {...cropped}});
-		doCropImageWork(store, state, id);
+		if(isThereStallOnDependetRecord(id, source, metrics, cropped) === true) return;
+		if(isAlreadyWorkInProgressOnThis(cropped) === true) return;
+		
+		const vcropped = {...cropped};
+		vcropped.status = Status.Waiting;
+		vcropped.details = String(Date.now() + throttle);
+		store.commit('cropped', {id: id, value: vcropped});
+		doCropImageWork(store, id, source, metrics, cropped);
 	}
 	
-	function cropImage(store, state, id)
+	function metricsChanged(store, id, {source, metrics, cropped})
 	{
-		const source = state.records.records.get(id).source;
-		const metrics = state.records.records.get(id).metrics;
-		const cropped = state.records.records.get(id).cropped;
-		if(source.status != Status.Completed )
+		if(isThereStallOnDependetRecord(id, source, metrics, cropped) === true) return;
+		
+		const vcropped = {...cropped};
+		vcropped.status = Status.Waiting;
+		vcropped.details = String(Date.now() + throttle);
+		store.commit('cropped', {id: id, value: vcropped});
+		doCropImageWork(store, id, source, metrics, cropped);
+	}
+	
+	function isThereStallOnDependetRecord(id, source, metrics, cropped)
+	{
+		if(isSourceNotLoadedYet(source) === true)
 		{
-			cropped.status = Status.Dirty;
-			store.commit('cropped', {id: id, value: {...cropped}});
+			const vcropped = {...cropped};
+			vcropped.status = Status.Stall;
+			vcropped.details = 'Waiting on source to load.';
+			store.commit('cropped', {id: id, value: vcropped});
 			return;
 		}
-		
-		cropped.status = Status.Working;
-		store.commit('cropped', {id: id, value: {...cropped}});
+		if(isMetricsNotEdited(metrics) === true)
+		{
+			const vcropped = {...cropped};
+			vcropped.status = Status.Stall;
+			vcropped.details = 'Waiting on changes on metrics.';
+			store.commit('cropped', {id: id, value: vcropped});
+			return;
+		}
+	}
+	function isSourceNotLoadedYet(source){ return source.status != Status.Completed; }
+	function isMetricsNotEdited(metrics){ return metrics.wasEdited === false; }
+	function isAcuallyUnselect(id){ return id == null; }
+	function isAlreadyWorkInProgressOnThis(cropped){ return cropped.status > Status.Stall; }
+	
+	function cropImage(store, id, source, metrics, cropped)
+	{
+		const vcropped = {...cropped};
+		vcropped.status = Status.Working;
+		store.commit('cropped', {id: id, value: vcropped});
 		
 		const rotated = drawRotated(source, metrics);
 		const clip = drawClip(rotated, metrics);
 		clip.convertToBlob({type: "image/png"}).then(function(blob){
-			cropped.status = Status.Completed;
-			cropped.width = clip.width;
-			cropped.height = clip.height;
-			cropped.blob = blob;
-			store.commit('cropped', {id: id, value: {...cropped}});
+			const vcropped = {...cropped}
+			vcropped.status = Status.Completed;
+			vcropped.width = clip.width;
+			vcropped.height = clip.height;
+			vcropped.blob = blob;
+			store.commit('cropped', {id: id, value: vcropped});
 		});
 	}
 	
