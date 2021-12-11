@@ -13,6 +13,10 @@ const RequireCropped = {
 		getCroppedUrl()
 		{
 			return this.cropped?.blob ? URL.createObjectURL(this.cropped.blob) : null;
+		},
+		haveCroppedBlob()
+		{
+			return this.cropped.blob == true;
 		}
 	},
 	watch:

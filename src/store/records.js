@@ -28,7 +28,6 @@ export const record =
 	cropped:
 	{
 		status: Status.Dirty,
-		wasCropped: false,
 		details: '',
 		blob: null,
 		width: 0,
