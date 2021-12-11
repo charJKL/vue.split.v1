@@ -1,17 +1,47 @@
 <template>
 <div :class="getStatusClass" v-if="isCroppedNotCompleted">
-	<template v-if="isCroppedWaiting">
-		<div class="box">
-			<h1>{{ printCroppedStatus }}</h1>
-			<h2>{{ getCouterValue }}</h2>
-		</div>
-	</template>
-	<template v-else>
-		<div class="box">
-			<h1>{{ printCroppedStatus }}</h1>
-			<h2>{{ printCroppedDetails }}</h2>
-		</div>
-	</template>
+	<div class="box" v-if="isCroppedDirty && haveCroppedBlob">
+		<h1>Fragment you see is outdated.</h1>
+	</div>
+	<div class="box" v-if="isCroppedDirty">
+		<h1>I don't cropped any image yet.</h1>
+	</div>
+	
+	<div class="box box-stall-waiting" v-if="isCroppedStall && isStallCauseBySource && haveCroppedBlob">
+		<h1>Fragment you see is outdated, waiting for image to load.</h1>
+		<h2>I will crop image as soon as it will become available.</h2>
+	</div>
+	<div class="box box-stall-waiting" v-if="isCroppedStall && isStallCauseBySource">
+		<h1>Waiting for image to load.</h1>
+		<h2>I will crop image as soon as it will become available.</h2>
+	</div>
+	
+	<div class="box box-stall-waiting" v-if="isCroppedStall && isStallCauseByMetrics && haveCroppedBlob">
+		<h1>Fragment you see is outdated, waiting on metrics changes.</h1>
+		<h2>Change default values of metrics to see crop image.</h2>
+	</div>
+	<div class="box box-stall-waiting" v-if="isCroppedStall && isStallCauseByMetrics">
+		<h1>Waiting for metrics changes.</h1>
+		<h2>Change default values of metrics to see crop image.</h2>
+	</div>
+
+	<div class="box" v-if="isCroppedWaiting && haveCroppedBlob">
+		<h1>Fragment you see is outdated, hanging on your hesitation.</h1>
+		<h2>Waiting {{ getWaitingCounter }}ms</h2>
+	</div>
+	<div class="box" v-if="isCroppedWaiting">
+		<h1>Hanging on your hesitation.</h1>
+		<h2>Waiting {{ getWaitingCounter }}ms</h2>
+	</div>
+	
+	<div class="box" v-if="isCroppedWorking && haveCroppedBlob">
+		<h1>Fragment you see is outdated, working on new one.</h1>
+		<h2 class="dots">Working</h2>
+	</div>
+	<div class="box" v-if="isCroppedWorking">
+		<h1>Cutting page to desired size.</h1>
+		<h2 class="dots">Working</h2>
+	</div>
 </div>
 </template>
 
@@ -32,14 +62,10 @@ export default
 	{
 		getStatusClass()
 		{
-			const isStallOnMetrics = this.isCroppedStall == true && this.cropped.details === 'metrics' ? 'remove-background' : '';
-			return [isStallOnMetrics];
+			const isStall = this.isCroppedStall == true ? 'remove-background' : '';
+			return ['status', isStall];
 		},
-		havePreviousData()
-		{
-			return this.cropped.wasCropped === true;
-		},
-		getCouterValue()
+		getWaitingCounter()
 		{
 			return parseInt(this.cropped.details) - this.timestamp;
 		}
@@ -64,7 +90,6 @@ export default
 	{
 		animationFrame()
 		{
-			console.log('animation frame');
 			this.timestamp = Date.now();
 			this.animationFrameId = window.requestAnimationFrame(this.animationFrame);
 		}
@@ -73,25 +98,13 @@ export default
 </script>
 
 <style lang="scss" scoped>
-.remove-background
+.status
 {
-	background: none;
+	@include status-text;
 }
-.box
+.status.remove-background{ background: none; }
+.dots
 {
-	text-align: center;
-	padding: 10px 15px;
-	width: 150px;
-	background: #fff;
-	h1{
-		margin: 0px;
-		font: bold 18px / 22px $font;
-	}
-	h2{
-		margin: 0px;
-		font: 11px / 16px $font;
-	}
+	@include dots-animation;
 }
-
-
 </style>

@@ -30,6 +30,15 @@
 		top: -1px;
 	}
 }
+@mixin desktop
+{
+	position: absolute;
+	z-index: 1;
+}
+@mixin layer
+{
+	position: absolute;
+}
 @mixin status-fill
 {
 	position: absolute;
@@ -40,13 +49,39 @@
 	align-items: center;
 	background: rgba(0, 0, 0, .2);
 	z-index: 2;
+	> :deep(.box)
+	{
+		padding: 10px 15px;
+		background: #fff;
+	}
 }
-@mixin desktop
+@mixin status-top
 {
-	position: absolute;
-	z-index: 1;
+	
 }
-@mixin layer
+@mixin status-text
 {
-	position: absolute;
+	text-align: center;
+	h1{
+		margin: 0px;
+		font: bold 18px / 22px $font;
+	}
+	h2{
+		margin: 0px;
+		font: 11px / 16px $font;
+	}
+}
+@mixin dots-animation {
+	&:after
+	{
+		position:absolute;
+		animation:dots 1s linear infinite;
+		content: "";
+	}
+}
+@keyframes dots {
+	0% {content: "";}
+	33% {content: ".";}
+	66% {content: "..";}
+	100% {content: "...";}
 }
