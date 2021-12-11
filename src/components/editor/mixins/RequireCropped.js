@@ -1,5 +1,5 @@
 import {record} from '../../../store/records';
-import {mapStatusEnum} from '../../../lib/Status';
+import Status, {mapStatusEnum} from '../../../lib/Status';
 import {isMatch} from '../../../lib/isMatch';
 
 const RequireCropped = {
@@ -17,6 +17,14 @@ const RequireCropped = {
 		haveCroppedBlob()
 		{
 			return this.cropped.blob == true;
+		},
+		isStallCauseBySource()
+		{
+			return this.cropped.status == Status.Stall && this.cropped.details == 'source';
+		},
+		isStallCauseByMetrics()
+		{
+			return this.cropped.status == Status.Stall && this.cropped.details == 'metrics';
 		}
 	},
 	watch:
