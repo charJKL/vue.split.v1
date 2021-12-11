@@ -6,7 +6,7 @@
 	<template v-if="isCroppedNotNull">
 		<editor-preview-status class="status" :cropped="this.cropped" />
 		<div class="desktop" :style="getDesktopStyle">
-			<img class="image" :style="getImageStyle" :src="getCroppedUrl" />
+			<img class="image" :src="getCroppedUrl" />
 		</div>
 	</template>
 </div>
@@ -25,12 +25,6 @@ export default
 	components: { EditorPreviewStatus },
 	computed:
 	{
-		getImageStyle()
-		{
-			const width = this.cropped.width * this.scale.x;
-			const height = this.cropped.height * this.scale.y;
-			return { width: `${width}px`, height: `${height}px`};
-		},
 		getDesktopStyle()
 		{
 			const width = this.cropped.width * this.scale.x;
@@ -66,6 +60,6 @@ export default
 }
 .image
 {
-	position: absolute;
+	@include layer;
 }
 </style>
