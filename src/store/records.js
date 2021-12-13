@@ -93,16 +93,15 @@ const actions =
 	{
 		for(const file of files)
 		{
-			const instance = cloneDeep(record);
-			while(instance.id === '' || state.records.has(instance.id)) instance.id = getRandomHash(16);
-			state.records.set(instance.id, instance);
+			const vrecord = cloneDeep(record);
+			do{ vrecord.id = getRandomHash(16); } while (state.records.has(vrecord.id)); // makre sure that id is unique
+			commit('record', vrecord);
 			
-			const source = {...instance.source};
-					source.filename = file.name;
-					source.blob = file;
-			commit('source', {id: instance.id, value: source});
+			const vsource = {...vrecord.source};
+			vsource.filename = file.name;
+			vsource.blob = file;
+			commit('source', {id: vrecord.id, value: vsource});
 		}
-		commit('records', new Map(state.records));
 	},
 	[updateSource]({state, commit}, source)
 	{
@@ -126,7 +125,7 @@ const actions =
 // access this by this.$store.commit('record', value)
 const mutations = 
 {
-	records(state, records){ state.records = records; },
+	record(state, record){ state.records.set(record.id, record); },
 	source(state, {id, value}){ state.records.get(id).source = value; },
 	metrics(state, {id, value}){ state.records.get(id).metrics = value; },
 	cropped(state, {id, value}){ state.records.get(id).cropped = value; },
