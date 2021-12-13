@@ -16,7 +16,7 @@ const RequireCropped = {
 		},
 		haveCroppedBlob()
 		{
-			return this.cropped.blob == true;
+			return this.cropped.blob != null;
 		},
 		isStallCauseBySource()
 		{
