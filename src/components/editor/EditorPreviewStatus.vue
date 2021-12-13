@@ -7,20 +7,20 @@
 		<h1>I don't cropped any image yet.</h1>
 	</div>
 	
-	<div class="box box-stall-waiting" v-if="isCroppedStall && isStallCauseBySource && haveCroppedBlob">
+	<div class="box" v-if="isCroppedStall && isStallCauseBySource && haveCroppedBlob">
 		<h1>Fragment you see is outdated, waiting for image to load.</h1>
 		<h2>I will crop image as soon as it will become available.</h2>
 	</div>
-	<div class="box box-stall-waiting" v-if="isCroppedStall && isStallCauseBySource">
+	<div class="box" v-if="isCroppedStall && isStallCauseBySource">
 		<h1>Waiting for image to load.</h1>
 		<h2>I will crop image as soon as it will become available.</h2>
 	</div>
 	
-	<div class="box box-stall-waiting" v-if="isCroppedStall && isStallCauseByMetrics && haveCroppedBlob">
+	<div class="box" v-if="isCroppedStall && isStallCauseByMetrics && haveCroppedBlob">
 		<h1>Fragment you see is outdated, waiting on metrics changes.</h1>
 		<h2>Change default values of metrics to see crop image.</h2>
 	</div>
-	<div class="box box-stall-waiting" v-if="isCroppedStall && isStallCauseByMetrics">
+	<div class="box" v-if="isCroppedStall && isStallCauseByMetrics">
 		<h1>Waiting for metrics changes.</h1>
 		<h2>Change default values of metrics to see crop image.</h2>
 	</div>
