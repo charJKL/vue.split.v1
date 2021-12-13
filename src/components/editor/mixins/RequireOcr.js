@@ -12,7 +12,7 @@ const RequireOcr = {
 		...mapStatusEnum('ocr'),
 		haveOcrData()
 		{
-			return this.wasParsed;
+			return this.ocr.wasParsed;
 		}
 	}
 }
