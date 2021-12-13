@@ -4,88 +4,104 @@ import ParseJob from './ocr/ParseJob';
 
 function ManagerOcr(store)
 {
-	var list = new List();
-	var refs = new Map();
-	var maxWorkers = 1;
-
 	store.subscribe(filterMutations);
+	
+	const list = new List();
+	const refs = new Map();
+	const maxWorkers = 1;
 
 	function filterMutations(mutation, state)
 	{
-		if(mutation.type == 'selected' && mutation.payload !== null)
+		if(mutation.type == 'selected')
 		{
-			selectedChanged(store, state, mutation);
+			const id = mutation.payload;
+			const record = state.records.records.get(id);
+			selectedChanged(store, id, record);
 			return;
 		}
 		if(mutation.type == 'cropped' && mutation.payload.value.status === Status.Dirty)
 		{
-			croppedChangedToDirty(store, state, mutation);
+			const id = mutation.payload.id;
+			const record = state.records.records.get(id);
+			croppedChangedToDirty(store, id, record);
 			return;
 		}
 		if(mutation.type == 'cropped' && mutation.payload.value.status === Status.Completed)
 		{
-			croppedChangedToDone(store, state, mutation);
+			const id = mutation.payload.id;
+			const record = state.records.records.get(id);
+			croppedChangedToDone(store, id, record);
 			return;
 		}
 	}
 	
-	function selectedChanged(store, state, mutation)
+	function selectedChanged(store, id, {cropped, ocr})
 	{
-		const id = mutation.payload;
-		const cropped = state.records.records.get(id).cropped;
-		const ocr = state.records.records.get(id).ocr;
-		if(cropped.status !== Status.Completed) return; // cropped data is not ready yet.
-		if(ocr.status > Status.Dirty) return; // cord data is already done or in process.
+		if(isThereStallOnDependedRecord(id, cropped, ocr) === true) return;
+		if(isAcuallyUnselect(id) === true) return;
+		if(isAlreadyWorkInProgressOnThis(ocr) === true) return;
 		
-		const instance = {...state.records.records.get(id).ocr};
-				instance.status = Status.Queued;
-		store.commit('ocr', {id: id, value: instance});
-		forceParse(store, state, id);
+		const vocr = {...ocr};
+		vocr.status = Status.Queued;
+		store.commit('ocr', {id: id, value: vocr});
+		forceParse(store, id, cropped, ocr);
 	}
 	
-	function croppedChangedToDirty(store, state, mutation)
+	function croppedChangedToDirty(store, id, {ocr})
 	{
-		const id = mutation.payload.id;
-
-		// Cropped values changes hence current result are dirty, not valid anymore:
-		const instance = {...state.records.records.get(id).ocr};
-				instance.status = Status.Dirty;
-		store.commit('ocr', {id: id, value: instance});
-	}
-
-	function croppedChangedToDone(store, state, mutation)
-	{
-		const id = mutation.payload.id;
-		
-		const instance = {...state.records.records.get(id).ocr};
-				instance.status = Status.Queued;
-		store.commit('ocr', {id: id, value: instance});
-		scheduleParse(store, state, id);
+		const vocr = {...ocr}; // cropped values changes, hence current ocr result are dirty: not valid anymore.
+		vocr.status = Status.Dirty;
+		store.commit('ocr', {id: id, value: vocr});
 	}
 	
-	function scheduleParse(store, state, id)
+	function croppedChangedToDone(store, id, {cropped, ocr})
 	{
-		const job = prepareJob(store, state, id);
+		if(isThereStallOnDependedRecord(id, cropped, ocr) === true) return;
+		
+		const vocr = {...ocr};
+		vocr.status = Status.Queued;
+		store.commit('ocr', {id: id, value: vocr});
+		scheduleParse(store, id, cropped, ocr);
+	}
+	
+	function isThereStallOnDependedRecord(id, cropped, ocr)
+	{
+		if(isCroppedDataNotReadyYet(cropped) === true)
+		{
+			const vocr = {...ocr};
+			vocr.status = Status.Stall;
+			vocr.details = 'cropped';
+			store.commit('ocr', {id: id, value: vocr});
+			return true;
+		}
+		return false;
+	}
+	
+	function isCroppedDataNotReadyYet(cropped){ return cropped.status !== Status.Completed; }
+	function isAcuallyUnselect(id){ return id == null; }
+	function isAlreadyWorkInProgressOnThis(ocr){ return ocr.status > Status.Stall; }
+	
+	function scheduleParse(store, id, cropped, ocr) // schedule parse for later
+	{ 
+		const job = prepareJob(store, id, cropped, ocr);
 		refs.get(id)?.terminate('Result is obsolete');
 		refs.set(id, job);
 		list.push(job);
 		scheduleLoop();
 	}
 	
-	function forceParse(store, state, id)
+	function forceParse(store, id, cropped, ocr) // start job right now
 	{
-		const job = prepareJob(store, state, id)
+		const job = prepareJob(store, id, cropped, ocr)
 		refs.get(id)?.terminate('Result is obsolete');
 		refs.set(id, job);
 		list.enqueue(job);
 		job.run();
 	}
 	
-	function prepareJob(store, state, id)
+	function prepareJob(store, id, cropped, ocr)
 	{
-		const blob = state.records.records.get(id).cropped.blob;
-		const ocr = state.records.records.get(id).ocr;
-		const job = new ParseJob(blob);
+		const job = new ParseJob(cropped.blob);
 				job.addEventListener('initialization', notifyOcrAboutLoading.bind(job, store, id, ocr));
 				job.addEventListener('recognize', notifyOcrAboutProgress.bind(job, store, id, ocr));
 				job.addEventListener('interrupted', notifyOcrAboutError.bind(job, store, id, ocr));
@@ -96,48 +112,45 @@ function ManagerOcr(store)
 		
 		function notifyOcrAboutLoading(store, id, ocr, log)
 		{
-			const instance = {...ocr};
-					instance.status = Status.Loading;
-					instance.details = log;
-			store.commit('ocr', {id: id, value: instance});
+			const vocr = {...ocr};
+			vocr.status = Status.Loading;
+			vocr.details = log;
+			store.commit('ocr', {id: id, value: vocr});
 		}
 		function notifyOcrAboutProgress(store, id, ocr, log)
 		{
-			const instance = {...ocr};
-					instance.status = Status.Working;
-					instance.details = (log * 100).toFixed(0);
-			store.commit('ocr', {id: id, value: instance});
+			const vocr = {...ocr};
+			vocr.status = Status.Working;
+			vocr.details = (log * 100).toFixed(0);
+			store.commit('ocr', {id: id, value: vocr});
 		}
 		function notifyOcrAboutError(store, id, ocr, log)
 		{
-			const instance = {...ocr};
-					instance.status = Status.Error;
-					instance.details = log;
-			store.commit('ocr', {id: id, value: instance});
+			const vocr = {...ocr};
+			vocr.status = Status.Error;
+			vocr.details = log;
+			store.commit('ocr', {id: id, value: vocr});
 		}
 		function notifyOcrAboutData(store, id, ocr, data)
 		{
-			console.log('daa', data);
-			const instance = {...ocr};
-					instance.status = Status.Completed;
-					instance.wasParsed = true;
-					instance.text = data.text;
-					instance.lines = data.lines.map(line => {return {bbox: line.bbox, baseline: line.baseline, text: line.text}});
-					instance.words = data.words.map(word => {return {bbox: word.bbox, baseline: word.baseline, text: word.text, choices: word.choices}});
-			store.commit('ocr', {id: id, value: instance});
+			const vocr = {...ocr};
+			vocr.status = Status.Completed;
+			vocr.wasParsed = true;
+			vocr.text = data.text;
+			vocr.lines = data.lines.map(line => {return {bbox: line.bbox, baseline: line.baseline, text: line.text}});
+			vocr.words = data.words.map(word => {return {bbox: word.bbox, baseline: word.baseline, text: word.text, choices: word.choices}});
+			store.commit('ocr', {id: id, value: vocr});
 		}
 	}
 	
 	function scheduleLoop()
 	{
-		console.log(list.toArray(), list);
 		var active = 0;
 		for(const job of list)
 		{
 			if(active >= maxWorkers) return;
 			if(job.isEnded() === true)
 			{
-				console.log('list.delete', job.id, job);
 				list.delete(job);
 				continue;
 			}
