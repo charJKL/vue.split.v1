@@ -41,8 +41,23 @@ export const record =
 		text: '',
 		words: [],
 		lines: [],
-	}
+	},
+	features:
+	{
+		changes: [],
+	},
 }
+
+export const line = {
+	baseline: null,
+	bbox: null,
+	text: "",
+};
+export const change = 
+{
+	apply: true,
+	text: ""
+};
 
 // access this by this.$store.state.<list>
 const state = {
@@ -75,6 +90,10 @@ const getters = {
 	ocr(state)
 	{
 		return state.records.get(state.selected)?.ocr ?? null;
+	},
+	features(state)
+	{
+		return state.records.get(state.selected)?.features ?? null;
 	}
 }
 
@@ -85,6 +104,7 @@ export const loadImagesFiles = 'load-images-files-action';
 export const updateSource = 'update-source-action';
 export const updateMetrics = 'update-metrics-action';
 export const updateCropped = 'update-cropped-action';
+export const updateFeatures = 'update-features-action';
 export const selectRecord = 'select-record-action';
 export const applyBlueprint = 'apply-blueprint-action';
 const actions = 
@@ -115,6 +135,11 @@ const actions =
 		metrics.wasEdited = true;
 		commit('metrics', {id: state.selected, value: metrics});
 	},
+	[updateFeatures]({state, commit}, features)
+	{
+		if(state.selected === null) return;
+		commit('features', {id: state.selected, value: features});
+	},
 	[selectRecord]({commit}, record)
 	{
 		commit('selected', record?.id ?? null);
@@ -129,6 +154,7 @@ const mutations =
 	metrics(state, {id, value}){ state.records.get(id).metrics = value; },
 	cropped(state, {id, value}){ state.records.get(id).cropped = value; },
 	ocr(state, {id, value}){ state.records.get(id).ocr = value; },
+	features(state, {id, value}){ state.records.get(id).features = value; },
 	selected(state, id){ state.selected = id; }
 }
 

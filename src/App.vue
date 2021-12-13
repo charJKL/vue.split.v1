@@ -13,7 +13,7 @@
 			<editor-adjust :cropped="cropped" :ocr="ocr"/>
 		</div>
 		<div class="box-editor box-editor-results" v-show="isTextStage">
-			<editor-results :ocr="ocr"/>
+			<editor-results :ocr="ocr" :features="features" @update:features="onUpdateFeatures"/>
 		</div>
 	</main>
 	<ui-footer></ui-footer>
@@ -28,7 +28,7 @@ import EditorMetrics from './components/editor/EditorMetrics';
 import EditorPreview from './components/editor/EditorPreview';
 import EditorAdjust from './components/editor/EditorAdjust';
 import EditorResults from './components/editor/EditorResults';
-import {updateMetrics} from './store/records';
+import {updateMetrics, updateFeatures} from './store/records';
 import {Stage} from './store/ui';
 import {mapGetters} from 'vuex';
 import _ from 'lodash';
@@ -45,7 +45,7 @@ export default
 	},
 	computed:
 	{
-		...mapGetters(['current', 'source', 'metrics', 'cropped', 'ocr']),
+		...mapGetters(['current', 'source', 'metrics', 'cropped', 'ocr', 'features']),
 		...mapGetters(['stage']),
 		isMetricsStage()
 		{
@@ -65,6 +65,10 @@ export default
 		onUpdateMetrics(metrics)
 		{
 			this.$store.dispatch(updateMetrics, metrics);
+		},
+		onUpdateFeatures(features)
+		{
+			this.$store.dispatch(updateFeatures, features);
 		},
 		onLoadSave(save)
 		{
