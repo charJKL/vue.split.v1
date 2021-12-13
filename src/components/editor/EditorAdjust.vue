@@ -1,11 +1,13 @@
 <template>
 <div class="editor">
+	<div class="toolbar">
+		<label class="tool scale">🔍 {{ printScaleValue }}</label>
+	</div>
 	<template v-if="isCroppedNotNull">
-		<div class="scale">🔍 {{ printScaleValue }}</div>
-		<editor-adjust-status class="status" :status="cropped.status" :details="cropped.details" :cropped="cropped" />
+		<editor-adjust-status class="status" :cropped="cropped" :ocr="ocr"/>
 		<div class="desktop" :style="getDesktopStyle">
 			<img class="image" :src="getCroppedUrl" />
-			<editor-adjust-boxes class="boxes" :width="cropped.width" :height="cropped.height" :boxes="this.ocr.words" />
+			<editor-adjust-boxes class="boxes" :width="cropped.width" :height="cropped.height" :boxes="ocr.words" />
 			<editor-adjust-marks class="marks" />
 		</div>
 	</template>
@@ -27,12 +29,6 @@ export default
 	components: { EditorAdjustStatus, EditorAdjustBoxes, EditorAdjustMarks },
 	computed:
 	{
-		getSize()
-		{
-			const width = this.cropped.width * this.scale.x;
-			const height = this.cropped.height * this.scale.y;
-			return {width: width, height: height};
-		},
 		getDesktopStyle()
 		{
 			const width = this.cropped.width * this.scale.x;
@@ -45,54 +41,36 @@ export default
 }
 </script>
 
-<style scoped>
+<style  lang="scss" scoped>
 .editor
 {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
+	@include editor;
 }
-.scale
+.toolbar
 {
-	position:absolute;
-	top: 3px; left: 3px;
-	font: 12px var(--font);
-	z-index: 2;
+	@include toolbar;
 }
 .status
 {
-	display: block;
-	position: absolute;
-	top: 0px; left: 0px;
-	width: 100%;
-	height: 100px;
-	z-index: 1;
-	background: linear-gradient(180deg, rgba(50, 50, 50, .3) 0%, rgba(50, 50, 50, .1) 50%, rgba(50, 50, 50, 0) 100%);
+	@include status-top;
 }
 .desktop
 {
-	position:absolute;
-	z-index: 0;
+	@include desktop;
 }
 .image
 {
-	position: absolute;
+	@include layer;
 	z-index: 0;
-	width: 100%;
-	height: 100%;
 }
 .boxes
 {
-	position: absolute;
+	@include layer;
 	z-index: 1;
-	width: 100%;
-	height: 100%;
 }
 .marks
 {
-	position: absolute;
+	@include layer;
 	z-index: 2;
 }
-
 </style>
