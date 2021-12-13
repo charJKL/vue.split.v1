@@ -4,8 +4,8 @@
 	<input class="file-list" type="text" :value="getList" @click="this.$refs.loadImagesFiles.click()" readonly />
 	<input class="input-hide" ref="loadImagesFiles" @change="onLoadImagesFiles" type="file" accept="image/*" multiple />
 	
-	<button :class="['stage-metrics', getStageMetricsClasses]" @click="onStageMetrics">Metrics - Preview</button>
-	<button :class="['stage-text', getStageTextClasses]" @click="onStageText">Preview - Text - Result</button>
+	<button :class="['stage-metrics', getStageMetricsClasses]" @click="onStageMetrics">1.Metrics - 2.Preview</button>
+	<button :class="['stage-text', getStageTextClasses]" @click="onStageText">3.Adjust - 4.Result</button>
 </header>
 </template>
 
