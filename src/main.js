@@ -11,7 +11,8 @@ import './lib/RegExp.prototype';
 
 const store = createStore({ 
 	modules: {records, blueprints, ui}, 
-	plugins: [ManagerLoading, ManagerCropping, ManagerOcr]
+	plugins: [ManagerLoading, ManagerCropping, ManagerOcr],
+	strict: true,
 	});
 const app = createApp(App);
 		app.use(store);

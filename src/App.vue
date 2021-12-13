@@ -21,10 +21,8 @@
 </template>
 
 <script>
-/* eslint-disable */
 import UiHeader from './components/UiHeader';
 import UiList from './components/UiList';
-import UiBlueprint from './components/UiBlueprint';
 import UiFooter from './components/UiFooter';
 import EditorMetrics from './components/editor/EditorMetrics';
 import EditorPreview from './components/editor/EditorPreview';
@@ -37,7 +35,7 @@ import _ from 'lodash';
 
 export default 
 {
-	components: { UiHeader, UiList, UiBlueprint, EditorMetrics, EditorPreview, UiFooter, EditorAdjust, EditorResults },
+	components: { UiHeader, UiList, EditorMetrics, EditorPreview, UiFooter, EditorAdjust, EditorResults },
 	name: 'App',
 	data()
 	{
