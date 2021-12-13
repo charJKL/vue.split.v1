@@ -1,43 +1,32 @@
 <template>
-<div v-if="isOcrNotCompleted">
-	<div class="box" v-if="isOcrDirty && haveOcrData">
-		<h1>Some data you see are outdated.</h1>
-		<h2>Red box indicators you see are outdated, the come from previous reconginsons.</h2>
+<div :class="getStatusClass" v-if="isCroppedNotCompleted || isOcrNotCompleted">
+	<div class="box" v-if="isCroppedNotCompleted && haveCroppedBlob">
+		<h1>Fragment you see is outdated, waiting for new image.</h1>
+		<h2 class="dots" v-if="isCroppedStall">Cropping job is waiting on resource</h2>
+		<h2 class="dots" v-if="isCroppedWaiting">Cropping waiting holding on your hesitation</h2>
+		<h2 class="dots" v-if="isCroppedWorking">Cropping is under process</h2>
 	</div>
-	<div class="box" v-if="isOcrDirty">
-		<h1>Page wasn't adjusted yet.</h1>
-	</div>
-	
-	
-	<div class="box" v-if="isOcrStall && haveOcrData">
-		<h1>Hints you see are outdated, waiting for cropped.</h1>
-		<h2>I will give you new data as soon as new cropped data will come up.</h2>
-	</div>
-	<div class="box" v-if="isOcrStall">
-		<h1>Waiting for new cropped data.</h1>
-		<h2>I will give you new data as soon as new cropped data will come up.</h2>
+	<div class="box" v-else-if="isCroppedNotCompleted">
+		<h1>Waiting for cropped fragment.</h1>
+		<h2 class="dots" v-if="isCroppedStall">Cropping job is waiting on resource</h2>
+		<h2 class="dots" v-if="isCroppedWaiting">Cropping waiting holding on your hesitation</h2>
+		<h2 class="dots" v-if="isCroppedWorking">Cropping is under process</h2>
 	</div>
 	
-	
-	<div class="box" v-if="isOcrQueued && haveOcrData">
-		<h1>Hints you see are outdated, waiting in queue to get data for you.</h1>
-		<h2 class="dots">I'am in queue</h2>
+	<div class="box" v-if="isOcrNotCompleted && haveOcrData">
+		<h1>Red box marks you see are outdated, waiting for new one</h1>
+		<h2 class="dots" v-if="isOcrStall">Job waiting on resource</h2>
+		<h2 class="dots" v-if="isOcrQueued">Job waiting in queue</h2>
+		<h2 class="dots" v-if="isOcrLoading">Tesseract is loading</h2>
+		<h2 class="dots" v-if="isOcrWorking">Parser is working</h2>
 	</div>
-	<div class="box" v-if="isOcrQueued">
-		<h1>Waiting in queue to get data for you.</h1>
-		<h2 class="dots">I'am in queue</h2>
+	<div class="box" v-else-if="isOcrNotCompleted">
+		<h1>Waiting for parse to get data.</h1>
+		<h2 class="dots" v-if="isOcrStall">Job waiting on resource</h2>
+		<h2 class="dots" v-if="isOcrQueued">Job waiting in queue</h2>
+		<h2 class="dots" v-if="isOcrLoading">Tesseract is loading</h2>
+		<h2 class="dots" v-if="isOcrWorking">Parser is working</h2>
 	</div>
-	
-	
-	<div class="box" v-if="isOcrWorking && haveOcrData">
-		<h1>It's stupid to write here status for ocr ???</h1>
-		<h2 class="dots">???</h2>
-	</div>
-	<div class="box" v-if="isOcrWorking">
-		<h1>It's stupid to write here status of ocr?.</h1>
-		<h2 class="dots">I'am in queue</h2>
-	</div>
-	
 </div>
 </template>
 
@@ -48,9 +37,29 @@ import RequireOcr from './mixins/RequireOcr';
 export default
 {
 	mixins: [RequireCropped, RequireOcr],
+	computed:
+	{
+		getStatusClass()
+		{
+			const removeGradientWhenHaventData = this.haveOcrData == true || this.haveCroppedBlob == true ? '' : 'remove-gradient';
+			return ['status', removeGradientWhenHaventData];
+		}
+	}
 }
 </script>
 
-<style lang="sass" scoped>
-
+<style lang="scss" scoped>
+.status
+{
+	@include status-text;
+	> .box
+	{
+		margin: 30px 0px 0px 0px;
+	}
+}
+.status.remove-gradient{ background: none; }
+.dots
+{
+	@include dots-animation;
+}
 </style>
