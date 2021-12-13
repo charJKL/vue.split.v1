@@ -1,4 +1,5 @@
 import {record} from '../../../store/records';
+import {mapStatusEnum} from '../../../lib/Status';
 import {isMatch} from '../../../lib/isMatch';
 
 const RequireOcr = {
@@ -8,9 +9,10 @@ const RequireOcr = {
 	},
 	computed:
 	{
-		isOcrNotNull()
+		...mapStatusEnum('ocr'),
+		haveOcrData()
 		{
-			return this.ocr != null;
+			return this.wasParsed;
 		}
 	}
 }
