@@ -3,7 +3,7 @@
 	<div class="box" v-if="isCroppedDirty && haveCroppedBlob">
 		<h1>Fragment you see is outdated.</h1>
 	</div>
-	<div class="box" v-if="isCroppedDirty">
+	<div class="box" v-else-if="isCroppedDirty">
 		<h1>I don't cropped any image yet.</h1>
 	</div>
 	
@@ -11,7 +11,7 @@
 		<h1>Fragment you see is outdated, waiting for image to load.</h1>
 		<h2>I will crop image as soon as it will become available.</h2>
 	</div>
-	<div class="box" v-if="isCroppedStall && isStallCauseBySource">
+	<div class="box" v-else-if="isCroppedStall && isStallCauseBySource">
 		<h1>Waiting for image to load.</h1>
 		<h2>I will crop image as soon as it will become available.</h2>
 	</div>
@@ -20,7 +20,7 @@
 		<h1>Fragment you see is outdated, waiting on metrics changes.</h1>
 		<h2>Change default values of metrics to see crop image.</h2>
 	</div>
-	<div class="box" v-if="isCroppedStall && isStallCauseByMetrics">
+	<div class="box" v-else-if="isCroppedStall && isStallCauseByMetrics">
 		<h1>Waiting for metrics changes.</h1>
 		<h2>Change default values of metrics to see crop image.</h2>
 	</div>
@@ -29,7 +29,7 @@
 		<h1>Fragment you see is outdated, hanging on your hesitation.</h1>
 		<h2>Waiting {{ getWaitingCounter }}ms</h2>
 	</div>
-	<div class="box" v-if="isCroppedWaiting">
+	<div class="box" v-else-if="isCroppedWaiting">
 		<h1>Hanging on your hesitation.</h1>
 		<h2>Waiting {{ getWaitingCounter }}ms</h2>
 	</div>
@@ -38,7 +38,7 @@
 		<h1>Fragment you see is outdated, working on new one.</h1>
 		<h2 class="dots">Working</h2>
 	</div>
-	<div class="box" v-if="isCroppedWorking">
+	<div class="box" v-else-if="isCroppedWorking">
 		<h1>Cutting page to desired size.</h1>
 		<h2 class="dots">Working</h2>
 	</div>
