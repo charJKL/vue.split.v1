@@ -1,104 +1,81 @@
 <template>
-<div class="box" v-if="isStatusNotCompleted">
-	<template v-if="isStatusDirty">
-		<div class="bar">
-			<div class="status">Don't have text yet.</div>
-		</div>
-	</template>
-	<template v-if="isStatusDirty && havePreviousData">
-		<div class="bar">
-			<div class="status">Text you see is outdated, may be inaccurate.</div>
-		</div>
-	</template>
+<div :class="getStatusClass" v-if="isOcrNotCompleted">
+
+	<div class="box" v-if="isOcrDirty && haveOcrData">
+		<h1>Text you see is outdated, may be inaccurate.</h1>
+	</div>
+	<div class="box" v-else-if="isOcrDirty">
+		<h1>Don't have text yet.</h1>
+	</div>
 	
+	<div class="box" v-if="isOcrStall && haveOcrData">	
+		<h1>Text you see is outdated,  waiting for cropped.</h1>
+		<h2>I will start parsing page as soon as new cropped image will come up.</h2>
+	</div>
+	<div class="box" v-else-if="isOcrStall">	
+		<h1>Waiting for cropped.</h1>
+		<h2>I will start parsing page as soon as new cropped image will come up.</h2>
+	</div>
 	
-	<template v-if="isStatusQueued">
-		<div class="bar">
-			<div class="status">Waiting in queue to get data for you.</div>
-			<div class="details dots">I' am xxx in queue</div>
-		</div>
-	</template>
-	<template v-if="isStatusQueued && havePreviousData">
-		<div class="bar">
-			<div class="status">Text you see is outdated, waiting in queue for new data.</div>
-			<div class="details dots">I'am xxx in queue</div>
-		</div>
-	</template>
+	<div class="box" v-if="isOcrQueued && haveOcrData">	
+		<h1>Text you see is outdated, waiting in queue for new data.</h1>
+		<h2 class="dots">I'm in queue</h2>
+	</div>
+	<div class="box" v-else-if="isOcrQueued">	
+		<h1>Waiting in queue to get data for you.</h1>
+		<h2 class="dots">I'm in queue</h2>
+	</div>
 	
+	<div class="box" v-if="isOcrLoading && haveOcrData">	
+		<h1 class="dots">Text you see is outdated, prepare work for new text data</h1>
+		<h2>{{ printOcrDetails }}</h2>
+	</div>
+	<div class="box" v-else-if="isOcrLoading">	
+		<h1 class="dots">Preparing work for data.</h1>
+		<h2>{{ printOcrDetails }}</h2>
+	</div>
 	
-	<template v-if="isStatusLoading">
-		<div class="bar">
-			<div class="status dots">Preparing work for data.</div>
-			<div class="details">{{ printDetails }}</div>
-		</div>
-	</template>
-	<template v-if="isStatusLoading && havePreviousData">
-		<div class="bar">
-			<div class="status dots">Text you see is outdated, prepare work for new text data</div>
-			<div class="details">{{ printDetails }}</div>
-		</div>
-	</template>
+	<div class="box" v-if="isOcrWorking && haveOcrData">	
+		<h1 class="dots">Text you see is outdated, working on new one</h1>
+		<h2>{{ printOcrDetails }}/100%</h2>
+	</div>
+	<div class="box" v-else-if="isOcrWorking">	
+		<h1 class="dots">I'm working</h1>
+		<h2>{{ printOcrDetails }}/100%</h2>
+	</div>
 	
-	
-	<template v-if="isStatusWorking">
-		<div class="bar">
-			<div class="status dots">I'm working</div>
-			<div class="details">{{ printDetails }}/100%</div>
-		</div>
-	</template>
-	<template v-if="isStatusWorking && havePreviousData">
-		<div class="bar">
-			<div class="status dots">Text you see is outdated, working on new one</div>
-			<div class="details">{{ printDetails }}/100%</div>
-		</div>
-	</template>
 </div>
 </template>
 
 <script>
-import ProvideStatus from './mixins/ProvideStatus';
+import RequireOcr from './mixins/RequireOcr';
 
 export default
 {
-	props:
-	{
-		ocr: {Type: Object, Required: true},
-	},
-	mixins: [ProvideStatus],
+	mixins: [RequireOcr],
 	computed:
 	{
-		havePreviousData()
+		getStatusClass()
 		{
-			return this.ocr?.wasParsed === true;
+			const removeGradientWhenHaventData = this.haveOcrData == true ? '' : 'remove-gradient';
+			return ['status', removeGradientWhenHaventData];
 		}
 	}
 }
 </script>
 
-<style scoped>
-.bar
-{
-	margin: 20px 0px 0px 0px;
-	text-align: center;
-}
+<style lang="scss" scoped>
 .status
 {
-	font: bold 18px var(--font);
+	@include status-text;
+	> .box
+	{
+		margin: 30px 0px 0px 0px;
+	}
 }
-.details
+.status.remove-gradient{ background: none; }
+.dots
 {
-	font: 16px var(--font);
-}
-.dots:after
-{
-	position:absolute;
-	animation:dots 1s linear infinite;
-	content: "";
-}
-@keyframes dots {
-	0% {content: "";}
-	33% {content: ".";}
-	66% {content: "..";}
-	100% {content: "...";}
+	@include dots-animation;
 }
 </style>

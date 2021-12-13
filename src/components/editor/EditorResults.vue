@@ -1,7 +1,7 @@
 <template>
 <div class="editor">
 	<template v-if="isOcrNotNull">
-		<editor-results-status class="status" :status="ocr.status" :details="ocr.details" :orc="ocr" />
+		<editor-results-status class="status" :ocr="ocr" />
 		<div class="desktop">
 			<div class="line" v-for="(line, i) of ocr.lines" :key="i" >
 				<input class="line-checkbox" type="checkbox">
@@ -23,26 +23,18 @@ export default
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .editor
 {
-	position: relative;
-	overflow: auto;
-	width: 100%;
-	height: 100%;
+	@include editor;
 }
 .status
 {
-	display: block;
-	position: absolute;
-	top: 0px; left: 0px;
-	width: 100%;
-	height: 100px;
-	z-index: 1;
-	background: linear-gradient(180deg, rgba(50, 50, 50, .3) 0%, rgba(50, 50, 50, .1) 50%, rgba(50, 50, 50, 0) 100%);
+	@include status-top;
 }
 .desktop
 {
+	height: 100%;
 	overflow: auto;
 }
 .line
