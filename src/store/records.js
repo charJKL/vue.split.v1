@@ -100,6 +100,7 @@ const getters = {
 // access this by this.$store.dispatch('load-file', value)
 // in actions i should call commits()
 export const loadPdfFile = 'load-pdf-file-action';
+export const getResults = 'get-results-action';
 export const loadImagesFiles = 'load-images-files-action';
 export const updateSource = 'update-source-action';
 export const updateMetrics = 'update-metrics-action';
@@ -122,6 +123,23 @@ const actions =
 			vsource.blob = file;
 			commit('source', {id: vrecord.id, value: vsource});
 		}
+	},
+	[getResults]({getters})
+	{
+		return new Promise((resolve) => {
+			var text = '';
+			for(const record of getters.records)
+			{
+				for(let i=0; i < record.ocr.lines.length; i++)
+				{
+					const ocr = record.ocr.lines[i];
+					const change = record.features.changes?.[i] ?? null;
+					const line = change?.apply == true ? change.text : ocr.text;
+					text += line.trimEnd() + '\n';
+				}
+			}
+			resolve(text);
+		});
 	},
 	[updateSource]({state, commit}, source)
 	{
