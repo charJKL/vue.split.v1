@@ -21,6 +21,10 @@ const RequireMetrics = {
 		isMetricsNotNull()
 		{
 			return this.metrics != null;
+		},
+		wasMetricsEdited()
+		{
+			return this.metrics.wasEdited;
 		}
 	}
 }
