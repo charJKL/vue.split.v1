@@ -55,9 +55,9 @@ export default
 	},
 	created()
 	{
-		if(typeof OffscreenCanvas === "undefined")
-		{
-			alert("Your browser don't support OffscreenCanvas. \n If you use Firefox enable it on about:config under gfx.offscreencanvas.enabled.");
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=801176
+		if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+			alert("Firefox is not supported");
 		}
 	},
 	methods:
