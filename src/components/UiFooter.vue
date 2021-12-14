@@ -4,18 +4,20 @@
 		<editor-input class="editor" :source="source" :metrics="metrics"  @update:source="onUpdateSource" @update:metrics="onUpdateMetrics"></editor-input>
 	</div>
 	<div class="footer-right">
-		<button id="save" @click="onSaveData">Save</button>
+		<ui-footer-save class="save" />
 	</div>
 </div>
 </template>
 
 <script>
-import EditorInput from './editor/EditorInput.vue';
+import EditorInput from './editor/EditorInput';
+import UiFooterSave from './UiFooterSave';
 import {updateMetrics} from '../store/records';
+import {mapGetters} from 'vuex';
 
 export default
 {
-	components: { EditorInput },
+	components: { EditorInput, UiFooterSave },
 	data()
 	{
 		return {
@@ -24,14 +26,7 @@ export default
 	},
 	computed:
 	{
-		source()
-		{
-			return this.$store.getters.source;
-		},
-		metrics()
-		{
-			return this.$store.getters.metrics;
-		},
+		...mapGetters(['source', 'metrics', 'ocr', 'features'])
 	},
 	watch:
 	{
@@ -50,10 +45,6 @@ export default
 		onUpdateMetrics(metrics)
 		{
 			this.$store.dispatch(updateMetrics, metrics);
-		},
-		onSaveData()
-		{
-			//this.$store.dispath(loadSave, e.target.files[0]);
 		}
 	}
 }
@@ -68,12 +59,7 @@ export default
 	flex-flow: row nowrap;
 	justify-content: space-between;
 	background: var(--gray);
-}
-button
-{
-	box-sizing: border-box;
-	height: 30px;
-	margin: 10px 10px 10px 0px;
+	z-index: 2;
 }
 .footer-left
 {
@@ -82,6 +68,10 @@ button
 .footer-right
 {
 	margin-left: auto;
+}
+.save
+{
+	margin: 10px 10px 10px 0px;
 }
 .editor
 {
