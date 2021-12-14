@@ -12,6 +12,13 @@ const RequireFeatures = {
 	{
 		[updateFeatures]: function(payload){ return isMatch(record.features, payload); },
 	},
+	computed:
+	{
+		getChangesCount()
+		{
+			return this.features.changes.filter(change => change != undefined).length;
+		}
+	}
 }
 
 export default RequireFeatures;
