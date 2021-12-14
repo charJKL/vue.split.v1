@@ -53,6 +53,13 @@ export default
 			return this.stage === Stage.Text;
 		}
 	},
+	created()
+	{
+		if(typeof OffscreenCanvas === "undefined")
+		{
+			alert("Your browser don't support OffscreenCanvas. \n If you use Firefox enable it on about:config under gfx.offscreencanvas.enabled.");
+		}
+	},
 	methods:
 	{
 		onUpdateMetrics(metrics)
