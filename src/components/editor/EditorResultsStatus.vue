@@ -44,6 +44,14 @@
 		<h2>{{ printOcrDetails }}/100%</h2>
 	</div>
 	
+	<div class="box" v-if="isOcrError && haveOcrData">
+		<h1>Error occured, try again by changing metrics.</h1>
+		<h2>{{ printOcrDetails }}</h2>
+	</div>
+	<div class="box" v-else-if="isOcrError">
+		<h1>Error occured, try again by changing metrics.</h1>
+		<h2>{{ printOcrDetails }}</h2>
+	</div>
 </div>
 </template>
 

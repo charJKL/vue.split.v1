@@ -40,10 +40,6 @@ function ManagerOcr(store)
 		if(isThereStallOnDependedRecord(id, cropped, ocr) === true) return;
 		if(isAcuallyUnselect(id) === true) return;
 		if(isAlreadyWorkInProgressOnThis(ocr) === true) return;
-		
-		const vocr = {...ocr};
-		vocr.status = Status.Queued;
-		store.commit('ocr', {id: id, value: vocr});
 		forceParse(store, id, cropped, ocr);
 	}
 	
@@ -57,10 +53,6 @@ function ManagerOcr(store)
 	function croppedChangedToDone(store, id, {cropped, ocr})
 	{
 		if(isThereStallOnDependedRecord(id, cropped, ocr) === true) return;
-		
-		const vocr = {...ocr};
-		vocr.status = Status.Queued;
-		store.commit('ocr', {id: id, value: vocr});
 		scheduleParse(store, id, cropped, ocr);
 	}
 	
@@ -87,6 +79,10 @@ function ManagerOcr(store)
 		refs.get(id)?.terminate('Result is obsolete');
 		refs.set(id, job);
 		list.push(job);
+		const vocr = {...ocr};
+		vocr.status = Status.Queued;
+		store.commit('ocr', {id: id, value: vocr});
+		
 		scheduleLoop();
 	}
 	
@@ -96,6 +92,10 @@ function ManagerOcr(store)
 		refs.get(id)?.terminate('Result is obsolete');
 		refs.set(id, job);
 		list.enqueue(job);
+		const vocr = {...ocr};
+		vocr.status = Status.Queued;
+		store.commit('ocr', {id: id, value: vocr});
+		
 		job.run();
 	}
 	
