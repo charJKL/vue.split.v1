@@ -66,9 +66,9 @@ class ParseJob
 		
 		this.#status = ParseJobStatus.Active;
 		this.#worker = createWorker({
-			workerPath: '/worker.min.js',
-			langPath: '/',
-			corePath: '/tesseract-core.wasm.js',
+			workerPath: '/tesseract/worker.min.js',
+			langPath: '/tesseract',
+			corePath: '/tesseract/tesseract-core.wasm.js',
 			logger: this.#log.bind(this),
 			errorHandler: this.#handler.bind(this),
 		});
