@@ -33,10 +33,6 @@ export default
 			const top = this.position.y;
 			return { width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px` };
 		},
-	},
-	updated()
-	{
-		console.log('component was updated');
 	}
 }
 </script>

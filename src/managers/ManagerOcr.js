@@ -161,7 +161,6 @@ function ManagerOcr(store)
 			}
 			if(job.isIdle() === true)
 			{
-				console.log('job.run', job);
 				job.run();
 			}
 		}
