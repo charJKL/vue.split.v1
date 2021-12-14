@@ -8,7 +8,7 @@ function ManagerOcr(store)
 	
 	const list = new List();
 	const refs = new Map();
-	const maxWorkers = 1;
+	const maxWorkers = 2;
 
 	function filterMutations(mutation, state)
 	{
