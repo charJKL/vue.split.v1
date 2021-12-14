@@ -14,6 +14,7 @@
 		<div class="indicator indicator-completed" v-if="isCroppedCompleted"></div>
 	</div>
 	<div class="status ocr">
+		<div class="result small" v-if="isOcrWorking">{{ printOcrDetails }}%</div>
 		<div class="indicator indicator-dirty" v-if="isOcrDirty"></div>
 		<div class="indicator indicator-stall" v-if="isOcrStall"></div>
 		<div class="indicator indicator-waiting" v-if="isOcrWaiting"></div>
@@ -78,6 +79,10 @@ export default
 {
 	text-align: center;
 	margin: 0px 0px 4px 0px;
+}
+.small
+{
+	font: 11px $font;
 }
 .animation-blink
 {
