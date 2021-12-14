@@ -13,6 +13,7 @@
 	</template>
 	<template v-if="isSourceCompleted">
 		<div :class="getEditorClass" :style="getEditorStyle" v-bind="$attrs">
+			<EditorThumbnailStatuses class="statuses" :source="source" :metrics="metrics" :cropped="cropped" :ocr="ocr" :features="features"/>
 			<img class="image" :style="getImageStyle" :src="getImageUrl" />
 			<div class="name" v-html="getName"></div>
 		</div>
@@ -22,12 +23,17 @@
 <script>
 import RequireSource from './mixins/RequireSource';
 import RequireMetrics from './mixins/RequireMetrics';
+import RequireCropped from './mixins/RequireCropped';
+import RequireOcr from './mixins/RequireOcr';
+import RequireFeatures from './mixins/RequireFeatures';
 import ProvideScale from './mixins/ProvideScale';
+import EditorThumbnailStatuses from './EditorThumbnailStatuses';
 import {mapGetters} from 'vuex';
 
 export default
 {
-	mixins: [RequireSource, RequireMetrics, ProvideScale],
+	mixins: [RequireSource, RequireMetrics, RequireCropped, RequireOcr, RequireFeatures, ProvideScale],
+	components: {EditorThumbnailStatuses},
 	computed:
 	{
 		...mapGetters(['record']),
@@ -102,11 +108,19 @@ export default
 	left: 50px;
 	top: 30px;
 }
+
 .image
 {
 	position:absolute;
 	object-fit: cover;
 	z-index: 1;
+}
+.statuses
+{
+	position: absolute;
+	left: 0px; bottom: 20px;
+	width: 100%;
+	z-index: 3;
 }
 .name
 {
@@ -119,5 +133,5 @@ export default
 	color: #fff;
 	z-index: 3;
 }
-.name >>> span{ background: rgb(0, 110, 200); }
+.name > :deep(span){ background: rgb(0, 110, 200); }
 </style>

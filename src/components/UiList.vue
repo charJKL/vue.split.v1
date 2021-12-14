@@ -1,6 +1,6 @@
 <template>
 <section ref="list" class="list" @wheel.prevent="onMouseWheel">
-	<editor-thumbnail v-for="(record, index) in records" :key="index" :source="record.source" :metrics="record.metrics" @click="onClickRecord(record)"/>
+	<editor-thumbnail v-for="(record, index) in records" :key="index" :source="record.source" :metrics="record.metrics" :cropped="record.cropped" :ocr="record.ocr" :features="record.features" @click="onClickRecord(record)"/>
 </section>
 </template>
 
