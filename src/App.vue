@@ -2,7 +2,6 @@
 	<ui-header></ui-header>
 	<ui-list></ui-list>
 	<main id="main">
-		<!-- <ui-blueprint></ui-blueprint> -->
 		<div class="box-editor box-editor-metrics" v-show="isMetricsStage">
 			<editor-metrics :source="source" :metrics="metrics" @update:metrics="onUpdateMetrics" />
 		</div>
@@ -17,7 +16,6 @@
 		</div>
 	</main>
 	<ui-footer></ui-footer>
-	<a ref="download" style="display:none"/>
 </template>
 
 <script>
@@ -31,7 +29,6 @@ import EditorResults from './components/editor/EditorResults';
 import {updateMetrics, updateFeatures} from './store/records';
 import {Stage} from './store/ui';
 import {mapGetters} from 'vuex';
-import _ from 'lodash';
 
 export default 
 {
@@ -54,10 +51,6 @@ export default
 		isTextStage()
 		{
 			return this.stage === Stage.Text;
-		},
-		isCurrent()
-		{
-			return this.current !== null;
 		}
 	},
 	methods:
@@ -69,36 +62,6 @@ export default
 		onUpdateFeatures(features)
 		{
 			this.$store.dispatch(updateFeatures, features);
-		},
-		onLoadSave(save)
-		{
-			function applySavedList(e)
-			{
-				const data = JSON.parse(e.target.result);
-				for(let [object, key] of Object.entries(data))
-				{
-					if(this.list[key] === undefined) continue;
-					this.list[key] = _.mergeWith(this.list[key], object);
-				}
-			}
-			const reader = new FileReader();
-					reader.onload = applySavedList.bind(this);
-					reader.readAsText(save);
-		},
-		onCurrentEdited()
-		{
-			this.current.wasEdited = true;
-		},
-		onSave()
-		{
-			/* TODO this function need to be refactored
-			const content = JSON.stringify(this.list);
-			const blob = new Blob([content], { type: "application/json" });
-			
-			this.$refs.download.href = URL.createObjectURL(blob);
-			this.$refs.download.download = 'metrics.json';
-			this.$refs.download.click();
-			*/
 		}
 	}
 }
