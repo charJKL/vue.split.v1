@@ -138,7 +138,11 @@ const actions =
 				{
 					const ocr = record.ocr.lines[i];
 					const change = record.features.changes?.[i] ?? null;
-					const line = change?.apply == true ? change.text : ocr.text;
+					let line = change?.apply == true ? change.text : ocr.text;
+					if(change?.header) line = '<h1>' + line;
+					if(change?.paragraph) line = '<p>' + line;
+					if(change?.quote) line = '<q>' + line;
+					if(change?.image) line = '<i>' + line;
 					text += line.trimEnd() + '\n';
 				}
 			}
