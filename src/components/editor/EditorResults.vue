@@ -3,7 +3,7 @@
 	<template v-if="isOcrNotNull">
 		<editor-results-status class="status" :ocr="ocr" />
 		<div class="desktop">
-			<editor-results-line class="line" v-for="({line, change}, i) of list" :key="i" :line="line" :change="change" @update:text="onUpdateText(i, line, $event)" @update:apply="onUpdateApply(i, line, $event)" @update:header="onUpdateHeader(i, line, $event)" @update:paragraph="onUpdateParagraph(i, line, $event)" @update:quote="onUpdateQuote(i, line, $event)" @update:image="onUpdateimage(i, line, $event)" />
+			<editor-results-line class="line" v-for="({line, change}, i) of list" :key="i" :line="line" :change="change" @update:text="onUpdateText(i, line, $event)" @update:apply="onUpdateApply(i, line, $event)" @update:header="onUpdateHeader(i, line, $event)" @update:paragraph="onUpdateParagraph(i, line, $event)" @update:quote="onUpdateQuote(i, line, $event)" @update:image="onUpdateImage(i, line, $event)" />
 		</div>
 	</template>
 </div>
