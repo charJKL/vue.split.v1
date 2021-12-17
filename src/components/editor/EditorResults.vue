@@ -3,7 +3,7 @@
 	<template v-if="isOcrNotNull">
 		<editor-results-status class="status" :ocr="ocr" />
 		<div class="desktop">
-			<editor-results-line class="line" v-for="({line, change}, i) of list" :key="i" :line="line" :change="change" @update:text="onUpdateText(i, line, $event)" @update:apply="onUpdateApply(i, line, $event)" />
+			<editor-results-line class="line" v-for="({line, change}, i) of list" :key="i" :line="line" :change="change" @update:text="onUpdateText(i, line, $event)" @update:apply="onUpdateApply(i, line, $event)" @update:header="onUpdateHeader(i, line, $event)" @update:paragraph="onUpdateParagraph(i, line, $event)" @update:quote="onUpdateQuote(i, line, $event)" @update:image="onUpdateimage(i, line, $event)" />
 		</div>
 	</template>
 </div>
@@ -37,10 +37,21 @@ export default
 	},
 	methods:
 	{
+		onUpdateChange(i, property, value)
+		{
+			const vchange = this.features.changes?.[i] ? {...this.features.changes[i]} : {...change};
+			vchange[property] = value;
+			
+			const vfeatures = {...this.features};
+			vfeatures.changes = [...vfeatures.changes];
+			vfeatures.changes[i] = vchange;
+			this.$emit(updateFeatures, vfeatures);
+		},
 		onUpdateText(i, line, text)
 		{
 			const vchange = this.features.changes?.[i] ? {...this.features.changes[i]} : {...change};
-			vchange.text = text;
+			vchange['apply'] = true;
+			vchange['text'] = text;
 			
 			const vfeatures = {...this.features};
 			vfeatures.changes = [...vfeatures.changes];
@@ -49,14 +60,24 @@ export default
 		},
 		onUpdateApply(i, line, apply)
 		{
-			const vchange = this.features.changes?.[i] ? {...this.features.changes[i]} : {...change};
-			vchange.apply = apply;
-			
-			const vfeatures = {...this.features};
-			vfeatures.changes = [...vfeatures.changes];
-			vfeatures.changes[i] = vchange;
-			this.$emit(updateFeatures, vfeatures);
-		}
+			this.onUpdateChange(i, 'apply', apply);
+		},
+		onUpdateHeader(i, line, header)
+		{
+			this.onUpdateChange(i, 'header', header);
+		},
+		onUpdateParagraph(i, line, paragraph)
+		{
+			this.onUpdateChange(i, 'paragraph', paragraph);
+		},
+		onUpdateQuote(i, line, quote)
+		{
+			this.onUpdateChange(i, 'quote', quote);
+		},
+		onUpdateImage(i, line, image)
+		{
+			this.onUpdateChange(i, 'image', image);
+		},
 	}
 }
 </script>

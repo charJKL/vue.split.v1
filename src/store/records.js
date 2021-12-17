@@ -55,7 +55,11 @@ export const line = {
 };
 export const change = 
 {
-	apply: true,
+	apply: false,
+	header: false,
+	paragraph: false,
+	quote: false,
+	image: false,
 	text: ""
 };
 
